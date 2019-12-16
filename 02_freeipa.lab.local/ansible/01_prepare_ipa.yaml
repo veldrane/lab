@@ -1,0 +1,26 @@
+---
+- hosts: centos7
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set new ip address
+    set_fact:
+      ip: "10.1.8.10"
+      hostname: "freeipa.lab.local"
+
+  - name: IP adresseses
+    setup:
+
+  - name: Change hostname
+    shell: echo "{{ hostname }}" > /etc/hostname
+
+  - name: Add hosts to hostname
+    shell: echo "{{ ip }} {{ hostname }}" >> /etc/hosts
+
+  - name: Add an Ethernet connection with static IP configuration
+    shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.gateway 10.1.8.1 ipv4.method manual
+
+  - name: Shutdown
+    shell: shutdown -h now
+

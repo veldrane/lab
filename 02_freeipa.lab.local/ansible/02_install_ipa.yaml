@@ -1,0 +1,55 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain freeipa.lab.local --name "before FreeIPA installation"
+
+  - name: Change network for the ipa server
+    shell: virt-xml freeipa.lab.local --edit -w vnet0 --network bridge=virbr8
+
+  - name: Start machine
+    shell: virsh start freeipa.lab.local
+
+
+- hosts: freeipa.lab.local
+  become: true
+  gather_facts: no
+  tasks:
+  - pause:
+      seconds: 25
+
+  - name: Set domain password
+    set_fact:
+      password: "admin123"
+  
+  - name: Get IP address
+    shell: /usr/sbin/ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
+    register: ipaddr
+
+  - name: Get hostname
+    shell: hostname
+    register: hostname
+
+  - name: Get REALM
+    shell: dnsdomainname | sed 's/.*/\U&/'
+    register: REALM
+
+  - name: Get Domain 
+    shell: dnsdomainname
+    register: domain
+
+  - name: Install prereq packages
+    shell: yum install ipa-server ipa-server-dns -y
+
+  - name: hostnamectl workarround 
+    shell: rm -f /usr/bin/hostnamectl ; ln -s /usr/bin/true /usr/bin/hostnamectl
+
+  - name: Allow https on firewalld
+    shell: firewall-cmd --add-service=https --add-service=ldap --add-service=ldaps --add-service=kerberos --permanent ; firewall-cmd --reload
+
+  - name: Install ipa server
+    shell: ipa-server-install --ip-address={{ ipaddr.stdout }} --hostname={{ hostname.stdout }} --realm={{ REALM.stdout }} --domain={{ domain.stdout }} \
+           --ds-password={{ password }} --admin-password={{ password }} --mkhomedir --setup-dns --unattended --no-forwarders
+

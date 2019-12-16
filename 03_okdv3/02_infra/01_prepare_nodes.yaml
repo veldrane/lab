@@ -1,0 +1,75 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Set more memory
+    shell: virsh setmem {{ hostname }}.{{ domain }} 8G --config
+
+  - name: Start machin_
+    shell: virsh start {{ hostname }}.{{ domain }}
+    ignore_errors: yes
+
+- hosts: freeipa.lab.local
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Login to ipa
+    shell: echo "{{ adminpwd }}" | kinit admin
+
+  - name: Add DNS record for host
+    shell: ipa dnsrecord-add {{ domain }} {{ hostname }} --a-rec {{ ip }}
+    ignore_errors: yes
+
+- hosts: template
+  become: true
+  gather_facts: no
+  tasks:
+
+  - pause:
+      seconds: 25
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Change hostname
+    shell: hostnamectl set-hostname {{ hostname }}.{{ domain }}
+
+  - name: Add hosts to hostname
+    shell: echo "{{ ip }} {{ hostname }} {{ hostname }}.{{ domain }}" >> /etc/hosts
+
+  - name: Resize partition
+    shell: printf 'd\n2\np\nn\np\n2\n\n\nt\n2\n8e\nw' | fdisk /dev/vda
+    ignore_errors: yes
+
+  - name: Partprobe disks
+    shell: partprobe /dev/vda
+
+  - name: PV resize
+    shell: pvresize /dev/vda2
+
+  - name: LV extend /lv-var
+    shell: lvresize /dev/rootvg/var -L+20G
+
+  - name: Resize fs 
+    shell: resize2fs /dev/rootvg/var
+
+  - name: Add an Ethernet connection with static IP configuration
+    shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "10.16.1.10,8.8.8.8"
+
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Reboot the vm
+    shell: virsh shutdown {{ hostname }}.{{ domain }}
+

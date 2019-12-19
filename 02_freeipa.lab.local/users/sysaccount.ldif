@@ -1,0 +1,8 @@
+dn: uid=okdsys,cn=sysaccounts,cn=etc,dc=lab,dc=local
+changetype: add
+objectclass: account
+objectclass: simplesecurityobject
+uid: okdsys
+userPassword: okdsys123
+passwordExpirationTime: 20380119031407Z
+nsIdleTimeout: 0

@@ -47,7 +47,7 @@
     shell: rm -f /usr/bin/hostnamectl ; ln -s /usr/bin/true /usr/bin/hostnamectl
 
   - name: Allow https on firewalld
-    shell: firewall-cmd --add-service=https --add-service=ldap --add-service=ldaps --add-service=kerberos --permanent ; firewall-cmd --reload
+    shell: firewall-cmd --add-service=https --add-service=ldap --add-service=ldaps --add-service=kerberos --add-service kpasswd --permanent ; firewall-cmd --reload
 
   - name: Install ipa server
     shell: ipa-server-install --ip-address={{ ipaddr.stdout }} --hostname={{ hostname.stdout }} --realm={{ REALM.stdout }} --domain={{ domain.stdout }} \

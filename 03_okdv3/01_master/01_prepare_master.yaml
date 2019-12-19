@@ -62,14 +62,34 @@
   - name: Resize fs 
     shell: resize2fs /dev/rootvg/var
 
-  - name: Make gshipley directory
-    shell: mkdir /root/gshipley
-  
   - name: Add an Ethernet connection with static IP configuration - add ipa server client
     shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "10.1.8.10"
 
   - name: Change strict policy on ssh client
     shell: echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+
+  - name: Make gshipley directory
+    shell: mkdir /root/gshipley
+  
+  - name: Copy gshipley
+    copy:
+      src: /root/bitbucket/private/lab/temp/gshipley.tgz
+      dest: /root/gshipley/gshipley.tgz
+      mode: 644
+
+  - name: extract gshipley
+    shell: cd /root/gshipley ; tar xvfz ./gshipley.tgz
+
+  - name: Run prepare script
+    shell: cd /root/gshipley ; ./prepare-install.sh
+
+  - name: Copy inventory.ini
+    copy:
+      src: /root/bitbucket/private/lab/03_okdv3/gshipley/inventory.ini
+      dest: /root/gshipley/cluster.ini
+      mode: 644
+
+
 
 - hosts: localhost
   become: true

@@ -29,7 +29,7 @@
     shell: ipa dnsrecord-add {{ domain }} {{ hostname }} --a-rec {{ ip }}
     ignore_errors: yes
 
-- hosts: template
+- hosts: centos7
   become: true
   gather_facts: no
   tasks:
@@ -41,20 +41,20 @@
     include: include/_setup_vars.yaml
 
   - name: Change hostname
-    shell: hostnamectl set-hostname {{ hostname }}.{{ domain }}
+    shell: echo "{{ hostname }}.{{ domain }}" > /etc/hostname
 
   - name: Add hosts to hostname
     shell: echo "{{ ip }} {{ hostname }} {{ hostname }}.{{ domain }}" >> /etc/hosts
 
   - name: Resize partition
-    shell: printf 'd\n2\np\nn\np\n2\n\n\nt\n2\n8e\nw' | fdisk /dev/vda
+    shell: printf 'd\n2\np\nn\np\n2\n\n\nt\n2\n8e\nw' | fdisk /dev/sda
     ignore_errors: yes
 
   - name: Partprobe disks
-    shell: partprobe /dev/vda
+    shell: partprobe /dev/sda
 
   - name: PV resize
-    shell: pvresize /dev/vda2
+    shell: pvresize /dev/sda2
 
   - name: LV extend /lv-var
     shell: lvresize /dev/rootvg/var -L+20G
@@ -63,7 +63,7 @@
     shell: resize2fs /dev/rootvg/var
 
   - name: Add an Ethernet connection with static IP configuration
-    shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "10.16.1.10,8.8.8.8"
+    shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "10.1.8.10"
 
 - hosts: localhost
   become: true

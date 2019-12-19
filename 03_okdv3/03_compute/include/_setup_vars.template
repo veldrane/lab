@@ -1,6 +1,6 @@
 - name: Set global variables
   set_fact:
-    ip: "10.16.1.2XXX"
+    ip: "10.1.16.2XXX"
     hostname: "node2XXX"
     domain: "lab.local"
     adminpwd: "admin123"

@@ -1,0 +1,21 @@
+- name: Set global variables
+  set_fact:
+    ip: "10.1.16.32"
+    hostname: "node32"
+    domain: "lab.local"
+    ipaserver: "freeipa.lab.local"
+    ipaip: "10.1.8.10"
+    ldapbase: "dc=lab,dc=local"
+    svcadmin: "admin"
+    adminpwd: "admin123"
+    template: "t_centos7"
+    template_dir: "/data/templates"
+    vms_dir: "/data/vms"
+
+- name: Set FQDN
+  set_fact:
+    fqdn: "{{ hostname }}.{{ domain }}"
+
+- name: Set REALM
+  set_fact: 
+    realm: "{{ domain|upper }}"

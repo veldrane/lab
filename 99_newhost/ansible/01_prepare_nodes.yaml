@@ -1,0 +1,133 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Add hosts"
+    add_host: name="{{ ip }}" groups=just_created
+ 
+  - name: Create data directory
+    shell: mkdir /data/vms/{{ hostname }}.{{ domain }} 
+
+  - name: Clone template
+    shell: virt-clone --original-xml /data/templates/t_centos7/t_centos7.xml --name {{ fqdn }} --file /data/vms/{{ fqdn }}/rootvg.qcow2
+
+  - name: Set max memory
+    shell: virsh setmaxmem {{ fqdn }} 8G --config
+
+  - name: Set more memory
+    shell: virsh setmem {{ fqdn }} 8G --config
+
+  - name: Start machine
+    shell: virsh start {{ fqdn }}
+    ignore_errors: yes
+
+  
+
+- hosts: centos7
+  become: true
+  gather_facts: no
+  tasks:
+
+  - pause:
+      seconds: 25
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Change hostname
+    shell: echo "{{ fqdn }}" > /etc/hostname
+
+  - name: Add hosts to hostname
+    shell: echo "{{ ip }} {{ hostname }} {{ fqdn }}" >> /etc/hosts
+
+  - name: Resize partition
+    shell: printf 'd\n2\np\nn\np\n2\n\n\nt\n2\n8e\nw' | fdisk /dev/sda
+    ignore_errors: yes
+
+  - name: Partprobe disks
+    shell: partprobe /dev/sda
+
+  - name: PV resize
+    shell: pvresize /dev/sda2
+
+  - name: Add an Ethernet connection with static IP configuration
+    shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "{{ ipaip }}"
+
+  - name: Install additional packages
+    shell: yum install -y ipa-client sssd openldap-clients krb5-workstation
+
+  - name: Enable make dir option for new users
+    shell: authconfig --enablemkhomedir --update
+
+  - name: Update sshd config - part 1
+    shell: echo "AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys" >> /etc/ssh/sshd_config 
+  
+  - name: Update sshd config - part 2
+    shell: echo "AuthorizedKeysCommandUser nobody" >> /etc/ssh/sshd_config
+
+  - name: Update ssh config - non strict host checking
+    shell: echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+
+  - name: Configure ldap client
+    template: 
+      src: include/ldap.conf.j2
+      dest: /etc/openldap/ldap.conf
+
+  - name: Copy CA key
+    shell: scp root@{{ ipaip }}:/etc/ipa/ca.crt /etc/ipa/ca.crt
+
+  - name: Configure kerberos client
+    template:
+      src: include/krb5.conf.j2
+      dest: /etc/krb5.conf
+
+  - name: Configure ipa client
+    template:
+      src: include/default.conf.j2
+      dest: /etc/ipa/default.conf
+
+  - name: Configure sssd
+    template:
+      src: include/sssd.conf.j2
+      dest: /etc/sssd/sssd.conf
+      owner: root
+      group: root
+      mode: '0600'
+
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: "Reboot host"
+    shell: virsh reboot {{ fqdn }} --mode acpi
+
+- hosts: just_created
+  become: true
+  gather_facts: no
+  tasks:
+
+  - pause:
+      seconds: 25
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Get the krb5 ticket
+    shell: echo "{{ adminpwd }}" | kinit {{ svcadmin }}
+
+  - name: Join server to ipa domain
+    shell: ipa-join 
+
+  - name: Add DNS record for host
+    shell: ipa dnsrecord-add {{ domain }} {{ hostname }} --a-rec {{ ip }}
+    ignore_errors: yes
+  
+  - name: Restart sssd services
+    shell: systemctl restart sssd
+

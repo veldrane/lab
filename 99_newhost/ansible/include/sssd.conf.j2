@@ -1,0 +1,37 @@
+[domain/{{ domain }}]
+
+cache_credentials = True
+krb5_store_password_if_offline = True
+ipa_domain = {{ domain }}
+id_provider = ipa
+auth_provider = ipa
+access_provider = ipa
+ipa_hostname = {{ fqdn }}
+chpass_provider = ipa
+dyndns_update = False
+ipa_server = {{ ipaserver }}
+dyndns_iface = eth0
+ldap_tls_cacert = /etc/ipa/ca.crt
+[sssd]
+services = nss, sudo, pam, ssh
+
+domains = {{ domain }}
+[nss]
+homedir_substring = /home
+
+[pam]
+
+[sudo]
+
+[autofs]
+
+[ssh]
+
+[pac]
+
+[ifp]
+
+[secrets]
+
+[session_recording]
+

@@ -1,0 +1,32 @@
+#File modified by ipa-client-install
+
+includedir /etc/krb5.conf.d/
+includedir /var/lib/sss/pubconf/krb5.include.d/
+
+[libdefaults]
+  default_realm = {{ realm }}
+  dns_lookup_realm = false
+  dns_lookup_kdc = false
+  rdns = false
+  dns_canonicalize_hostname = false
+  ticket_lifetime = 24h
+  forwardable = true
+  udp_preference_limit = 0
+  default_ccache_name = KEYRING:persistent:%{uid}
+
+
+[realms]
+  {{ realm }} = {
+    kdc = {{ ipaserver }}:88
+    master_kdc = {{ ipaserver }}:88
+    admin_server = {{ ipaserver }}:749
+    kpasswd_server = {{ ipaserver }}:464
+    default_domain = {{ domain }}
+  }
+
+
+[domain_realm]
+  .{{ domain }} = {{ realm }}
+  {{ domain }} = {{ realm }}
+  {{ fqdn }} = {{ realm }}
+

@@ -7,8 +7,12 @@
   - name: Set variables
     include: include/_setup_vars.yaml
 
-  - name: "Add hosts"
-    add_host: name="{{ ip }}" groups=just_created
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+  - name: "Create ansible group for ipa server"
+    add_host: name="{{ ipaip }}" groups=ipaserver
+
  
   - name: Create data directory
     shell: mkdir /data/vms/{{ hostname }}.{{ domain }} 
@@ -107,7 +111,7 @@
   - name: "Reboot host"
     shell: virsh reboot {{ fqdn }} --mode acpi
 
-- hosts: just_created
+- hosts: newhost
   become: true
   gather_facts: no
   tasks:
@@ -124,10 +128,26 @@
   - name: Join server to ipa domain
     shell: ipa-join 
 
-  - name: Add DNS record for host
-    shell: ipa dnsrecord-add {{ domain }} {{ hostname }} --a-rec {{ ip }}
-    ignore_errors: yes
+  - name: Enable sssd service
+    shell: systemctl enable sssd
   
   - name: Restart sssd services
     shell: systemctl restart sssd
+
+
+- hosts: ipaserver
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Get the krb5 ticket
+    shell: echo "{{ adminpwd }}" | kinit {{ svcadmin }}
+
+  - name: Add DNS record for host
+    shell: ipa dnsrecord-add {{ domain }} {{ hostname }} --a-rec {{ ip }}
+    ignore_errors: yes
+
 

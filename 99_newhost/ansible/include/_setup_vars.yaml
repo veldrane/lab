@@ -1,7 +1,7 @@
 - name: Set global variables
   set_fact:
-    ip: "10.1.16.36"
-    hostname: "node36"
+    ip: "10.1.16.44"
+    hostname: "node44"
     domain: "lab.local"
     ipaserver: "freeipa.lab.local"
     ipaip: "10.1.8.10"

@@ -77,21 +77,24 @@
   - name: Update ssh config - non strict host checking
     shell: echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
 
-  - name: Configure ldap client
-    template: 
-      src: include/ldap.conf.j2
-      dest: /etc/openldap/ldap.conf
-
-  - name: Copy CA key
-    shell: scp root@{{ ipaip }}:/etc/ipa/ca.crt /etc/ipa/ca.crt
-
 - hosts: localhost
   become: true
   gather_facts: no
   tasks:
 
-  - name: "Reboot host"
-    shell: virsh reboot {{ fqdn }} --mode acpi
+  - name: "Shutdown host"
+    shell: virsh shutdown {{ fqdn }} --mode acpi
+
+  - pause:
+      seconds: 5
+    
+  - name: "Destroy domain"
+    shell: "virsh destroy {{ fqdn }}"
+    ignore_errors: yes
+
+  - name: "Start domain"
+    shell: "virsh start {{ fqdn }}"
+    
 
 - hosts: newhost
   become: true

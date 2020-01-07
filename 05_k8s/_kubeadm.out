@@ -1,0 +1,142 @@
+[root@node71 ~]# kubeadm init
+W0107 16:17:11.734106    1978 validation.go:28] Cannot validate kube-proxy config - no validator is available
+W0107 16:17:11.734268    1978 validation.go:28] Cannot validate kubelet config - no validator is available
+[init] Using Kubernetes version: v1.17.0
+[preflight] Running pre-flight checks
+	[WARNING Firewalld]: firewalld is active, please ensure ports [6443 10250] are open or your cluster may not function correctly
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Starting the kubelet
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [node71.lab.local kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 10.1.16.71]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+[certs] Generating "etcd/server" certificate and key
+[certs] etcd/server serving cert is signed for DNS names [node71.lab.local localhost] and IPs [10.1.16.71 127.0.0.1 ::1]
+[certs] Generating "etcd/peer" certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [node71.lab.local localhost] and IPs [10.1.16.71 127.0.0.1 ::1]
+[certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "sa" key and public key
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+[kubeconfig] Writing "admin.conf" kubeconfig file
+[kubeconfig] Writing "kubelet.conf" kubeconfig file
+[kubeconfig] Writing "controller-manager.conf" kubeconfig file
+[kubeconfig] Writing "scheduler.conf" kubeconfig file
+[control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+W0107 16:18:16.463646    1978 manifests.go:214] the default kube-apiserver authorization-mode is "Node,RBAC"; using "Node,RBAC"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+W0107 16:18:16.465360    1978 manifests.go:214] the default kube-apiserver authorization-mode is "Node,RBAC"; using "Node,RBAC"
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+[apiclient] All control plane components are healthy after 21.503885 seconds
+[upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.17" in namespace kube-system with the configuration for the kubelets in the cluster
+[upload-certs] Skipping phase. Please see --upload-certs
+[mark-control-plane] Marking the node node71.lab.local as control-plane by adding the label "node-role.kubernetes.io/master=''"
+[mark-control-plane] Marking the node node71.lab.local as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[bootstrap-token] Using token: 5yls5b.fqaq86y457mynsfq
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[kubelet-finalize] Updating "/etc/kubernetes/kubelet.conf" to point to a rotatable kubelet client certificate and key
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 10.1.16.71:6443 --token 5yls5b.fqaq86y457mynsfq \
+    --discovery-token-ca-cert-hash sha256:2207d0aef996bf70271628ceae72e51786debeb1a49870b73bb9a3b89917ba5d 
+[root@node71 ~]# kubectl 
+kubectl controls the Kubernetes cluster manager.
+
+ Find more information at: https://kubernetes.io/docs/reference/kubectl/overview/
+
+Basic Commands (Beginner):
+  create         Create a resource from a file or from stdin.
+  expose         Take a replication controller, service, deployment or pod and expose it as a new Kubernetes Service
+  run            Run a particular image on the cluster
+  set            Set specific features on objects
+
+Basic Commands (Intermediate):
+  explain        Documentation of resources
+  get            Display one or many resources
+  edit           Edit a resource on the server
+  delete         Delete resources by filenames, stdin, resources and names, or by resources and label selector
+
+Deploy Commands:
+  rollout        Manage the rollout of a resource
+  scale          Set a new size for a Deployment, ReplicaSet or Replication Controller
+  autoscale      Auto-scale a Deployment, ReplicaSet, or ReplicationController
+
+Cluster Management Commands:
+  certificate    Modify certificate resources.
+  cluster-info   Display cluster info
+  top            Display Resource (CPU/Memory/Storage) usage.
+  cordon         Mark node as unschedulable
+  uncordon       Mark node as schedulable
+  drain          Drain node in preparation for maintenance
+  taint          Update the taints on one or more nodes
+
+Troubleshooting and Debugging Commands:
+  describe       Show details of a specific resource or group of resources
+  logs           Print the logs for a container in a pod
+  attach         Attach to a running container
+  exec           Execute a command in a container
+  port-forward   Forward one or more local ports to a pod
+  proxy          Run a proxy to the Kubernetes API server
+  cp             Copy files and directories to and from containers.
+  auth           Inspect authorization
+
+Advanced Commands:
+  diff           Diff live version against would-be applied version
+  apply          Apply a configuration to a resource by filename or stdin
+  patch          Update field(s) of a resource using strategic merge patch
+  replace        Replace a resource by filename or stdin
+  wait           Experimental: Wait for a specific condition on one or many resources.
+  convert        Convert config files between different API versions
+  kustomize      Build a kustomization target from a directory or a remote url.
+
+Settings Commands:
+  label          Update the labels on a resource
+  annotate       Update the annotations on a resource
+  completion     Output shell completion code for the specified shell (bash or zsh)
+
+Other Commands:
+  api-resources  Print the supported API resources on the server
+  api-versions   Print the supported API versions on the server, in the form of "group/version"
+  config         Modify kubeconfig files
+  plugin         Provides utilities for interacting with plugins.
+  version        Print the client and server version information
+
+Usage:
+  kubectl [flags] [options]
+
+Use "kubectl <command> --help" for more information about a given command.
+Use "kubectl options" for a list of global command-line options (applies to all commands).
+[root@node71 ~]# kubectl get ns
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+

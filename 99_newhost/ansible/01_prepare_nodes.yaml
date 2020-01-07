@@ -21,10 +21,10 @@
     shell: virt-clone --original-xml /data/templates/t_centos7/t_centos7.xml --name {{ fqdn }} --file /data/vms/{{ fqdn }}/rootvg.qcow2
 
   - name: Set max memory
-    shell: virsh setmaxmem {{ fqdn }} 8G --config
+    shell: virsh setmaxmem {{ fqdn }} {{ mem }} --config
 
   - name: Set more memory
-    shell: virsh setmem {{ fqdn }} 8G --config
+    shell: virsh setmem {{ fqdn }} {{ mem }} --config
 
   - name: Start machine
     shell: virsh start {{ fqdn }}
@@ -91,6 +91,10 @@
   - name: "Destroy domain"
     shell: "virsh destroy {{ fqdn }}"
     ignore_errors: yes
+
+  - name: "Change virbr interface"
+    shell: virt-xml {{ fqdn }} --edit -w vnet0 --network bridge=virbr{{ virbr }}
+
 
   - name: "Start domain"
     shell: "virsh start {{ fqdn }}"

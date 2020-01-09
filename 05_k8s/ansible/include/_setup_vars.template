@@ -18,8 +18,6 @@
   set_fact:
     ip: "10.1.{{ virbr  }}.{{ netsuffix }}"
 
-
-
 - name: Set FQDN
   set_fact:
     fqdn: "{{ hostname }}.{{ domain }}"
@@ -27,3 +25,13 @@
 - name: Set REALM
   set_fact: 
     realm: "{{ domain|upper }}"
+
+- name: Set pod network
+  set_fact:
+    podnetwork: "10.58.0.0/16"
+
+- name: Set master 
+  set_fact:
+    master: "node71.lab.local"
+
+

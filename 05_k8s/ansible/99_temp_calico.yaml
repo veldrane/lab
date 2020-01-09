@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ master }}" groups=master
+
+- hosts: master
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Change pod ip
+    replace:
+      path: /root/calico.yaml
+      regexp: '192.168.0.0/16'
+      replace: "{{ podnetwork }}"

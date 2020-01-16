@@ -1,8 +1,8 @@
 - name: Set global variables
   set_fact:
     virbr: "16"
-    netsuffix: "88" 
-    hostname: "node88"
+    netsuffix: "75" 
+    hostname: "node75"
     domain: "lab.local"
     mem: "4G"
     ipaserver: "freeipa.lab.local"
@@ -26,12 +26,11 @@
   set_fact: 
     realm: "{{ domain|upper }}"
 
-- name: Set pod network
+- name: Set Kubernetes facts
   set_fact:
     podnetwork: "10.58.0.0/16"
-
-- name: Set master 
-  set_fact:
+    svcnetwork: "10.59.0.0/16"
+    clusterdom: "cluster.local"
     master: "node71.lab.local"
 
 

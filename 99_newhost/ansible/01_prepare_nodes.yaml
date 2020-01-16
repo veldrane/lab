@@ -10,9 +10,14 @@
   - name: "Create ansible group for new hosts"
     add_host: name="{{ ip }}" groups=newhost
 
+  - name: "Delete ssh keys for template"
+    shell: sed -i -E '/10.1.16.200/d' $HOME/.ssh/known_hosts
+
+  - name: "Delete ssh keys for ip"
+    shell: sed -i -E "/{{ ip }}/d" $HOME/.ssh/known_hosts
+
   - name: "Create ansible group for ipa server"
     add_host: name="{{ ipaip }}" groups=ipaserver
-
  
   - name: Create data directory
     shell: mkdir /data/vms/{{ hostname }}.{{ domain }} 
@@ -38,7 +43,7 @@
   tasks:
 
   - pause:
-      seconds: 25
+      seconds: 35
 
   - name: Set variables
     include: include/_setup_vars.yaml

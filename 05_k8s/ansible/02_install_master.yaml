@@ -52,7 +52,7 @@
     shell: systemctl restart kubelet && systemctl enable kubelet
 
   - name: Run kubeadm
-    shell: kubeadm init --pod-network-cidr={{ podnetwork }} --apiserver-advertise-address={{ ip }} > /tmp/kubeadm.out
+    shell: kubeadm init --pod-network-cidr={{ podnetwork }} --service-cidr={{ svcnetwork }} --apiserver-advertise-address={{ ip }} > /tmp/kubeadm.out
 
   - name: Get token 
     shell: cat /tmp/kubeadm.out | grep -E '\-\-token' | awk '{print $5}'
@@ -74,6 +74,9 @@
   - name: Change ownership to kube directory
     shell: chown $(id -u):$(id -g) /root/.kube/config
 
+  - name: Create SDN namespace
+    shell: kubectl create namespace kube-sdn
+
   - name: Get calico manifest
     shell: cd /root ; wget https://docs.projectcalico.org/v3.11/manifests/calico.yaml
 
@@ -83,5 +86,18 @@
       regexp: '192.168.0.0/16'
       replace: "{{ podnetwork }}"
 
+  - name: Change namespace for calico
+    replace:
+      path: /root/calico.yaml
+      regexp: 'kube-system'
+      replace: "kube-sdn"
+
+
   - name: Apply Calico SDN Manifest
     shell: kubectl apply -f /root/calico.yaml
+
+  - name: Get Helm
+    shell: cd /root ; wget https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz ; tar xvfz helm-v3.0.2-linux-amd64.tar.gz linux-amd64/helm 
+   
+  - name: Copy Helm to /usr/local/bin
+    shell: cd /root ; mv linux-amd64/helm /usr/local/bin ; rm -rf linux-amd64

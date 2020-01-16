@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Start machin_
+    shell: virsh start {{ hostname }}.{{ domain }}
+    ignore_errors: yes
+

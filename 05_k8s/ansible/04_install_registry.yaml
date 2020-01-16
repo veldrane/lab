@@ -1,0 +1,75 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Disable SElinux
+    shell: setenforce 0 ; sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+
+
+  - name: Disable swap
+    shell: swapoff -a ; sed -i -E '/swap/d' /etc/fstab
+
+  - name: Setup firewall rules
+    shell: firewall-cmd --permanent --add-port=10250-10252/tcp --add-port=10255/tcp --add-port=8472/udp --add-port=179/tcp
+
+  - name: Setup masquarade and reload rules
+    shell: firewall-cmd --add-masquerade --permanent ; firewall-cmd --reload
+
+  - name: Enable br_netfilter (probably not survive the reboot!!! - check in the future)
+    shell: modprobe br_netfilter; echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+
+  - name: Copy kubernetes repo definition to yum dir
+    copy: 
+      src: include/kubernetes.repo
+      dest: /etc/yum.repos.d/kubernetes.repo
+
+  - name: Install kubeadm and docker
+    shell: yum install kubeadm docker -y
+
+  - name: Enable docker
+    shell: systemctl restart docker && systemctl enable docker
+
+  - name: Enable kubelet
+    shell: systemctl restart kubelet && systemctl enable kubelet
+
+  - name: Get token file 
+    shell: scp root@{{ master }}:/root/token.out /tmp/token.out
+
+  - name: Get token 
+    shell: cat /tmp/token.out | awk -F\; '{print $1}'
+    register: kube_token
+
+  - name: Get CA token
+    shell: cat /tmp/token.out | awk -F\; '{print $2}'
+    register: ca_token
+
+  - name: Join node to kubernetes cluster
+    shell: kubeadm join --token {{ kube_token.stdout }} --discovery-token-ca-cert-hash {{ ca_token.stdout }} {{ master }}:6443
+
+  - name: Create .kube directory
+    shell: mkdir -p /root/.kube
+
+  - name: Copy cfg to .kube dir
+    shell: scp root@{{ master }}:/etc/kubernetes/admin.conf /root/.kube/config 
+ 
+  - name: Change ownership to kube directory
+    shell: chown $(id -u):$(id -g) /root/.kube/config
+
+  - name: Label node as a worker
+    shell: kubectl label node {{ fqdn }} node-role.kubernetes.io/registry=registry

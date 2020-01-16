@@ -1,0 +1,110 @@
+node84.lab.local | CHANGED | rc=0 >>
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 52:54:00:10:10:5a brd ff:ff:ff:ff:ff:ff
+    inet 10.1.16.84/24 brd 10.1.16.255 scope global noprefixroute eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c7b0:535:7153:a783/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a13e:256a:6b28:2efb/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::e8eb:8433:2083:c824/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 02:42:31:5e:52:a1 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 scope global docker0
+       valid_lft forever preferred_lft forever
+4: tunl0@NONE: <NOARP,UP,LOWER_UP> mtu 1440 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ipip 0.0.0.0 brd 0.0.0.0
+    inet 10.58.36.0/32 brd 10.58.36.0 scope global tunl0
+       valid_lft forever preferred_lft forever
+5: caliddff2f6f9b7@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1440 qdisc noqueue state UP group default 
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet6 fe80::ecee:eeff:feee:eeee/64 scope link 
+       valid_lft forever preferred_lft forever
+node83.lab.local | CHANGED | rc=0 >>
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 52:54:00:11:c0:5f brd ff:ff:ff:ff:ff:ff
+    inet 10.1.16.83/24 brd 10.1.16.255 scope global noprefixroute eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c7b0:535:7153:a783/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a13e:256a:6b28:2efb/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::e8eb:8433:2083:c824/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 02:42:4e:e6:dd:b4 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 scope global docker0
+       valid_lft forever preferred_lft forever
+4: tunl0@NONE: <NOARP,UP,LOWER_UP> mtu 1440 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ipip 0.0.0.0 brd 0.0.0.0
+    inet 10.58.165.128/32 brd 10.58.165.128 scope global tunl0
+       valid_lft forever preferred_lft forever
+node82.lab.local | CHANGED | rc=0 >>
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 52:54:00:b0:3b:19 brd ff:ff:ff:ff:ff:ff
+    inet 10.1.16.82/24 brd 10.1.16.255 scope global noprefixroute eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c7b0:535:7153:a783/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a13e:256a:6b28:2efb/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::e8eb:8433:2083:c824/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 02:42:97:ea:cc:c2 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 scope global docker0
+       valid_lft forever preferred_lft forever
+4: tunl0@NONE: <NOARP,UP,LOWER_UP> mtu 1440 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ipip 0.0.0.0 brd 0.0.0.0
+    inet 10.58.46.128/32 brd 10.58.46.128 scope global tunl0
+       valid_lft forever preferred_lft forever
+5: calid0b4bef8b37@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1440 qdisc noqueue state UP group default 
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet6 fe80::ecee:eeff:feee:eeee/64 scope link 
+       valid_lft forever preferred_lft forever
+node81.lab.local | CHANGED | rc=0 >>
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 52:54:00:79:a0:f1 brd ff:ff:ff:ff:ff:ff
+    inet 10.1.16.81/24 brd 10.1.16.255 scope global noprefixroute eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a13e:256a:6b28:2efb/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::c7b0:535:7153:a783/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 02:42:82:c8:89:ce brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 scope global docker0
+       valid_lft forever preferred_lft forever
+4: tunl0@NONE: <NOARP,UP,LOWER_UP> mtu 1440 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ipip 0.0.0.0 brd 0.0.0.0
+    inet 10.58.57.128/32 brd 10.58.57.128 scope global tunl0
+       valid_lft forever preferred_lft forever
+6: cali771ec2ecab8@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1440 qdisc noqueue state UP group default 
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet6 fe80::ecee:eeff:feee:eeee/64 scope link 
+       valid_lft forever preferred_lft forever

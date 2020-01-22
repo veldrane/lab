@@ -7,7 +7,69 @@
   - name: Set variables
     include: include/_setup_vars.yaml
 
-  - name: Start machin_
-    shell: virsh start {{ hostname }}.{{ domain }}
-    ignore_errors: yes
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
 
+  - name: Create docker registry data disk
+    shell: qemu-img create -f qcow2 {{ vms_dir }}/{{ fqdn }}/datavg.qcow2 {{ disksize }}
+
+  - name: Attach disk to machine
+    shell: virsh attach-disk {{ fqdn }} --source {{ vms_dir }}/{{ fqdn }}/datavg.qcow2 --target vdb --subdriver qcow2 --targetbus virtio --persistent
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Setup firewall rules
+    shell: firewall-cmd --permanent --add-port=443/tcp --add-port=80/tcp --add-port=5000/tcp ; firewall-cmd --reload
+
+  - name: Create datavg and logical volume
+    shell: pvcreate /dev/vdb ; vgcreate datavg /dev/vdb ; lvcreate -n registry -L20G datavg
+
+  - name: Create fs
+    shell: mkfs.ext4 /dev/datavg/registry
+
+  - name: make directory /data
+    shell: mkdir /data 
+
+  - name: Add /data to fstab
+    shell: echo '/dev/mapper/datavg-registry  /data              ext4    noatime,nodiratime        1 2' >> /etc/fstab
+
+  - name: Mount /data
+    shell: mount /data ; mkdir -p /data/registry/certs 
+
+  - name: Install docker
+    shell: yum install docker -y
+
+  - name: Enable and start docker
+    shell: systemctl enable docker ; systemctl start docker
+
+  - name: Get the krb5 ticket
+    shell: echo "{{ adminpwd }}" | kinit {{ svcadmin }}
+
+  - name: Add service
+    shell: ipa service-add HTTP/{{ fqdn }}@{{ realm }} --force
+
+  - name: Generate certificates
+    shell: ipa-getcert request -r -f /etc/pki/tls/certs/{{ fqdn }}.crt \ 
+           -k /etc/pki/tls/private/{{ fqdn }}.key \ 
+           -N CN={{ fqdn }} -D {{ fqdn }} \ 
+           -K HTTP/{{ fqdn }}@{{ realm }}
+
+  - name: Copy certs to right /data/certs location
+    shell: cat /etc/pki/tls/certs/{{ fqdn }}.crt /etc/ipa/ca.crt > /data/registry/certs/{{ fqdn }}.pem
+
+  - name: Copy keys to right /data/certs location
+    shell: cat /etc/pki/tls/private/{{ fqdn }}.key > /data/registry/certs/{{ fqdn }}.key
+
+  - name: Start docker registry
+    shell: docker run --restart=always --name=docker-registry -d \
+           -v /data/registry:/var/lib/registry:Z -p 443:443 \ 
+           -e REGISTRY_HTTP_ADDR=0.0.0.0:443 \
+           -e REGISTRY_HTTP_TLS_CERTIFICATE=/var/lib/registry/certs/{{ fqdn }}.pem \
+           -e REGISTRY_HTTP_TLS_KEY=/var/lib/registry/certs/{{ fqdn }}.key \
+           registry

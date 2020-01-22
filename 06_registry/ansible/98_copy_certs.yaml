@@ -1,0 +1,33 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Copy certs to right /data/registry/certs location
+    shell: cat /etc/pki/tls/certs/{{ fqdn }}.crt /etc/ipa/ca.crt > /data/registry/certs/{{ fqdn }}.pem
+
+  - name: Copy keys to right /data/registry/certs location
+    shell: cat /etc/pki/tls/private/{{ fqdn }}.key > /data/registry/certs/{{ fqdn }}.key
+
+  - name: Start docker registry
+    shell: docker run --restart=always --name=docker-registry -d \
+           -v /data/registry:/var/lib/registry:Z -p 443:443 \ 
+           -e REGISTRY_HTTP_ADDR=0.0.0.0:443 \
+           -e REGISTRY_HTTP_TLS_CERTIFICATE=/var/lib/registry/certs/{{ fqdn }}.pem \
+           -e REGISTRY_HTTP_TLS_KEY=/var/lib/registry/certs/{{ fqdn }}.key \
+           registry

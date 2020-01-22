@@ -55,14 +55,14 @@
     shell: echo "{{ ip }} {{ hostname }} {{ fqdn }}" >> /etc/hosts
 
   - name: Resize partition
-    shell: printf 'd\n2\np\nn\np\n2\n\n\nt\n2\n8e\nw' | fdisk /dev/sda
+    shell: printf 'd\n2\np\nn\np\n2\n\n\nt\n2\n8e\nw' | fdisk /dev/vda
     ignore_errors: yes
 
   - name: Partprobe disks
-    shell: partprobe /dev/sda
+    shell: partprobe /dev/vda
 
   - name: PV resize
-    shell: pvresize /dev/sda2
+    shell: pvresize /dev/vda2
 
   - name: Add an Ethernet connection with static IP configuration
     shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "{{ ipaip }}"

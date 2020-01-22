@@ -27,3 +27,7 @@
 - name: Set REALM
   set_fact: 
     realm: "{{ domain|upper }}"
+
+- name: Set disksize
+  set_fact: 
+    disksize: "21G"

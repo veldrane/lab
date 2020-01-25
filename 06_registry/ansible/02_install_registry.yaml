@@ -16,6 +16,9 @@
   - name: Attach disk to machine
     shell: virsh attach-disk {{ fqdn }} --source {{ vms_dir }}/{{ fqdn }}/datavg.qcow2 --target vdb --subdriver qcow2 --targetbus virtio --persistent
 
+  - name: Autostart of the machine
+    shell: virsh autostart {{ fqdn }}
+
 - hosts: newhost
   become: true
   gather_facts: no
@@ -25,7 +28,13 @@
     include: include/_setup_vars.yaml
 
   - name: Setup firewall rules
-    shell: firewall-cmd --permanent --add-port=443/tcp --add-port=80/tcp --add-port=5000/tcp ; firewall-cmd --reload
+    shell: firewall-cmd --permanent --add-port=443/tcp ; firewall-cmd --reload
+
+  - name: LV extend /lv-var
+    shell: lvresize /dev/rootvg/var -L+10G
+
+  - name: Resize fs
+    shell: resize2fs /dev/rootvg/var
 
   - name: Create datavg and logical volume
     shell: pvcreate /dev/vdb ; vgcreate datavg /dev/vdb ; lvcreate -n registry -L20G datavg
@@ -42,11 +51,29 @@
   - name: Mount /data
     shell: mount /data ; mkdir -p /data/registry/certs 
 
+  - name: Install prerequisites
+    shell: yum install -y yum-utils device-mapper-persistent-data lvm2 wget
+
+  - name: Add docker repo
+    shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
   - name: Install docker
-    shell: yum install docker -y
+    shell: yum install -y docker-ce docker-ce-cli containerd.io
+
+  - name: Change docker.socket systemd definition
+    blockinfile:
+      path: /usr/lib/systemd/system/docker.socket
+      insertafter: "PartOf=docker.service"
+      block: |
+        After=network-online.target
+        Wants=network-online.target
+
+  - name: Change docker.socket systemd group
+    shell: sed -i -E "s/SocketGroup\=docker/SocketGroup\=a_docker/g" /usr/lib/systemd/system/docker.socket
 
   - name: Enable and start docker
     shell: systemctl enable docker ; systemctl start docker
+
 
   - name: Get the krb5 ticket
     shell: echo "{{ adminpwd }}" | kinit {{ svcadmin }}
@@ -59,6 +86,9 @@
            -k /etc/pki/tls/private/{{ fqdn }}.key \ 
            -N CN={{ fqdn }} -D {{ fqdn }} \ 
            -K HTTP/{{ fqdn }}@{{ realm }}
+
+  - pause:
+      seconds: 5
 
   - name: Copy certs to right /data/certs location
     shell: cat /etc/pki/tls/certs/{{ fqdn }}.crt /etc/ipa/ca.crt > /data/registry/certs/{{ fqdn }}.pem

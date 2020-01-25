@@ -20,6 +20,9 @@
 
   - name: Add an Ethernet connection with static IP configuration
     shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.gateway 10.1.8.1 ipv4.method manual
+  
+  - name: Change time zone to Europe/Prague
+    shell: timedatectl set-timezone 'Europe/Prague'
 
   - name: Shutdown
     shell: shutdown -h now

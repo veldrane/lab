@@ -1,10 +1,10 @@
 - name: Set global variables
   set_fact:
     virbr: "8"
-    netsuffix: "21" 
-    hostname: "registry"
+    netsuffix: "22" 
+    hostname: "build"
     domain: "lab.local"
-    mem: "2G"
+    mem: "4G"
     ipaserver: "freeipa.lab.local"
     ipaip: "10.1.8.10"
     ldapbase: "dc=lab,dc=local"
@@ -13,8 +13,7 @@
     template: "t_centos7"
     template_dir: "/data/templates"
     vms_dir: "/data/vms"
-    rootvg_size: 30
-
+    rootvg_size: 40
 
 - name: Set ip
   set_fact:
@@ -32,4 +31,4 @@
 
 - name: Set disksize
   set_fact: 
-    disksize: "21G"
+    disksize: "40G"

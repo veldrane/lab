@@ -25,6 +25,10 @@
   - name: Clone template
     shell: virt-clone --original-xml /data/templates/t_centos7/t_centos7.xml --name {{ fqdn }} --file /data/vms/{{ fqdn }}/rootvg.qcow2
 
+  - name: Change rootvg size
+    shell: qemu-img resize /data/vms/{{ fqdn }}/rootvg.qcow2 +{{ rootvg_size - 20 }}G
+    when: rootvg_size is defined
+
   - name: Set max memory
     shell: virsh setmaxmem {{ fqdn }} {{ mem }} --config
 
@@ -81,6 +85,9 @@
 
   - name: Update ssh config - non strict host checking
     shell: echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+
+  - name: Set timezone to Prague
+    shell: timedatectl set-timezone 'Europe/Prague'
 
 - hosts: localhost
   become: true

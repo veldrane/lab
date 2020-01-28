@@ -1,8 +1,8 @@
 - name: Set global variables
   set_fact:
     virbr: "16"
-    netsuffix: "75" 
-    hostname: "node75"
+    netsuffix: "84" 
+    hostname: "node84"
     domain: "lab.local"
     mem: "4G"
     ipaserver: "freeipa.lab.local"
@@ -13,6 +13,7 @@
     template: "t_centos7"
     template_dir: "/data/templates"
     vms_dir: "/data/vms"
+    rootvg_size: 30
 
 - name: Set ip
   set_fact:

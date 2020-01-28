@@ -1,0 +1,46 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Resize fs
+    shell: resize2fs /dev/rootvg/var
+
+  - name: LV extend /lv-home
+    shell: lvresize /dev/rootvg/var -L+8G
+
+  - name: Make gshipley directory
+    shell: mkdir /root/gshipley
+
+  - name: Copy gshipley
+    copy:
+      src: /root/bitbucket/private/lab/temp/gshipley.tgz
+      dest: /root/gshipley/gshipley.tgz
+      mode: 644
+
+  - name: extract gshipley
+    shell: cd /root/gshipley ; tar xvfz ./gshipley.tgz
+
+  - name: Run prepare script
+    shell: cd /root/gshipley ; ./prepare-install.sh
+
+  - name: Copy inventory.ini
+    copy:
+      src: /root/bitbucket/private/lab/03_okdv3/gshipley/inventory.ini
+      dest: /root/gshipley/cluster.ini
+      mode: 644

@@ -13,6 +13,7 @@
     template: "t_centos7"
     template_dir: "/data/templates"
     vms_dir: "/data/vms"
+    rootvg_size: 30
 
 - name: Set ip
   set_fact:

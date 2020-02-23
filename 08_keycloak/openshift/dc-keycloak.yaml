@@ -1,0 +1,120 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: 2020-02-20T12:07:34Z
+  generation: 11
+  labels:
+    app: keycloak-https
+    application: keycloak
+  name: keycloak
+  namespace: keycloak
+  resourceVersion: "393921"
+  selfLink: /apis/apps.openshift.io/v1/namespaces/keycloak/deploymentconfigs/keycloak
+  uid: 93f7bddf-53d9-11ea-8f7e-525400dc1209
+spec:
+  replicas: 0
+  revisionHistoryLimit: 10
+  selector:
+    deploymentConfig: keycloak
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        application: keycloak
+        deploymentConfig: keycloak
+      name: keycloak
+    spec:
+      containers:
+      - env:
+        - name: KEYCLOAK_USER
+          value: admin
+        - name: KEYCLOAK_PASSWORD
+          value: admin
+        - name: DB_VENDOR
+          value: postgres
+        - name: JGROUPS_DISCOVERY_PROTOCOL
+          value: dns.DNS_PING
+        - name: JGROUPS_DISCOVERY_PROPERTIES
+          value: dns_query=keycloak.keycloak.svc.cluster.local
+        - name: DB_ADDR
+          value: 10.1.8.20
+        - name: DB_DATABASE
+          value: keycloak
+        - name: DB_USER
+          value: keycloak
+        - name: DB_PASSWORD
+          value: keycloak
+        image: quay.io/keycloak/keycloak:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /auth/realms/master
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: keycloak
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /auth/realms/master
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          privileged: false
+          runAsUser: 1000
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: keycloak
+      serviceAccountName: keycloak
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+  - type: ConfigChange
+status:
+  availableReplicas: 0
+  conditions:
+  - lastTransitionTime: 2020-02-20T12:07:38Z
+    lastUpdateTime: 2020-02-20T12:07:38Z
+    message: replication controller "keycloak-1" successfully rolled out
+    reason: NewReplicationControllerAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: 2020-02-21T09:42:34Z
+    lastUpdateTime: 2020-02-21T09:42:34Z
+    message: Deployment config does not have minimum availability.
+    status: "False"
+    type: Available
+  details:
+    causes:
+    - type: ConfigChange
+    message: config change
+  latestVersion: 1
+  observedGeneration: 11
+  replicas: 0
+  unavailableReplicas: 0
+  updatedReplicas: 0

@@ -1,0 +1,52 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ master }}" groups=master
+
+- hosts: master
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Disable SElinux
+    shell: setenforce 0 ; sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+
+
+  - name: Disable swap
+    shell: swapoff -a ; sed -i -E '/swap/d' /etc/fstab
+
+  - name: Setup firewall rules
+    shell: firewall-cmd --permanent --add-port=6443/tcp --add-port=2379-2380/tcp --add-port=10250-10252/tcp --add-port=10255/tcp --add-port=8472/udp
+
+  - name: Open BGP protocal on firewalld
+    shell: firewall-cmd --permanent --add-port=179/tcp
+
+  - name: Setup masquarade and reload rules
+    shell: firewall-cmd --add-masquerade --permanent ; firewall-cmd --reload
+
+  - name: Enable br_netfilter (probably not survive the reboot!!! - check in the future)
+    shell: modprobe br_netfilter; echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+
+  - name: Copy kubernetes repo definition to yum dir
+    copy: 
+      src: include/kubernetes.repo
+      dest: /etc/yum.repos.d/kubernetes.repo
+
+  - name: Install kubeadm, docker and wget
+    shell: yum install wget kubeadm docker -y
+
+  - name: Enable docker
+    shell: systemctl restart docker && systemctl enable docker
+
+  - name: Enable kubelet
+    shell: systemctl restart kubelet && systemctl enable kubelet

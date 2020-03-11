@@ -1,0 +1,48 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+bootstrapTokens:
+- groups:
+  - system:bootstrappers:kubeadm:default-node-token
+  token: abcdef.0123456789abcdef
+  ttl: 24h0m0s
+  usages:
+  - signing
+  - authentication
+kind: InitConfiguration
+localAPIEndpoint:
+  advertiseAddress: 10.1.16.71
+  bindPort: 6443
+nodeRegistration:
+  criSocket: /var/run/dockershim.sock
+  name: node71.lab.local
+  taints:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+---
+apiServer:
+  timeoutForControlPlane: 4m0s
+  extraArgs:
+    oidc-issuer-url: https://secure-keycloak-keycloak.route.local/auth/realms/lab
+    oidc-username-claim: email
+    oidc-groups-claim: group
+    oidc-username-prefix: oidc
+    oidc-groups-prefix: oidc
+    oidc-client-id: kube
+    oidc-ca-file: /etc/kubernetes/ca-keycloak.pem
+apiVersion: kubeadm.k8s.io/v1beta2
+certificatesDir: /etc/kubernetes/pki
+clusterName: kubernetes
+controllerManager: {}
+dns:
+  type: CoreDNS
+etcd:
+  local:
+    dataDir: /var/lib/etcd
+imageRepository: k8s.gcr.io
+kind: ClusterConfiguration
+kubernetesVersion: v1.17.0
+networking:
+  dnsDomain: cluster.local
+  serviceSubnet: 10.59.0.0/16
+  podSubnet: 10.58.0.0/16
+scheduler: {}
+

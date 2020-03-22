@@ -31,7 +31,7 @@ If you need a create new bridge lets have a directory 00_proliant where the simp
 
 #### Directories ####
 
-<BR>
+
 
 **00_proliant:** Scripts for initial configuration and creation of the virtual networks inside the kvm
 

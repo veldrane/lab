@@ -1,0 +1,17 @@
+[Unit]
+Description=Docker Socket for the API
+PartOf=docker.service
+# BEGIN ANSIBLE MANAGED BLOCK
+After=network-online.target sssd.service sockets.target
+Wants=network-online.target sssd.service sockets.target
+# END ANSIBLE MANAGED BLOCK
+
+[Socket]
+ListenStream=/var/run/docker.sock
+SocketMode=0660
+SocketUser=root
+SocketGroup=a_docker
+
+[Install]
+WantedBy=sockets.target
+

@@ -1,0 +1,55 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: krakend
+    application: krakend
+  name: krakend
+  namespace: krakend
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    deploymentConfig: krakend
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        application: krakend
+        deploymentConfig: krakend
+      name: krakend
+    spec:
+      containers:
+      - image: registry.lab.local/openshift/krakend:1.1
+        imagePullPolicy: Always
+        name: krakend
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+        securityContext: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/krakend/krakend.json
+          name: config
+          subPath: krakend.json
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: config
+        name: config
+  test: false
+  triggers:
+  - type: ConfigChange

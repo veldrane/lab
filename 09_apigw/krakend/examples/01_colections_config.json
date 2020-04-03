@@ -1,0 +1,72 @@
+apiVersion: v1
+data:
+  krakend.json: |-
+    {
+      "version": 2,
+      "extra_config": {
+        "github_com/devopsfaith/krakend-httpsecure": {
+          "allowed_hosts": [
+            "krakend.lab.local"
+          ],
+          "ssl_proxy_headers": {}
+        },
+          "github_com/devopsfaith/krakend-metrics": {
+          "collection_time": "60s",
+          "proxy_disabled": false,
+          "router_disabled": false,
+          "backend_disabled": false,
+          "endpoint_disabled": false,
+          "listen_address": ":8090"
+        },
+        "github_com/devopsfaith/krakend-opencensus": {
+          "sample_rate": 100,
+          "reporting_period": 1,
+          "exporters": {
+            "prometheus": {
+              "port": 9090
+            }
+          }
+        }
+      },
+      "timeout": "3000ms",
+      "cache_ttl": "300s",
+      "output_encoding": "json",
+      "name": "apigw",
+      "endpoints": [
+        {
+          "endpoint": "/simple/articles",
+          "method": "GET",
+          "backend": [
+            {
+              "url_pattern": "/articles",
+              "encoding": "json",
+              "is_collection": true,
+              "host": [
+                "http://simpleapi.simple.svc.cluster.local:8080"
+              ]
+            }
+          ]
+        },
+        {
+          "endpoint": "/simple/article/{id}",
+          "output_encoding": "no-op",
+          "method": "GET",
+          "headers_to_pass": [
+            "*"
+          ],
+          "backend": [
+            {
+              "method": "GET",
+              "url_pattern": "/article/{id}",
+              "host": [
+                "http://simpleapi.simple.svc.cluster.local:8080"
+              ],
+              "encoding": "no-op"
+            }
+          ]
+        }
+      ]
+    }
+kind: ConfigMap
+metadata:
+  name: config

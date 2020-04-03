@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  artcles-hs256.jks: |-
+    {
+        "kty": "oct",
+        "use": "sig",
+        "kid": "artices",
+        "k": "CySseL9NPAfxiooPFm-2oXPCIXDymBWXrAEhOf7ZKgBDukwwMm3Xwb8JXLhTxLdV2mPKlje_9_dJ-NiLp-U2qlJVgOL31CXCRI1bFwoc9-humjSU9Kr9zhUbH5rocod82-k-P70bSyDm99-FkKbKPI04q2L4kMc6sWM4MTzWjiGmq2No0eu9l14cpo5_WWHCLncdsGdmX7iqxfkhKhMCFAafQw9z9_OqQYA5lidCFOoj6dkPV5Aw5MT4avtCRw6vCspL3KpltZokeWicDAxP0VZRwv9duYbchLxLX0Ucc6UcQjfFYgOwAXrhujWYIMgV08K1F47QSvta34mhwx4Rog",
+        "alg": "HS256"
+    }
+kind: ConfigMap
+metadata:
+  name: articles-hs256
+  namespace: keystore

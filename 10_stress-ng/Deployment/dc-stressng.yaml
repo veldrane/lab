@@ -1,0 +1,58 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: 2020-02-20T12:07:34Z
+  generation: 29
+  labels:
+    app: stress-ng-https
+    application: stress-ng
+  name: stress-ng
+  namespace: stress-ng
+  resourceVersion: "676103"
+  selfLink: /apis/apps.openshift.io/v1/namespaces/stress-ng/deploymentconfigs/stress-ng
+  uid: 93f7bddf-53d9-11ea-8f7e-525400dc1209
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    deploymentConfig: stress-ng
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        application: stress-ng
+        deploymentConfig: stress-ng
+      name: stress-ng
+    spec:
+      containers:
+      - args:
+        - --cpu 8 
+        - --io 4 
+        - --vm 2 
+        - --vm-bytes 128M 
+        - --fork 4 
+        - --timeout 60s
+        image: registry.lab.local/openshift/stress-ng:latest
+        imagePullPolicy: Always
+        name: stress-ng
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        resources: {}
+        securityContext: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

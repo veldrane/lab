@@ -1,0 +1,36 @@
+apiVersion: v1
+data:
+  articles-hs256.json: |-
+    {
+        "kty": "oct",
+        "kid": "artices",
+        "k": "CySseL9NPAfxiooPFm-2oXPCIXDymBWXrAEhOf7ZKgBDukwwMm3Xwb8JXLhTxLdV2mPKlje_9_dJ-NiLp-U2qlJVgOL31CXCRI1bFwoc9-humjSU9Kr9zhUbH5rocod82-k-P70bSyDm99-FkKbKPI04q2L4kMc6sWM4MTzWjiGmq2No0eu9l14cpo5_WWHCLncdsGdmX7iqxfkhKhMCFAafQw9z9_OqQYA5lidCFOoj6dkPV5Aw5MT4avtCRw6vCspL3KpltZokeWicDAxP0VZRwv9duYbchLxLX0Ucc6UcQjfFYgOwAXrhujWYIMgV08K1F47QSvta34mhwx4Rog",
+        "alg": "HS256"
+    }
+  token: |-
+    {
+        "access_token": {
+            "aud": "http://api.example.com",
+            "iss": "https://krakend.io",
+            "sub": "1234567890qwertyuio",
+            "jti": "mnb23vcsrt756yuiomnbvcx98ertyuiop",
+            "roles": ["role_a", "role_b"],
+            "exp": 1735689600
+        },
+        "refresh_token": {
+            "aud": "http://api.example.com",
+            "iss": "https://krakend.io",
+            "sub": "1234567890qwertyuio",
+            "jti": "mnb23vcsrt756yuiomn12876bvcx98ertyuiop",
+            "exp": 1735689600
+        },
+        "exp": 1735689600
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: 2020-04-03T19:01:39Z
+  name: articles-hs256
+  namespace: keystore
+  resourceVersion: "1133107"
+  selfLink: /api/v1/namespaces/keystore/configmaps/articles-hs256
+  uid: 8c929960-75dd-11ea-9164-525400dc1209

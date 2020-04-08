@@ -1,0 +1,2 @@
+./gettoken.sh secure-keycloak-keycloak.route.local lab veldrane kube 28e9bcc5-f4ff-48e6-8834-c9e2d1f55bdf
+cat token.out | jq .access_token | sed s/\"//g | awk -F. '{print $2}' | base64 -d | jq .

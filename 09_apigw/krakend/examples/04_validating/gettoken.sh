@@ -45,7 +45,7 @@ echo -n Password:
 read -s PASSWORD
 
 
-export TOKEN=$(curl -X POST "$KEYCLOAK_URL" "$INSECURE" \
+export TOKEN=$(curl -q -X POST "$KEYCLOAK_URL" "$INSECURE" \
  -H "Content-Type: application/x-www-form-urlencoded" \
  -d "username=$USERNAME" \
  -d "password=$PASSWORD" \
@@ -58,3 +58,6 @@ echo $TOKEN
 if [[ $(echo $TOKEN) != 'null' ]]; then
 	export KEYCLOAK_TOKEN=$TOKEN
 fi
+
+echo $TOKEN | jq .access_token | sed s/\"//g | awk -F. '{print $1}' | base64 -d | jq .
+echo $TOKEN | jq .access_token | sed s/\"//g | awk -F. '{print $2}' | base64 -d | jq .

@@ -84,6 +84,15 @@ items:
           {
             "endpoint": "/simple/article",
             "method": "POST",
+            "extra_config": {
+                "github.com/devopsfaith/krakend-jose/validator": {
+                    "alg": "RS256",
+                    "roles_key": "groups",
+                    "roles": ["kube-cluster-admin"],
+                    "jwk-url": "https://secure-keycloak-keycloak.route.local/auth/realms/lab/protocol/openid-connect/certs",
+                    "disable_jwk_security": true
+                }
+            },
             "backend": [
               {
                 "url_pattern": "/article",

@@ -35,23 +35,6 @@ data:
       "endpoints": [
         {
           "endpoint": "/simple/articles",
-          "method": "GET",
-          "backend": [
-            {
-              "url_pattern": "/articles",
-              "encoding": "json",
-              "is_collection": true,
-              "mapping": {
-                "collection": "articles"
-              },
-              "host": [
-                "http://simpleapi.simple.svc.cluster.local:8080"
-              ]
-            }
-          ]
-        },
-        {
-          "endpoint": "/simple/article/{id}",
           "output_encoding": "no-op",
           "method": "GET",
           "headers_to_pass": [
@@ -60,7 +43,25 @@ data:
           "backend": [
             {
               "method": "GET",
-              "url_pattern": "/article/{id}",
+              "url_pattern": "/articles",
+              "host": [
+                "http://simpleapi.simple.svc.cluster.local:8080"
+              ],
+              "encoding": "no-op"
+            }
+          ]
+        },
+        {
+          "endpoint": "/simple/article/*}",
+          "output_encoding": "no-op",
+          "method": "GET",
+          "headers_to_pass": [
+            "*"
+          ],
+          "backend": [
+            {
+              "method": "GET",
+              "url_pattern": "/article/*",
               "host": [
                 "http://simpleapi.simple.svc.cluster.local:8080"
               ],

@@ -36,18 +36,14 @@ items:
         "name": "apigw",
         "endpoints": [
           {
-            "endpoint": "/simple/articles",
+            "endpoint": "/token",
             "method": "GET",
             "backend": [
               {
-                "url_pattern": "/articles",
+                "url_pattern": "/token",
                 "encoding": "json",
-                "is_collection": true,
-                "mapping": {
-                  "collection": "articles"
-                },
                 "host": [
-                  "http://simpleapi.simple.svc.cluster.local:8080"
+                  "http://nginx.keystore.svc.cluster.local:8080"
                 ]
               }
             ],

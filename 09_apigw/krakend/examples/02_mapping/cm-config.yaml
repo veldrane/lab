@@ -41,6 +41,16 @@ data:
               "url_pattern": "/articles",
               "encoding": "json",
               "is_collection": true,
+              "extra_config": {
+                  "github.com/devopsfaith/krakend/proxy": {
+                      "flatmap_filter": [
+                          {
+                              "type": "del",
+                              "args": ["collection.*.Id"]
+                          }
+                      ]
+                  }
+              },
               "host": [
                 "http://simpleapi.simple.svc.cluster.local:8080"
               ]
@@ -49,7 +59,7 @@ data:
         },
         {
           "endpoint": "/simple/article/{id}",
-          "output_encoding": "no-op",
+          "output_encoding": "json",
           "method": "GET",
           "headers_to_pass": [
             "*"
@@ -61,7 +71,11 @@ data:
               "host": [
                 "http://simpleapi.simple.svc.cluster.local:8080"
               ],
-              "encoding": "no-op"
+          "blacklist": [
+            "Content",
+            "Id"
+          ],
+              "encoding": "json"
             }
           ]
         }

@@ -73,19 +73,21 @@ data:
         },
         {
           "endpoint": "/simple/article/{id}",
-          "output_encoding": "no-op",
           "method": "GET",
-          "headers_to_pass": [
-            "*"
-          ],
+          "extra_config":{
+                  "github.com/devopsfaith/krakend-cel": [
+                    {
+                      "check_expr": "req_params.Id.matches('1')"
+                    }
+                  ]
+                },
           "backend": [
             {
               "method": "GET",
               "url_pattern": "/article/{id}",
               "host": [
                 "http://simpleapi.simple.svc.cluster.local:8080"
-              ],
-              "encoding": "no-op"
+              ]
             }
           ]
         }

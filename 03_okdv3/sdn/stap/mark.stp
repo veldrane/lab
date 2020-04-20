@@ -1,0 +1,155 @@
+#!/usr/bin/stap
+# BEGIN mark.stp
+
+global NF_HOOK
+global NF_FAM
+
+probe begin {
+	NF_HOOK[0] = "NF_IP_PRE_ROUTING"
+	NF_HOOK[1] = "NF_IP_LOCAL_IN"
+	NF_HOOK[2] = "NF_IP_FORWARD"
+	NF_HOOK[3] = "NF_IP_LOCAL_OUT"
+	NF_HOOK[4] = "NF_IP_POST_ROUTING"
+
+	NF_FAM[0] = "NFPROTO_UNSPEC"
+	NF_FAM[1] = "NFPROTO_INET"
+	NF_FAM[2] = "NFPROTO_IPV4"
+	NF_FAM[3] = "NFPROTO_ARP"
+	NF_FAM[7] = "NFPROTO_BRIGE"
+	NF_FAM[10] = "NFPROTO_IPV6"
+	NF_FAM[12] = "NFPROTO_DECNET"
+
+	printf("SystemTap started %s ...\n", ctime(gettimeofday_s()))
+}
+probe end  { printf("SystemTap stopped %s.\n", ctime(gettimeofday_s())) }
+
+function get_ipid:long(skb:long)
+%{ /* pure */
+        struct iphdr *iph = ip_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(iph->id);
+%}
+
+function get_ipsrc:long(skb:long)
+%{ /* pure */
+        struct iphdr *iph = ip_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(iph->saddr);
+%}
+
+function get_ipdst:long(skb:long)
+%{ /* pure */
+        struct iphdr *iph = ip_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(iph->daddr);
+%}
+
+function get_udpsrc:long(skb:long)
+%{ /* pure */
+        struct udphdr *udph = udp_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(udph->source);
+%}
+
+function get_tcpsrc:long(skb:long)
+%{ /* pure */
+        struct tcphdr *tcph = tcp_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(tcph->source);
+%}
+
+function get_tcpdst:long(skb:long)
+%{ /* pure */
+        struct tcphdr *tcph = tcp_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(tcph->dest);
+%}
+
+
+function get_udpdst:long(skb:long)
+%{ /* pure */
+        struct udphdr *udph = udp_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(udph->dest);
+%}
+
+probe module("xt_mark").function("mark_mt") {
+	
+        if (ipmib_get_proto($skb) == 6) {
+
+		tcpdst = ntohs(get_tcpdst($skb))
+
+                time = gettimeofday_us()
+                printf("%lu.%06lu: ", time/1000000, time%1000000)
+
+                ipid   = ntohs(get_ipid($skb))
+                ipsrc  = ip_ntop(get_ipsrc($skb))
+                ipdst  = ip_ntop(get_ipdst($skb))
+                tcpsrc = ntohs(get_tcpsrc($skb))
+
+                printf("tcp: 0x%x: %s:%d -> %s:%d ", ipid, ipsrc, tcpsrc, ipdst, tcpdst)
+
+                family = $par->family
+                hook   = $par->hooknum
+                if ($par->in->name) {
+                         indev  = kernel_string(@cast($par->in, "net_device")->name)
+                   } else { indev = "NULL"}
+                if ($par->out->name) {
+                        outdev  = kernel_string(@cast($par->out, "net_device")->name)
+                   } else { outdev = "NULL"}
+                if ($par->target->table) {
+                        table  = $par->target->table
+                   } else { table = -1 }
+
+                printf("family: %s, hook: %s, indev: %s, outdev: %s, table: %d ",
+                     NF_FAM[family],
+                     NF_HOOK[hook],
+                     indev, outdev,
+                     table)
+
+                skbmark = $skb->mark
+                mark = @cast($par->targinfo, "xt_mark_tginfo2")->mark
+                mask = @cast($par->targinfo, "xt_mark_tginfo2")->mask
+
+                printf("skb init mark: 0x%x, input mark: 0x%x, input mask: 0x%x\n", skbmark, mark, mask)
+
+	}
+
+
+	
+	if (ipmib_get_proto($skb) == 17) {
+
+		udpdst = ntohs(get_udpdst($skb))
+
+
+			time = gettimeofday_us()
+			printf("%lu.%06lu: ", time/1000000, time%1000000)
+
+			ipid   = ntohs(get_ipid($skb))
+			ipsrc  = ip_ntop(get_ipsrc($skb))
+			ipdst  = ip_ntop(get_ipdst($skb))
+			udpsrc = ntohs(get_udpsrc($skb))
+
+			printf("udp: 0x%x: %s:%d -> %s:%d ", ipid, ipsrc, udpsrc, ipdst, udpdst)
+
+			family = $par->family
+			hook   = $par->hooknum
+			if ($par->in->name) {
+				indev  = kernel_string(@cast($par->in, "net_device")->name)
+			} else { indev = "NULL"}
+			if ($par->out->name) {
+				outdev  = kernel_string(@cast($par->out, "net_device")->name)
+			} else { outdev = "NULL"}
+			if ($par->target->table) {
+				table  = $par->target->table
+			} else { table = -1 }
+
+			printf("family: %s, hook: %s, indev: %s, outdev: %s, table: %d ",
+				NF_FAM[family],
+				NF_HOOK[hook],
+				indev, outdev,
+				table)
+
+			skbmark = $skb->mark
+			mark = @cast($par->targinfo, "xt_mark_tginfo2")->mark
+			mask = @cast($par->targinfo, "xt_mark_tginfo2")->mask
+
+			printf("skb init mark: 0x%x, input mark: 0x%x, input mask: 0x%x\n", skbmark, mark, mask)
+		
+	}
+}
+
+# END mark.stp

@@ -1,0 +1,4 @@
+ovs-ofctl -O OpenFlow13 dump-flows br0
+ovs-vsctl --format=table --columns=ofport,name,type,external_ids list interface
+ovs-appctl ofproto/trace br0 in_port=2,tcp,nw_src=10.48.21.1,nw_dst=10.48.21.30
+ovs-appctl ofproto/trace br0 in_port=30,tcp,ct_state=trk,nw_src=10.48.21.30,nw_dst=10.1.8.22

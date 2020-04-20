@@ -1,0 +1,103 @@
+#!/usr/bin/stap
+# BEGIN mark.stp
+
+global NF_HOOK
+global NF_FAM
+
+probe begin {
+	NF_HOOK[0] = "NF_IP_PRE_ROUTING"
+	NF_HOOK[1] = "NF_IP_LOCAL_IN"
+	NF_HOOK[2] = "NF_IP_FORWARD"
+	NF_HOOK[3] = "NF_IP_LOCAL_OUT"
+	NF_HOOK[4] = "NF_IP_POST_ROUTING"
+
+	NF_FAM[0] = "NFPROTO_UNSPEC"
+	NF_FAM[1] = "NFPROTO_INET"
+	NF_FAM[2] = "NFPROTO_IPV4"
+	NF_FAM[3] = "NFPROTO_ARP"
+	NF_FAM[7] = "NFPROTO_BRIGE"
+	NF_FAM[10] = "NFPROTO_IPV6"
+	NF_FAM[12] = "NFPROTO_DECNET"
+
+	printf("SystemTap started %s ...\n", ctime(gettimeofday_s()))
+}
+
+
+probe end  { printf("SystemTap stopped %s.\n", ctime(gettimeofday_s())) }
+
+function get_ipid:long(skb:long)
+%{ /* pure */
+        struct iphdr *iph = ip_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(iph->id);
+%}
+
+function get_ipsrc:long(skb:long)
+%{ /* pure */
+        struct iphdr *iph = ip_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(iph->saddr);
+%}
+
+function get_ipdst:long(skb:long)
+%{ /* pure */
+        struct iphdr *iph = ip_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(iph->daddr);
+%}
+
+function get_tcpsrc:long(skb:long)
+%{ /* pure */
+        struct tcphdr *tcph = tcp_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(tcph->source);
+%}
+
+function get_tcpdst:long(skb:long)
+%{ /* pure */
+        struct tcphdr *tcph = tcp_hdr((struct sk_buff *)STAP_ARG_skb);
+        STAP_RETURN(tcph->dest);
+%}
+
+
+probe module("ip_tables").function("ipt_do_table") {
+	
+        if (ipmib_get_proto($skb) == 6) {
+
+		tcpdst = ntohs(get_tcpdst($skb))
+
+                time = gettimeofday_us()
+                printf("%lu.%06lu: ", time/1000000, time%1000000)
+
+                ipid   = ntohs(get_ipid($skb))
+                ipsrc  = ip_ntop(get_ipsrc($skb))
+                ipdst  = ip_ntop(get_ipdst($skb))
+                tcpsrc = ntohs(get_tcpsrc($skb))
+                hookid = $table->valid_hooks
+		hook = $hook
+		mark = $skb->mark
+
+                printf("tcp ipid 0x%x: %s:%d -> %s:%d mark:0x%x ", ipid, ipsrc, tcpsrc, ipdst, tcpdst, mark)
+		
+		if ($state->in->name) {
+                         indev  = kernel_string(@cast($state->in, "net_device")->name)
+                } else { indev = "NULL"}
+
+                if ($state->out->name) {
+                         outdev  = kernel_string(@cast($state->out, "net_device")->name)
+                } else { outdev = "NULL"}
+
+
+		printf("in: %s out: %s hook: %s hookid: %d ", indev, outdev, NF_HOOK[hook], hookid)
+
+	}
+}
+
+probe module("ip_tables").function("ipt_do_table").return {
+
+if (ipmib_get_proto($skb) == 6) {
+
+		printf("rc: %d\n", $return)
+
+ 	}
+
+
+}
+
+# END mark.stp

@@ -1,0 +1,11 @@
+apiVersion: network.openshift.io/v1
+host: node23.lab.local
+hostIP: 10.1.16.23
+kind: HostSubnet
+metadata:
+  annotations:
+    pod.network.openshift.io/node-uid: bd6fbf16-4085-11ea-b599-525400dc1209
+  creationTimestamp: null
+  name: node23.lab.local
+  selfLink: /apis/network.openshift.io/v1/hostsubnets/node23.lab.local
+subnet: 10.48.1.0/24

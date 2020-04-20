@@ -1,0 +1,1 @@
+tcpdump -i eth0 "tcp[tcpflags] & (tcp-syn) != 0"

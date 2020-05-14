@@ -64,10 +64,4 @@
     shell: ipa-getkeytab  -p nfs/{{ fqdn }} -k /etc/krb5.keytab
 
   - name: Set nfs exports 
-    shell: echo '/nfsvg/home *(rw,sec=krb5p,sync)' >> /etc/exports ; exportfs -r
-
-  - name: Enable and start nfs services
-    shell: systemctl start nfs-server ; systemctl enable nfs-server
-
-  - name: Enable and start nfs secure services
-    shell: systemctl start nfs-secure ; systemctl enable nfs-secure
+    shell: echo '/nfsvg/home 10.1.0.0/24(rw,sec=krb5p,sync)' >> /etc/exports ; exportfs -r

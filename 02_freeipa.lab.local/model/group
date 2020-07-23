@@ -1,0 +1,14 @@
+lab-admin:x:10000
+lab-staff:x:10001
+nfs-admin:x:10010
+nfs-staff:x:10011
+docker-admin:x:10020
+docker-staff:x:10021
+kube-admin:x:10030
+kube-staff:x:10031
+okd-admin:x:10040
+okd-staff:x:10041
+oidc-admin:x:10050
+oidc-staff:x:10051
+simple-admin:x:10060
+simple-staff:x:10061

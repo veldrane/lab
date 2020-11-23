@@ -1,0 +1,52 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+  - name: Create elk data disk
+    shell: qemu-img create -f qcow2 {{ vms_dir }}/{{ fqdn }}/elkvg.qcow2 {{ disksize }}
+
+  - name: Attach disk to machine
+    shell: virsh attach-disk {{ fqdn }} --source {{ vms_dir }}/{{ fqdn }}/elkvg.qcow2 --target vdb --subdriver qcow2 --targetbus virtio --persistent
+
+  - name: Autostart of the machine
+    shell: virsh autostart {{ fqdn }}
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Setup firewall rules
+    shell: firewall-cmd --permanent --add-port=9200/tcp --add-port=9300/tcp --add-port=443/tcp ; firewall-cmd --reload
+
+  - name: LV extend /lv-var
+    shell: lvresize /dev/rootvg/var -L+10G
+
+  - name: Resize fs
+    shell: resize2fs /dev/rootvg/var
+
+  - name: Create datavg and logical volume
+    shell: pvcreate /dev/vdb ; vgcreate elkvg /dev/vdb ; lvcreate -n data -L50G elkvg
+
+  - name: Create fs
+    shell: mkfs.ext4 /dev/elkvg/data
+
+  - name: make directory /elk/data
+    shell: mkdir -p /elk/data
+
+  - name: Add /elk/data to fstab
+    shell: echo '/dev/mapper/elkvg-data  /elk/data              ext4    noatime,nodiratime        1 2' >> /etc/fstab
+
+  - name: Mount /elk/data
+    shell: mount /elk/data

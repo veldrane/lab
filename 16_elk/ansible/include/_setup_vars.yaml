@@ -1,8 +1,8 @@
 - name: Set global variables
   set_fact:
     virbr: "16"
-    netsuffix: "33" 
-    hostname: "node33"
+    netsuffix: "35" 
+    hostname: "node35"
     domain: "lab.local"
     mem: "8G"
     ipaserver: "freeipa.lab.local"

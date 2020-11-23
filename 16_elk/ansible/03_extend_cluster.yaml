@@ -19,19 +19,19 @@
     include: include/_setup_vars.yaml
 
   - name: Copy cluster.ini
-    shell: cp /root/gshipley/cluster.ini /root/gshipley/prometheus.ini
+    shell: cp /root/gshipley/cluster.ini /root/gshipley/elastic.ini
 
   - name: Add new hosts
-    shell: echo "[new_nodes]" >> /root/gshipley/prometheus.ini ; echo "{{ fqdn }} openshift_node_group_name='node-config-prometheus'" >> /root/gshipley/prometheus.ini
+    shell: echo "[new_nodes]" >> /root/gshipley/elastic.ini ; echo "{{ fqdn }} openshift_node_group_name='node-config-elastic'" >> /root/gshipley/elastic.ini
 
   - name: Add section new nodes
-    shell: cd /root/gshipley ; sed -i -E 's/nodes$/nodes\nnew_nodes/' prometheus.ini
+    shell: cd /root/gshipley ; sed -i -E 's/nodes$/nodes\nnew_nodes/' elastic.ini
 
   - name: Add host to ansible host
     shell: echo "{{ fqdn }}" >> /etc/ansible/hosts
 
   - name: setting up the node group
-    shell: cd /root/gshipley ; ansible-playbook -i prometheus.ini openshift-ansible/playbooks/openshift-master/openshift_node_group.yml
+    shell: cd /root/gshipley ; ansible-playbook -i elastic.ini openshift-ansible/playbooks/openshift-master/openshift_node_group.yml
 
   - name: Add new node to the cluster 
-    shell: cd /root/gshipley ; ansible-playbook -i prometheus.ini openshift-ansible/playbooks/openshift-node/scaleup.yml
+    shell: cd /root/gshipley ; ansible-playbook -i elastic.ini openshift-ansible/playbooks/openshift-node/scaleup.yml

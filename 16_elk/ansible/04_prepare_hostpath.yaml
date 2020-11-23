@@ -1,0 +1,49 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ fqdn }}" groups=newhost
+
+  - name: "Create ansible group for freeipa"
+    add_host: name="{{ ipaserver }}" groups=freeipa
+
+
+- hosts: freeipa
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Get the krb5 ticket
+    shell: echo "{{ adminpwd }}" | kinit {{ svcadmin }}
+
+  - name: Add elasticsearch username to ipa 
+    shell: ipa user-add {{ username }} --first=Elasticsearch --last=SA --homedir={{ hostpath }} --uid={{ uid }} --gidnumber={{ gid }} --random
+
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Change security context on hostpath
+    shell: chcon -t container_file_t -R {{ hostpath }}
+
+  - name: Chown fs to new owner
+    shell: chown {{ username }}.{{ groupname }} {{ hostpath }}
+
+  - name: Set 770 on the hostpath
+    shell: chmod 770 {{ hostpath }}
+
+ 

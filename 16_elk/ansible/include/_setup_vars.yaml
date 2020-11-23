@@ -37,3 +37,12 @@
 - name: Set ocp master
   set_fact:
     master: "node11.lab.local"
+
+- name: Set user for elasticsearch
+  set_fact:
+    uid: "1008"
+    gid: "1008"
+    username: "elastic"
+    groupname: "elastic"
+    hostpath: "/elk/data"
+    

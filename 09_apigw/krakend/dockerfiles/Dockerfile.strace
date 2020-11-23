@@ -11,7 +11,7 @@ ADD krakend /usr/bin/krakend
 
 USER krakend
 
-ENTRYPOINT [ "/usr/bin/krakend" ]
-CMD [ "run", "-c", "/etc/krakend/krakend.json" ]
+ENTRYPOINT [ "/usr/bin/strace" ]
+CMD [ "-ttt","-o","strace","-ff","\'","/usr/bin/krakend","run", "-c", "/etc/krakend/krakend.json","\'" ]
 
 EXPOSE 8000 8090

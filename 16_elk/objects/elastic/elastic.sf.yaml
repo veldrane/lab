@@ -1,0 +1,70 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    labels:
+      app: elastic
+    name: elastic
+    namespace: elastic
+    selfLink: /apis/apps/v1/namespaces/elastic/statefulsets/elastic
+  spec:
+    podManagementPolicy: OrderedReady
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: elastic
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: elastic
+      spec:
+        containers:
+        - image: registry.lab.local/openshift/elasticsearch:7.9.3
+          imagePullPolicy: IfNotPresent
+          name: elastic
+          ports:
+          - containerPort: 9200
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+            subPath: elasticsearch.yml
+            name: config-volume
+          - mountPath: /data
+            name: data
+          - mountPath: /log
+            name: log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext:
+          runAsUser: 1008
+        serviceAccount: elastic
+        serviceAccountName: elastic
+        terminationGracePeriodSeconds: 300
+        volumes:
+        - configMap:
+            defaultMode: 420
+            name: elastic
+          name: config-volume
+        - hostPath:
+            path: /elk/data
+            type: ""
+          name: data
+        - hostPath:
+            path: /elk/data/log
+            type: ""
+          name: log
+    updateStrategy:
+      rollingUpdate:
+        partition: 0
+      type: RollingUpdate
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

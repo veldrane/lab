@@ -1,0 +1,9 @@
+{
+  "size": 10000,
+  "query": {
+    "match": {
+      "sessionid": "9c5a04a7",
+      "syscall":"open|close|pipe|fcntl"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  elasticsearch.yml: |-
+    cluster.name: esc
+    node.name: ${HOSTNAME}
+    network.host: 0.0.0.0
+    cluster.initial_master_nodes: 
+      - elastic-0
+    node.data: true
+    path.data: /data
+    path.logs: /log
+kind: ConfigMap
+metadata:
+  name: elastic

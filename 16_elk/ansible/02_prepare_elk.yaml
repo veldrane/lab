@@ -29,6 +29,9 @@
 
   - name: Setup firewall rules
     shell: firewall-cmd --permanent --add-port=9200/tcp --add-port=9300/tcp --add-port=443/tcp ; firewall-cmd --reload
+  
+  - name: Change vm.max_map_count to 262144
+    shell: sysctl -w vm.max_map_count=262144 ; echo "vm.max_map_count=262144" > /etc/sysctl.d/99-elastic.conf
 
   - name: LV extend /lv-var
     shell: lvresize /dev/rootvg/var -L+10G

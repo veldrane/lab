@@ -1,0 +1,14 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": { "sessionid": "9c5a04a7" }
+        },
+        {
+          "match": { "syscall":"open|close|pipe|fcntl" }
+        }
+      ]
+    }
+  }
+}

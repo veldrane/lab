@@ -1,0 +1,247 @@
+{
+  "took": 6,
+  "timed_out": false,
+  "_shards": {
+    "total": 1,
+    "successful": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "hits": {
+    "total": {
+      "value": 38,
+      "relation": "eq"
+    },
+    "max_score": 3.4029274,
+    "hits": [
+      {
+        "_index": "linux.main.bebebeaf",
+        "_type": "trace",
+        "_id": "855",
+        "_score": 3.4029274,
+        "_source": {
+          "epoch": 1606239470.071459,
+          "syscall": "pipe",
+          "args": "[6<pipe:[49644]>, 7<pipe:[49644]>]",
+          "rc": "0",
+          "runt": 6.4e-05,
+          "pid": "2956",
+          "tracefile": "/home/veldrane/bitbucket/private/vitrace.io/temp/scp.2956",
+          "u_epoch": 1606239470071459,
+          "u_runt": 64,
+          "@timestamp": "2020-11-24T18:37:50.071459Z",
+          "fd1": "6",
+          "object1": "pipe:[49644]",
+          "fd2": "7",
+          "object2": "pipe:[49644]",
+          "sessionid": "9c5a04a7"
+        }
+      },
+      {
+        "_index": "linux.main.bebebeaf",
+        "_type": "trace",
+        "_id": "858",
+        "_score": 3.4029274,
+        "_source": {
+          "epoch": 1606239470.073331,
+          "syscall": "close",
+          "args": "7<pipe:[49644]>",
+          "rc": "0",
+          "runt": 5.8e-05,
+          "pid": "2956",
+          "tracefile": "/home/veldrane/bitbucket/private/vitrace.io/temp/scp.2956",
+          "u_epoch": 1606239470073331,
+          "u_runt": 58,
+          "@timestamp": "2020-11-24T18:37:50.073331Z",
+          "fd": "7",
+          "objectname": "pipe:[49644]",
+          "sessionid": "9c5a04a7"
+        }
+      },
+      {
+        "_index": "linux.main.bebebeaf",
+        "_type": "trace",
+        "_id": "945",
+        "_score": 3.4029274,
+        "_source": {
+          "epoch": 1606239470.09386,
+          "syscall": "read",
+          "args": "6<pipe:[49644]>, \"S\", 1",
+          "rc": "1",
+          "runt": 0.162171,
+          "pid": "2956",
+          "tracefile": "/home/veldrane/bitbucket/private/vitrace.io/temp/scp.2956",
+          "u_epoch": 1606239470093860,
+          "u_runt": 162171,
+          "@timestamp": "2020-11-24T18:37:50.093860Z",
+          "fd": "6",
+          "objectname": "pipe:[49644]",
+          "data": "\"S\"",
+          "size": 1,
+          "sessionid": "9c5a04a7"
+        }
+      },
+      {
+        "_index": "linux.main.bebebeaf",
+        "_type": "trace",
+        "_id": "946",
+        "_score": 3.4029274,
+        "_source": {
+          "epoch": 1606239470.256255,
+          "syscall": "read",
+          "args": "6<pipe:[49644]>, \"S\", 1",
+          "rc": "1",
+          "runt": 0.000149,
+          "pid": "2956",
+          "tracefile": "/home/veldrane/bitbucket/private/vitrace.io/temp/scp.2956",
+          "u_epoch": 1606239470256255,
+          "u_runt": 149,
+          "@timestamp": "2020-11-24T18:37:50.256255Z",
+          "fd": "6",
+          "objectname": "pipe:[49644]",
+          "data": "\"S\"",
+          "size": 1,
+          "sessionid": "9c5a04a7"
+        }
+      },
+      {
+        "_index": "linux.main.bebebeaf",
+        "_type": "trace",
+        "_id": "947",
+        "_score": 3.4029274,
+        "_source": {
+          "epoch": 1606239470.256591,
+          "syscall": "read",
+          "args": "6<pipe:[49644]>, \"H\", 1",
+          "rc": "1",
+          "runt": 0.00011,
+          "pid": "2956",
+          "tracefile": "/home/veldrane/bitbucket/private/vitrace.io/temp/scp.2956",
+          "u_epoch": 1606239470256591,
+          "u_runt": 110,
+          "@timestamp": "2020-11-24T18:37:50.256591Z",
+          "fd": "6",
+          "objectname": "pipe:[49644]",
+          "data": "\"H\"",
+          "size": 1,
+          "sessionid": "9c5a04a7"
+        }
+      },
+      {
+        "_index": "linux.main.bebebeaf",
+        "_type": "trace",
+        "_id": "948",
+        "_score": 3.4029274,
+        "_source": {
+          "epoch": 1606239470.256839,
+          "syscall": "read",
+          "args": "6<pipe:[49644]>, \"-\", 1",
+          "rc": "1",
+          "runt": 5.4e-05,
+          "pid": "2956",
+          "tracefile": "/home/veldrane/bitbucket/private/vitrace.io/temp/scp.2956",
+          "u_epoch": 1606239470256839,
+          "u_runt": 54,
+          "@timestamp": "2020-11-24T18:37:50.256839Z",
+          "fd": "6",
+          "objectname": "pipe:[49644]",
+          "data": "\"-\"",
+          "size": 1,
+          "sessionid": "9c5a04a7"
+        }
+      },
+      {
+        "_index": "linux.main.bebebeaf",
+        "_type": "trace",
+        "_id": "949",
+        "_score": 3.4029274,
+        "_source": {
+          "epoch": 1606239470.257019,
+          "syscall": "read",
+          "args": "6<pipe:[49644]>, \"2\", 1",
+          "rc": "1",
+          "runt": 5.2e-05,
+          "pid": "2956",
+          "tracefile": "/home/veldrane/bitbucket/private/vitrace.io/temp/scp.2956",
+          "u_epoch": 1606239470257019,
+          "u_runt": 52,
+          "@timestamp": "2020-11-24T18:37:50.257019Z",
+          "fd": "6",
+          "objectname": "pipe:[49644]",
+          "data": "\"2\"",
+          "size": 1,
+          "sessionid": "9c5a04a7"
+        }
+      },
+      {
+        "_index": "linux.main.bebebeaf",
+        "_type": "trace",
+        "_id": "950",
+        "_score": 3.4029274,
+        "_source": {
+          "epoch": 1606239470.257194,
+          "syscall": "read",
+          "args": "6<pipe:[49644]>, \".\", 1",
+          "rc": "1",
+          "runt": 5.2e-05,
+          "pid": "2956",
+          "tracefile": "/home/veldrane/bitbucket/private/vitrace.io/temp/scp.2956",
+          "u_epoch": 1606239470257194,
+          "u_runt": 52,
+          "@timestamp": "2020-11-24T18:37:50.257194Z",
+          "fd": "6",
+          "objectname": "pipe:[49644]",
+          "data": "\".\"",
+          "size": 1,
+          "sessionid": "9c5a04a7"
+        }
+      },
+      {
+        "_index": "linux.main.bebebeaf",
+        "_type": "trace",
+        "_id": "951",
+        "_score": 3.4029274,
+        "_source": {
+          "epoch": 1606239470.257367,
+          "syscall": "read",
+          "args": "6<pipe:[49644]>, \"0\", 1",
+          "rc": "1",
+          "runt": 8.7e-05,
+          "pid": "2956",
+          "tracefile": "/home/veldrane/bitbucket/private/vitrace.io/temp/scp.2956",
+          "u_epoch": 1606239470257367,
+          "u_runt": 87,
+          "@timestamp": "2020-11-24T18:37:50.257367Z",
+          "fd": "6",
+          "objectname": "pipe:[49644]",
+          "data": "\"0\"",
+          "size": 1,
+          "sessionid": "9c5a04a7"
+        }
+      },
+      {
+        "_index": "linux.main.bebebeaf",
+        "_type": "trace",
+        "_id": "952",
+        "_score": 3.4029274,
+        "_source": {
+          "epoch": 1606239470.25762,
+          "syscall": "read",
+          "args": "6<pipe:[49644]>, \"-\", 1",
+          "rc": "1",
+          "runt": 7.9e-05,
+          "pid": "2956",
+          "tracefile": "/home/veldrane/bitbucket/private/vitrace.io/temp/scp.2956",
+          "u_epoch": 1606239470257620,
+          "u_runt": 79,
+          "@timestamp": "2020-11-24T18:37:50.257620Z",
+          "fd": "6",
+          "objectname": "pipe:[49644]",
+          "data": "\"-\"",
+          "size": 1,
+          "sessionid": "9c5a04a7"
+        }
+      }
+    ]
+  }
+}

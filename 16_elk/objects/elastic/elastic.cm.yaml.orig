@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  elasticsearch.yml: |-
+    cluster.name: esc
+    node.name: ${HOSTNAME}
+    node.master: true
+    node.data: true
+    path.data: /data
+    path.logs: /data
+    network.host: 0.0.0.0
+    discovery.zen.ping.unicast.hosts: ["esint.elastic.svc.cluster.local"]
+kind: ConfigMap
+metadata:
+  name: elastic

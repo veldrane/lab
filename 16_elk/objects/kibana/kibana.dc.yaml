@@ -1,0 +1,51 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  creationTimestamp: null
+  generation: 1
+  labels:
+    app: kibana
+    application: kibana
+  name: kibana
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    deploymentConfig: kibana
+  strategy:
+    activeDeadlineSeconds: 21600
+    recreateParams:
+      timeoutSeconds: 600
+    resources: {}
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        application: kibana
+        deploymentConfig: kibana
+      name: kibana
+    spec:
+      containers:
+      - env: 
+        - name: ELASTICSEARCH_HOSTS
+          value: http://elastic.elastic.svc.cluster.local:9200
+        image: registry.lab.local/openshift/kibana:7.9.3
+        imagePullPolicy: Always
+        name: kibana
+        ports:
+        - containerPort: 5601
+          protocol: TCP
+        resources: {}
+        securityContext: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      nodeSelector:
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+  - type: ConfigChange

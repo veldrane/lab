@@ -1,0 +1,190 @@
+apiVersion: v1
+data:
+  nginx.conf: |-
+    user nginx;
+    worker_processes 4;
+    load_module /etc/nginx/modules/ndk_http_module.so;
+    load_module /etc/nginx/modules/ngx_http_lua_module.so;
+
+    error_log  /var/log/nginx/error.log debug;
+    pid        /var/cache/nginx/nginx.pid;
+
+    events {
+      worker_connections 1024;
+    }
+
+    http {
+      include       /etc/nginx/mime.types;
+      default_type  application/octet-stream;
+
+      log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for" "cache: $upstream_cache_status" $request_time';
+
+      access_log /var/log/nginx/access.log main;
+
+      ssl_session_cache   shared:SSL:10m;
+      ssl_ciphers "AES128-GCM-SHA256:AES128:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
+      proxy_ssl_ciphers  "AES128-GCM-SHA256:AES128:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
+
+      sendfile on;
+      keepalive_timeout 65;
+      gzip on;
+      gzip_http_version 1.1;
+      gzip_vary on;
+      gzip_proxied any;
+      gzip_comp_level 6;
+      gzip_types *;
+      gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+      proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=cache-space:100m max_size=1024m inactive=1h;
+      client_max_body_size 20M;
+      limit_req_zone $binary_remote_addr zone=simplel:10m rate=50r/s;
+
+      upstream upstream-simpleapi.simple.svc.cluster.local {
+              zone simpleapi 64k;
+              least_conn;
+              resolver 10.1.16.24 valid=10s;
+              server simpleapi-headless.simple.svc.cluster.local service=_http._tcp resolve;
+          }
+        upstream upstream-keycloak.lab.local {
+              zone simpleapi 64k;
+              least_conn;
+
+              server keycloak.lab.local:8443 max_fails=3;
+          }
+
+    server {
+        listen 8080;
+        server_tokens off;
+
+        allow 127.0.0.1;
+        deny all;
+
+        location /stub_status {
+            stub_status;
+        }
+    }
+
+    server {
+            listen 8080;
+            server_name apigw.lab.local;
+            server_tokens off;
+
+            # INFRA-12046
+            add_header Cache-Control no-store;
+            add_header Pragma no-cache;
+
+            #resolver 10.1.16.21 valid=60s;
+
+            proxy_http_version 1.1;
+
+            location /simple/articles {
+                    set $upstream upstream-simpleapi.simple.svc.cluster.local;
+                    proxy_read_timeout 45s;
+                    proxy_set_header Host $http_host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-Prefix /simple/;
+                    #proxy_set_header X-Forwarded-Proto https;
+                    #proxy_set_header X-Forwarded-Port 443;
+
+                    if ($request_uri ~ "/simple/articles") {
+                       proxy_pass http://$upstream/articles;
+                    }
+            }
+
+            location /simple/article {
+                    set $upstream upstream-simpleapi.simple.svc.cluster.local;
+                    proxy_read_timeout 45s;
+                    proxy_set_header Host $http_host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-Prefix /simple/;
+                    #proxy_set_header X-Forwarded-Proto https;
+                    #proxy_set_header X-Forwarded-Port 443;
+
+                    limit_except POST {
+                      deny all;
+                      }
+                    if ($request_uri = "/simple/article") {
+                       proxy_pass http://$upstream/article;
+                    }
+            }
+
+            location ~ /simple/article/(?<articleId>(\d+)$) {
+                    limit_req zone=simplel;
+                    set $endpoint "";
+                    set $upstream upstream-simpleapi.simple.svc.cluster.local;
+                    proxy_read_timeout 45s;
+                    proxy_set_header Host $http_host;
+                    #proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-Prefix /simple;
+                    proxy_set_header Authorization "";
+                    proxy_set_header X-Forwarded-Proto http;
+                    proxy_set_header X-Forwarded-Port 80;
+                    proxy_set_header X-Article-Id $articleId;
+                    #health_check interval=10 fails=3 passes=2 uri=/article/1;
+
+                    access_by_lua_block {
+                        local res, err = ngx.re.match(ngx.var.request_uri, "/simple/(article/.*)")
+
+                        if (ngx.var.request_method ~= "DELETE" and ngx.var.request_method ~= "GET") then
+                          ngx.exit(ngx.HTTP_FORBIDDEN)
+                        else
+                          ngx.var.endpoint = res[1]
+                        end
+                      }
+                      proxy_pass http://$upstream/$endpoint;
+                      #proxy_pass http://upstream-simpleapi.simple.svc.cluster.local;
+            }
+
+
+            location /simple/_auth {
+                    set $realm_name "lab";
+                    set $client_id "curl";
+                    set $client_secret "9d92a4f1-dd9d-4d0c-beed-bf388d4dac85";
+                    proxy_read_timeout 45s;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Forwarded-Prefix /simple/_auth;
+                    proxy_set_header X-Forwarded-Proto http;
+                    proxy_set_header X-Forwarded-Port 8090;
+
+                    access_by_lua_block {
+                      ngx.req.read_body()
+                      local post_args, err = ngx.req.get_post_args()
+
+                      post_args["grant_type"] = "password"
+                      post_args["client_secret"] = ngx.var.client_secret
+                      post_args["client_id"] = ngx.var.client_id
+                      post_args["client_secret"] = ngx.var.client_secret
+                      post_args["scope"] = ngx.var.scope
+
+                      ngx.req.set_body_data(ngx.encode_args(post_args))
+
+                    }
+
+                    proxy_ssl_verify off;
+                    proxy_pass https://upstream-keycloak.lab.local/auth/realms/$realm_name/protocol/openid-connect/token;
+            }
+
+            location /api/ {
+                    api write=on;
+            }
+
+            location = /dashboard.html {
+                root /usr/share/nginx/html;
+            }
+
+
+            location / {
+                return 301 /dashboard.html;
+            }
+
+            location /status.html {
+                return 301 /dashboard.html;
+            }
+      }
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: ng-plus-config
+  selfLink: /api/v1/namespaces/ngingx-apigw/configmaps/ng-plus-config

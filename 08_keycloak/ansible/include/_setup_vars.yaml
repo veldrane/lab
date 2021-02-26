@@ -7,6 +7,8 @@
     mem: "2G"
     ipaserver: "freeipa.lab.local"
     ipaip: "10.1.8.10"
+    nfsserver: "nfsnode.lab.local"
+    home_export: "/nfsvg/home"
     ldapbase: "dc=lab,dc=local"
     svcadmin: "admin"
     adminpwd: "admin123"

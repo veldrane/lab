@@ -20,8 +20,6 @@
   set_fact:
     ip: "10.1.{{ virbr  }}.{{ netsuffix }}"
 
-
-
 - name: Set FQDN
   set_fact:
     fqdn: "{{ hostname }}.{{ domain }}"

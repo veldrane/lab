@@ -1,13 +1,11 @@
 - name: Set global variables
   set_fact:
     virbr: "8"
-    netsuffix: "25" 
-    hostname: "nfsclient"
+    netsuffix: "10" 
+    hostname: "freeipa"
     domain: "lab.local"
     mem: "2G"
     ipaserver: "freeipa.lab.local"
-    nfsserver: "nfsnode.lab.local"
-    home_export: "/nfsvg/home"
     ipaip: "10.1.8.10"
     ldapbase: "dc=lab,dc=local"
     svcadmin: "admin"

@@ -1,0 +1,48 @@
+---
+- hosts: freeipa.lab.local
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Get the krb5 ticket
+    shell: echo "{{ adminpwd }}" | kinit {{ svcadmin }}
+
+  - name: Add groups
+    shell: ipa group-add {{ item.groupname }} --gid={{ item.gid }}
+    loop:
+      - { groupname: 'stuff', gid: '1100' }
+      - { groupname: 'k8s-cluster-admin', gid: '1101' }
+      - { groupname: 'simple-admin', gid: '1102' }
+      - { groupname: 'simple-user', gid: '1103' }
+    ignore_errors: yes
+
+  - name: Add users
+    shell: ipa user-add {{ item.username }} --uid={{ item.uid }} --gid=1100 --homedir=/nfshome/{{ item.username }} --random --shell=/bin/bash --first={{ item.first }} --last={{ item.last }}
+    loop:
+      - { username: 'veldrane', uid: '1001', first: 'Veldrane', last: 'Veldranovic' }
+      - { username: 'valor', uid: '1002',first: 'Valor', last: 'Valorovic' }
+      - { username: 'jdvorak', uid: '2001', first: 'Jan', last: 'Dvorak' }
+      - { username: 'mnovak', uid: '2002', first: 'Martin', last: 'Novak' }
+      - { username: 'ddvorak', uid: '2003', first: 'David', last: 'Dvorak' }
+    ignore_errors: yes
+
+- hosts: nfsnode.lab.local
+  become: true
+  gather_facts: no
+  tasks:
+
+   - name: Create home dir for users
+     shell: cp -r /etc/skel /nfsvg/home/{{ item.username }} && chown {{ item.username }}:stuff -R /nfsvg/home/{{ item.username }}
+     loop:
+      - { username: 'veldrane', uid: '1001', first: 'Veldrane', last: 'Veldranovic' }
+      - { username: 'valor', uid: '1002',first: 'Valor', last: 'Valorovic' }
+      - { username: 'jdvorak', uid: '2001', first: 'Jan', last: 'Dvorak' }
+      - { username: 'mnovak', uid: '2002', first: 'Martin', last: 'Novak' }
+      - { username: 'ddvorak', uid: '2003', first: 'David', last: 'Dvorak' }
+     ignore_errors: yes
+
+   - name: restore selinux context
+     shell: restorecon -R /nfsvg/home

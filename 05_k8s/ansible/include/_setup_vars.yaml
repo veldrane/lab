@@ -1,12 +1,14 @@
 - name: Set global variables
   set_fact:
     virbr: "16"
-    netsuffix: "71" 
-    hostname: "node71"
+    netsuffix: "11" 
+    hostname: "node11"
     domain: "lab.local"
     mem: "4G"
     ipaserver: "freeipa.lab.local"
     ipaip: "10.1.8.10"
+    nfsserver: "nfsnode.lab.local"
+    home_export: "/nfsvg/home"
     ldapbase: "dc=lab,dc=local"
     svcadmin: "admin"
     adminpwd: "admin123"
@@ -32,6 +34,6 @@
     podnetwork: "10.58.0.0/16"
     svcnetwork: "10.59.0.0/16"
     clusterdom: "cluster.local"
-    master: "node71.lab.local"
+    master: "node11.lab.local"
 
 

@@ -5,8 +5,8 @@
 
 echo "Creating master..."
 
-i=71
-while [ "$i" -ne 72 ]
+i=11
+while [ "$i" -ne 12 ]
 do
     echo "node$i.lab.local"
     rm -rf /root/.ansible/cp/*

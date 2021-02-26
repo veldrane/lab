@@ -68,9 +68,6 @@
         After=network-online.target
         Wants=network-online.target
 
-  - name: Change docker.socket systemd group
-    shell: sed -i -E "s/SocketGroup\=docker/SocketGroup\=a_docker/g" /usr/lib/systemd/system/docker.socket
-
   - name: Enable and start docker
     shell: systemctl enable docker ; systemctl start docker
 
@@ -95,6 +92,9 @@
 
   - name: Copy keys to right /data/certs location
     shell: cat /etc/pki/tls/private/{{ fqdn }}.key > /data/registry/certs/{{ fqdn }}.key
+
+  - name: Pull docker registry image
+    shell: docker pull registry:latest
 
   - name: Start docker registry
     shell: docker run --restart=always --name=docker-registry -d \

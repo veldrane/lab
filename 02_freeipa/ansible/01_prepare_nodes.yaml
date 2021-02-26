@@ -72,7 +72,7 @@
     shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "{{ ipaip }}"
 
   - name: Install additional packages
-    shell: yum install -y ipa-client sssd openldap-clients krb5-workstation nfs-client autofs
+    shell: yum install -y ipa-client sssd openldap-clients krb5-workstation
 
   - name: Enable make dir option for new users
     shell: authconfig --enablemkhomedir --update
@@ -85,18 +85,6 @@
 
   - name: Update ssh config - non strict host checking
     shell: echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-
-  - name: Create nfshome dir 
-    shell: mkdir /nfshome 
-
-  - name: Set nfs home boolean
-    shell: setsebool -P use_nfs_home_dirs 1
-
-  - name: Prepare autofs master
-    shell: echo "/nfshome /etc/auto.nfshome --timeout=180 " >> /etc/auto.master
-
-  - name: Create auto.nfshome
-    shell: echo "*  -fstype=nfs,rw,soft,sec=krb5i,nfsvers=4,minorversion=2,user=&  {{ nfsserver }}:{{ home_export }}/&" >> /etc/auto.nfshome
 
   - name: Set timezone to Prague
     shell: timedatectl set-timezone 'Europe/Prague'
@@ -122,33 +110,3 @@
 
   - name: "Start domain"
     shell: "virsh start {{ fqdn }}"
-    
-
-- hosts: newhost
-  become: true
-  gather_facts: no
-  tasks:
-
-  - pause:
-      seconds: 25
-
-  - name: Set variables
-    include: include/_setup_vars.yaml
-
-  - name: Join machine to IPA domain
-    shell: ipa-client-install -U -p {{ svcadmin }} -w {{ adminpwd }} --mkhomedir
-
-  - name: Get the krb5 ticket
-    shell: echo "{{ adminpwd }}" | kinit {{ svcadmin }}
-
-  - name: Add nfs server to the ipa server
-    shell: ipa service-add nfs/{{ fqdn }}
-
-  - name: Create nfs service for krb5 mount client
-    shell: ipa-getkeytab -s {{ ipaserver }} -p nfs/{{ fqdn }} -k /etc/krb5.keytab
-
-  - name: Enable and start nfs client
-    shell: systemctl enable nfs-client.target && systemctl start nfs-client.target
-
-  - name: Enable and start autofs
-    shell: systemctl enable autofs && systemctl start autofs

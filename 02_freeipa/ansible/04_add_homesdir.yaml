@@ -1,0 +1,18 @@
+- hosts: nfsnode.lab.local
+  become: true
+  gather_facts: no
+  tasks:
+
+   - name: Create home dir for users
+     shell: cp -r /etc/skel /nfsvg/home/{{ item.username }} && chown {{ item.username }}:stuff -R /nfsvg/home/{{ item.username }}
+     loop:
+      - { username: 'veldrane', uid: '1001', first: 'Veldrane', last: 'Veldranovic' }
+      - { username: 'valor', uid: '1002',first: 'Valor', last: 'Valorovic' }
+      - { username: 'jdvorak', uid: '2001', first: 'Jan', last: 'Dvorak' }
+      - { username: 'mnovak', uid: '2002', first: 'Martin', last: 'Novak' }
+      - { username: 'ddvorak', uid: '2003', first: 'David', last: 'Dvorak' }
+     ignore_errors: yes
+
+   - name: restore selinux context
+     shell: restorecon -R /nfsvg/home
+

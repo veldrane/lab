@@ -64,4 +64,25 @@
     shell: ipa-getkeytab  -p nfs/{{ fqdn }} -k /etc/krb5.keytab
 
   - name: Set nfs exports 
-    shell: echo '/nfsvg/home 10.1.0.0/24(rw,sec=krb5p,sync)' >> /etc/exports ; exportfs -r
+    shell: echo '/nfsvg/home 10.1.0.0/16(rw,sec=krb5i,sync,no_root_squash)' >> /etc/exports ; exportfs -r
+
+  - name: Enable and start nfs client
+    shell: systemctl enable nfs-client.target && systemctl start nfs-client.target
+
+  - name: Enable and start nfs server
+    shell: systemctl enable nfs && systemctl start nfs
+
+  - name: Create nfshome dir
+    shell: mkdir /nfshome
+
+  - name: Set nfs home boolean
+    shell: setsebool -P use_nfs_home_dirs 1
+
+  - name: Prepare autofs master
+    shell: echo "/nfshome /etc/auto.nfshome --timeout=180 " >> /etc/auto.master
+
+  - name: Create auto.nfshome
+    shell: echo "*  -fstype=nfs,rw,soft,sec=krb5i,nfsvers=4,minorversion=2,user=&  {{ fqdn }}:/nfsvg/home/&" >> /etc/auto.nfshome
+
+  - name: Enable and start autofs
+    shell: systemctl enable autofs && systemctl start autofs

@@ -52,7 +52,7 @@ export TOKEN=$(curl -X POST "$KEYCLOAK_URL" "$INSECURE" \
  -d 'grant_type=password' \
  -d "client_id=$CLIENT_ID" \
  -d "client_secret=$CLIENT_SECRET" \
- -d "scope=groups openid" -v )
+ -d "scope=openid" -v )
 
 echo $TOKEN
 

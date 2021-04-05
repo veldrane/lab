@@ -18,7 +18,11 @@ USERNAME=$3
 CLIENT_ID=$4
 CLIENT_SECRET=$5
 SECURE=$6
+<<<<<<< HEAD
 PASSWORD=Nznsjtsth8
+=======
+PASSWORD=Houston1
+>>>>>>> 28a8fc16cab6a8b304d43091b42ec49a1ac00f27
 
 
 
@@ -53,7 +57,7 @@ export TOKEN=$(curl -X POST "$KEYCLOAK_URL" "$INSECURE" \
  -d 'grant_type=password' \
  -d "client_id=$CLIENT_ID" \
  -d "client_secret=$CLIENT_SECRET" \
- -d "scope=groups openid" 2>/dev/null )
+ -d "scope=openid" 2>/dev/null )
 
 echo $TOKEN
 

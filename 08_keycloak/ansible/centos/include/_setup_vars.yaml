@@ -17,6 +17,18 @@
     vms_dir: "/data/vms"
     rootvg_size: 30
 
+- name: Set Keycloak variables
+  set_fact:
+    keycloak_version: "12.0.2"
+    pg_jdbc_version: "42.2.18"
+    db_connection_string: "localhost:5432/keycloak"
+    db_username: "keycloak"
+    db_password: "keycloak12345"
+    kcusername: "keycloak"
+    kcadminpwd: "admin"
+    lvdata_size: "5G"
+
+
 - name: Set ip
   set_fact:
     ip: "10.1.{{ virbr  }}.{{ netsuffix }}"

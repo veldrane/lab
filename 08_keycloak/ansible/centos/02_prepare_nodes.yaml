@@ -1,0 +1,107 @@
+---
+- hosts: localhost
+  become: false
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+  - name: Create temp directory for download
+    shell: mkdir {{ playbook_dir }}/temp
+    ignore_errors: yes
+
+  - name: Copy keycloak to temp 
+    shell: cp {{ playbook_dir }}/archives/keycloak-{{ keycloak_version }}.tar.gz {{ playbook_dir }}/temp/
+
+  - name: Download postgre jdbc client
+    shell: curl https://jdbc.postgresql.org/download/postgresql-{{ pg_jdbc_version }}.jar -o {{ playbook_dir }}/temp/postgresql-{{ pg_jdbc_version }}.jar
+
+  - name: Prepare keycloak template coniguration
+    template:
+      src: include/standalone.xml.{{ keycloak_version }}.template
+      dest: /{{ playbook_dir }}/temp/standalone.xml
+
+  - name: Prepare module.xml template
+    template:
+      src: include/module.xml.template
+      dest: /{{ playbook_dir }}/temp/module.xml
+
+  - name: Prepare keycloak systemd template
+    template:
+      src: include/keycloak.service.template
+      dest: /{{ playbook_dir }}/temp/keycloak.service
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+  
+  - name: Set variables
+    include: include/_setup_vars.yaml 
+
+  - name: Copy binaries to /tmp
+    copy:
+      src: temp/{{ item }}
+      dest: /tmp
+    with_items:
+      - postgresql-{{ pg_jdbc_version }}.jar
+      - keycloak-{{ keycloak_version }}.tar.gz
+      - standalone.xml
+      - module.xml
+      - keycloak.service
+
+  - name: Check fs
+    shell: cat /etc/fstab| grep /data | grep -v -E '^#' | cut -d " " -f2
+    register: data_lv
+  
+  - name: Create data_lv for postgresql
+    shell: mkdir /data && lvcreate -n lv_data -L{{ lvdata_size }} rootvg && mkfs.ext4 /dev/mapper/rootvg-lv_data
+    when: data_lv.stdout == ""
+
+  - name: Add data_lv to fstab
+    shell: echo '/dev/mapper/rootvg-lv_data /data ext4 defaults 0 0' >> /etc/fstab
+    when: data_lv.stdout == ""
+
+  - name: Mount fs data
+    shell: mount /data
+    when: data_lv.stdout == ""
+
+  - name: Add 8443 port to firewalld
+    shell: firewall-cmd --add-port=8443/tcp --permanent && firewall-cmd --reload
+
+  - name: Install java 
+    shell: yum install -y java
+
+  - name: Download pgsql repo rpm
+    shell: curl https://download.postgresql.org/pub/repos/yum/12/redhat/rhel-7.9-x86_64/pgdg-redhat-repo-latest.noarch.rpm -o /tmp/pgdg-redhat-repo-latest.noarch.rpm
+
+  - name: Install pgsql
+    shell: yum install -y /tmp/pgdg-redhat-repo-latest.noarch.rpm && yum -y update && yum -y install postgresql12 postgresql12-server postgresql12-contrib
+
+  - name: Create postgresql subdir
+    shell: mkdir /data/postgresql && chown postgres:postgres /data/postgresql
+
+  - name: Initdb 
+    shell: sudo -u postgres /usr/pgsql-12/bin/initdb --pgdata=/data/postgresql
+
+  - name: Change directory for data
+    shell: sed -i -E 's/\/var\/lib\/pgsql\/12\/data\//\/data\/postgresql/g' /lib/systemd/system/postgresql-12.service
+
+  - name: Enable and start postgresql
+    shell: systemctl enable postgresql-12 && systemctl start postgresql-12
+
+
+- hosts: localhost
+  become: false
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Delete temp file
+    shell: rm -rf {{ playbook_dir }}/temp

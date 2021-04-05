@@ -72,7 +72,7 @@
     shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "{{ ipaip }}"
 
   - name: Install additional packages
-    shell: yum install -y ipa-client sssd openldap-clients krb5-workstation nfs-client autofs
+    shell: yum install -y ipa-client sssd openldap-clients krb5-workstation nfs-client autofs policycoreutils-python
 
   - name: Enable make dir option for new users
     shell: authconfig --enablemkhomedir --update
@@ -85,6 +85,9 @@
 
   - name: Update ssh config - non strict host checking
     shell: echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+
+  - name: Update ssh config - GSSAPI
+    shell: printf "GSSAPIKeyExchange yes\nGSSAPIDelegateCredentials yes\nGSSAPIRenewalForcesRekey yes\nGSSAPITrustDns yes" >> /etc/ssh/ssh_config
 
   - name: Create nfshome dir 
     shell: mkdir /nfshome 

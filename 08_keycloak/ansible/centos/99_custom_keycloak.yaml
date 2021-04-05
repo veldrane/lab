@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  become: false
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+  
+  - name: Set variables
+    include: include/_setup_vars.yaml
+  
+  - name: Add admin user to master realm
+    shell: cd /opt/keycloak/current/bin && ./add-user-keycloak.sh -r master -u admin -p {{ adminpwd }}

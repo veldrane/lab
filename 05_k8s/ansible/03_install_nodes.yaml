@@ -18,9 +18,17 @@
   - name: Set variables
     include: include/_setup_vars.yaml
 
-  - name: Disable SElinux
-    shell: setenforce 0 ; sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+#  - name: Disable SElinux
+#    shell: setenforce 0 ; sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 
+  - name: Make /etc/kubernetes directory and change the selinux context
+    shell: mkdir /etc/kubernetes ; semanage fcontext -a -t svirt_sandbox_file_t '/etc/kubernetes(/.*)?'
+
+  - name: Make /var/lib/etcd and change the selinux context 
+    shell: mkdir -p /var/lib/etcd ; semanage fcontext -a -t svirt_sandbox_file_t '/var/lib/etcd(/.*)?'
+
+  - name: Restore contexts
+    shell: restorecon -vR /etc/kubernetes ; restorecon -vR /var/lib/etcd
 
   - name: Disable swap
     shell: swapoff -a ; sed -i -E '/swap/d' /etc/fstab

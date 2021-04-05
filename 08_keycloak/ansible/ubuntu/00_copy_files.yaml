@@ -1,0 +1,52 @@
+---
+- hosts: localhost
+  become: false
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+  
+  - name: Create temp directory for download
+    shell: mkdir temp
+    ignore_errors: yes
+
+  - name: Copy keycloak to temp
+    shell: cp archives/keycloak-{{ keycloak_version }}.tar.gz temp/
+
+  - name: Download postgre jdbc client
+    shell: curl https://jdbc.postgresql.org/download/postgresql-{{ pg_jdbc_version }}.jar -o temp/postgresql-{{ pg_jdbc_version }}.jar
+
+  - name: Prepare keycloak template coniguration
+    template:
+      src: include/standalone.xml.{{ keycloak_version }}.template
+      dest: temp/standalone.xml
+
+  - name: Prepare module.xml template
+    template:
+      src: include/module.xml.template
+      dest: temp/module.xml
+
+  - name: Prepare keycloak systemd template
+    template:
+      src: include/keycloak.service.template
+      dest: temp/keycloak.service
+
+- hosts: keycloak01-k8s01-poc
+  become: true
+  gather_facts: no
+  tasks:
+  
+  - name: Set variables
+    include: include/_setup_vars.yaml 
+
+  - name: Copy binaries to /tmp
+    copy:
+      src: temp/{{ item }}
+      dest: /tmp
+    with_items:
+      - postgresql-{{ pg_jdbc_version }}.jar
+      - keycloak-{{ keycloak_version }}.tar.gz
+      - standalone.xml
+      - module.xml
+      - keycloak.service

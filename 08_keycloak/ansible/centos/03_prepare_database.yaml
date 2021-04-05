@@ -1,0 +1,43 @@
+---
+- hosts: localhost
+  become: false
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+  
+  - name: Set variables
+    include: include/_setup_vars.yaml 
+
+  - name: Create user for keycloak db
+    shell: sudo -u postgres createuser {{ db_username }}
+    ignore_errors: yes
+
+  - name: Prepare keycloak systemd template
+    template:
+      src: include/database.sql.template
+      dest: /data/postgresql/database.sql
+  
+  - name: Check pg_hba.conf records
+    shell: cat /data/postgresql/pg_hba.conf | grep keycloak
+    register: kc_record
+    ignore_errors: yes
+
+  - name: Allow access for keycloak user
+    shell: echo "local   all             keycloak                                md5" >> /data/postgresql/pg_hba.conf
+    when: kc_record.stdout == ""
+
+  - name: Restart postgresql
+    shell: systemctl restart postgresql-12
+
+  - name: Create database for keycloak
+    shell: sudo -u postgres psql -f /data/postgresql/database.sql

@@ -64,7 +64,7 @@
     shell: ipa-getkeytab  -p nfs/{{ fqdn }} -k /etc/krb5.keytab
 
   - name: Set nfs exports 
-    shell: echo '/nfsvg/home 10.1.0.0/16(rw,sec=krb5i,sync,no_root_squash)' >> /etc/exports ; exportfs -r
+    shell: echo '/nfsvg/home 10.1.0.0/16(rw,sec=krb5i,sync,no_root_squash,insecure)' >> /etc/exports ; exportfs -r
 
   - name: Enable and start nfs client
     shell: systemctl enable nfs-client.target && systemctl start nfs-client.target

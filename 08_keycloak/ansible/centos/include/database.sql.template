@@ -1,0 +1,3 @@
+ALTER USER {{ db_username }} WITH ENCRYPTED password '{{ db_password }}';
+CREATE DATABASE keycloak WITH ENCODING='UTF8' OWNER={{ db_username }};
+\q

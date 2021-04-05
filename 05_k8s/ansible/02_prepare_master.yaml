@@ -18,9 +18,11 @@
   - name: Set variables
     include: include/_setup_vars.yaml
 
-  - name: Disable SElinux
-    shell: setenforce 0 ; sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+#  - name: Disable SElinux
+#    shell: setenforce 0 ; sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
 
+  - name: Set SElinux boolean for nfs access from the container - redhat doc
+    shell: setsebool -P virt_use_nfs 1
 
   - name: Disable swap
     shell: swapoff -a ; sed -i -E '/swap/d' /etc/fstab

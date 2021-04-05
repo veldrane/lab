@@ -1,0 +1,57 @@
+---
+- hosts: localhost
+  become: false
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+  
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Create keycloak directory
+    shell: mkdir -p /opt/keycloak
+  
+
+  - name: Add keycloak user to system
+    shell: useradd --shell /usr/sbin/nologin --home-dir /opt/keycloak keycloak 
+    ignore_errors: yes
+
+  - name: Extract keycloak package into target directory
+    shell: cd /opt/keycloak && tar xvfz /tmp/keycloak-{{ keycloak_version }}.tar.gz
+
+  - name: Make a link to actual version
+    shell: cd /opt/keycloak && ln -s keycloak-{{ keycloak_version }} current
+  
+  - name: Create postgresql module directories
+    shell: cd /opt/keycloak/keycloak-{{ keycloak_version }}/modules && mkdir -p org/postgresql/main
+
+  - name: Copy driver to modules dir
+    shell: cp /tmp/postgresql-{{ pg_jdbc_version }}.jar /opt/keycloak/keycloak-{{ keycloak_version }}/modules/org/postgresql/main/
+  
+  - name: Copy module.xml 
+    shell: cp /tmp/module.xml /opt/keycloak/keycloak-{{ keycloak_version }}/modules/org/postgresql/main
+
+  - name: Copy standalone.xml
+    shell: cp /tmp/standalone.xml /opt/keycloak/keycloak-{{ keycloak_version }}/standalone/configuration
+
+  - name: Change ownership to keycloak
+    shell: chown -R keycloak:keycloak /opt/keycloak
+
+  - name: Copy systemd service profile
+    shell: cp /tmp/keycloak.service /lib/systemd/system
+
+  - name: Add admin user to master realm
+    shell: cd /opt/keycloak/current/bin && ./add-user-keycloak.sh -r master -u admin -p {{ adminpwd }}
+
+  - name: Enable systemd service
+    shell: systemctl enable keycloak && systemctl start keycloak

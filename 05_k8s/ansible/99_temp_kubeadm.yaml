@@ -1,0 +1,1 @@
+kubeadm init --pod-network-cidr=10.58.0.0/16 --service-cidr=10.59.0.0/16 --apiserver-advertise-address=10.1.16.11

@@ -34,6 +34,6 @@
     podnetwork: "10.58.0.0/16"
     svcnetwork: "10.59.0.0/16"
     clusterdom: "cluster.local"
-    master: "node71.lab.local"
+    master: "node11.lab.local"
 
 

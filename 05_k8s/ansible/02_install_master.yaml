@@ -18,9 +18,14 @@
   - name: Set variables
     include: include/_setup_vars.yaml
 
-  - name: Disable SElinux
-    shell: setenforce 0 ; sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+  - name: Make /etc/kubernetes directory and change the selinux context
+    shell: mkdir /etc/kubernetes ; semanage fcontext -a -t svirt_sandbox_file_t '/etc/kubernetes(/.*)?'
 
+  - name: Make /var/lib/etcd and change the selinux context 
+    shell: mkdir -p /var/lib/etcd ; semanage fcontext -a -t svirt_sandbox_file_t '/var/lib/etcd(/.*)?'
+
+  - name: Restore contexts
+    shell: restorecon -vR /etc/kubernetes ; restorecon -vR /var/lib/etcd
 
   - name: Disable swap
     shell: swapoff -a ; sed -i -E '/swap/d' /etc/fstab
@@ -78,7 +83,7 @@
     shell: kubectl create namespace kube-sdn
 
   - name: Get calico manifest
-    shell: cd /root ; wget https://docs.projectcalico.org/v3.11/manifests/calico.yaml
+    shell: cd /root ; wget https://docs.projectcalico.org/manifests/calico.yaml
 
   - name: Change pod ip
     replace:
@@ -95,9 +100,3 @@
 
   - name: Apply Calico SDN Manifest
     shell: kubectl apply -f /root/calico.yaml
-
-  - name: Get Helm
-    shell: cd /root ; wget https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz ; tar xvfz helm-v3.0.2-linux-amd64.tar.gz linux-amd64/helm 
-   
-  - name: Copy Helm to /usr/local/bin
-    shell: cd /root ; mv linux-amd64/helm /usr/local/bin ; rm -rf linux-amd64

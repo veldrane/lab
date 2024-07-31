@@ -1,18 +1,18 @@
 - name: Set global variables
   set_fact:
-    virbr: "4"
-    netsuffix: "26" 
-    hostname: "node26"
-    domain: "lab.syscallx86.com"
+    virbr: "16"
+    netsuffix: "XXX" 
+    hostname: "nodeXXX"
+    domain: "lab.local"
     mem: "4G"
-    ipaserver: "freeipa.lab.syscallx86.com"
+    ipaserver: "freeipa.lab.local"
     ipaip: "10.1.8.10"
-    nfsserver: "nfsnode.lab.syscallx86.com"
+    nfsserver: "nfsnode.lab.local"
     home_export: "/nfsvg/home"
-    ldapbase: "dc=lab,dc=syscallx86,dc=com"
+    ldapbase: "dc=lab,dc=local"
     svcadmin: "admin"
     adminpwd: "admin123"
-    template: "basevm"
+    template: "t_centos7"
     template_dir: "/data/templates"
     vms_dir: "/data/vms"
     rootvg_size: 30
@@ -31,8 +31,9 @@
 
 - name: Set Kubernetes facts
   set_fact:
-    podnetwork: "10.58.0.0/16"
-    svcnetwork: "10.59.0.0/16"
+    podnetwork: "10.78.0.0/16"
+    svcnetwork: "10.79.0.0/16"
     clusterdom: "cluster.local"
-    master: "node11.lab.syscallx86.com"
+    master: "node51.lab.local"
+
 

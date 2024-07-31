@@ -72,7 +72,7 @@
     shell: nmcli connection modify enp1s0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "{{ ipaip }}"
 
   - name: Install additional packages
-    shell: yum install -y ipa-client sssd openldap-clients krb5-workstation
+    shell: yum install -y ipa-client sssd openldap-clients krb5-workstation nfs-utils autofs
 
   - name: Update sshd config - part 1
     shell: echo "AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys" >> /etc/ssh/sshd_config 
@@ -103,3 +103,17 @@
 
   - name: "Start domain"
     shell: "virsh start {{ fqdn }}"
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - pause:
+      seconds: 25
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Join machine to IPA domain
+    shell: ipa-client-install -U -p {{ svcadmin }} -w {{ adminpwd }} --mkhomedir

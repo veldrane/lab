@@ -23,13 +23,13 @@
     ignore_errors: yes
 
   - name: Add users
-    shell: ipa user-add {{ item.username }} --gid=1100 --homedir=/nfshome/{{ item.username }} --random --shell=/bin/bash --first={{ item.first }} --last={{ item.last }}
+    shell: ipa user-add {{ item.username }} --uid={{ item.uid }} --gid=1100 --homedir=/nfshome/{{ item.username }} --random --shell=/bin/bash --first={{ item.first }} --last={{ item.last }}
     loop:
-      - { username: 'veldrane', first: 'Veldrane', last: 'Veldranovic' }
-      - { username: 'valor', first: 'Valor', last: 'Valorovic' }
-      - { username: 'jdvorak', first: 'Jan', last: 'Dvorak' }
-      - { username: 'mnovak', first: 'Martin', last: 'Novak' }
-      - { username: 'ddvorak', first: 'David', last: 'Dvorak' }
+      - { username: 'veldrane', uid: '1001', first: 'Veldrane', last: 'Veldranovic' }
+      - { username: 'valor', uid: '1002',first: 'Valor', last: 'Valorovic' }
+      - { username: 'jdvorak', uid: '2001', first: 'Jan', last: 'Dvorak' }
+      - { username: 'mnovak', uid: '2002', first: 'Martin', last: 'Novak' }
+      - { username: 'ddvorak', uid: '2003', first: 'David', last: 'Dvorak' }
     ignore_errors: yes
 
 - hosts: nfsnode.lab.syscallx86.com
@@ -40,11 +40,11 @@
    - name: Create home dir for users
      shell: mkdir /nfsvg/home/{{ item.username }} && cp -r /etc/skel /nfsvg/home/{{ item.username }} && chown {{ item.username }}:stuff -R /nfsvg/home/{{ item.username }}
      loop:
-      - { username: 'veldrane', first: 'Veldrane', last: 'Veldranovic' }
-      - { username: 'valor', first: 'Valor', last: 'Valorovic' }
-      - { username: 'jdvorak',  first: 'Jan', last: 'Dvorak' }
-      - { username: 'mnovak',  first: 'Martin', last: 'Novak' }
-      - { username: 'ddvorak', first: 'David', last: 'Dvorak' }
+      - { username: 'veldrane', uid: '1001', first: 'Veldrane', last: 'Veldranovic' }
+      - { username: 'valor', uid: '1002',first: 'Valor', last: 'Valorovic' }
+      - { username: 'jdvorak', uid: '2001', first: 'Jan', last: 'Dvorak' }
+      - { username: 'mnovak', uid: '2002', first: 'Martin', last: 'Novak' }
+      - { username: 'ddvorak', uid: '2003', first: 'David', last: 'Dvorak' }
      ignore_errors: yes
 
    - name: restore selinux context

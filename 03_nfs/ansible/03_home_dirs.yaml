@@ -1,0 +1,18 @@
+- hosts: nfsnode.lab.syscallx86.com
+  become: true
+  gather_facts: no
+  tasks:
+
+   - name: Create home dir for users
+     shell: mkdir /nfsvg/home/{{ item.username }} && find /etc/skel/ -type f -exec cp {} /nfsvg/home/{{ item.username }}/ \; && chown {{ item.username }}:stuff -R /nfsvg/home/{{ item.username }}
+     loop:
+      - { username: 'veldrane', first: 'Veldrane', last: 'Veldranovic' }
+      - { username: 'valor', first: 'Valor', last: 'Valorovic' }
+      - { username: 'jdvorak',  first: 'Jan', last: 'Dvorak' }
+      - { username: 'mnovak',  first: 'Martin', last: 'Novak' }
+      - { username: 'ddvorak', first: 'David', last: 'Dvorak' }
+     ignore_errors: yes
+
+   - name: restore selinux context
+     shell: restorecon -R /nfsvg/home
+

@@ -1,18 +1,18 @@
 - name: Set global variables
   set_fact:
-    virbr: "16"
+    virbr: "4"
     netsuffix: "XXX" 
     hostname: "nodeXXX"
-    domain: "lab.local"
+    domain: "lab.syscallx86.com"
     mem: "4G"
-    ipaserver: "freeipa.lab.local"
+    ipaserver: "freeipa.lab.syscallx86.com"
     ipaip: "10.1.8.10"
-    nfsserver: "nfsnode.lab.local"
+    nfsserver: "nfsnode.lab.syscallx86.com"
     home_export: "/nfsvg/home"
-    ldapbase: "dc=lab,dc=local"
+    ldapbase: "dc=lab,dc=syscallx86,dc=com"
     svcadmin: "admin"
     adminpwd: "admin123"
-    template: "t_centos7"
+    template: "basevm"
     template_dir: "/data/templates"
     vms_dir: "/data/vms"
     rootvg_size: 30
@@ -34,6 +34,5 @@
     podnetwork: "10.58.0.0/16"
     svcnetwork: "10.59.0.0/16"
     clusterdom: "cluster.local"
-    master: "node11.lab.local"
-
+    master: "node11.lab.syscallx86.com"
 

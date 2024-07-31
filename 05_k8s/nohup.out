@@ -1589,3 +1589,620 @@ PLAY RECAP *********************************************************************
 centos7                    : ok=22   changed=16   unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   
 localhost                  : ok=20   changed=14   unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   
 
+Creating nodes...
+node23.lab.syscallx86.com
+arp: in 9 entries no match found.
+[WARNING]: Found both group and host with same name: localhost
+[DEPRECATION WARNING]: "include" is deprecated, use include_tasks/import_tasks 
+instead. See https://docs.ansible.com/ansible-
+core/2.14/user_guide/playbooks_reuse_includes.html for details. This feature 
+will be removed in version 2.16. Deprecation warnings can be disabled by 
+setting deprecation_warnings=False in ansible.cfg.
+
+PLAY [localhost] ***************************************************************
+
+TASK [Set global variables] ****************************************************
+ok: [localhost]
+
+TASK [Set ip] ******************************************************************
+ok: [localhost]
+
+TASK [Set FQDN] ****************************************************************
+ok: [localhost]
+
+TASK [Set REALM] ***************************************************************
+ok: [localhost]
+
+TASK [Set Kubernetes facts] ****************************************************
+ok: [localhost]
+
+TASK [Create ansible group for new hosts] **************************************
+changed: [localhost]
+
+TASK [Delete ssh keys for template] ********************************************
+changed: [localhost]
+
+TASK [Delete ssh keys for ip] **************************************************
+changed: [localhost]
+
+TASK [Create ansible group for ipa server] *************************************
+changed: [localhost]
+
+TASK [Create data directory] ***************************************************
+changed: [localhost]
+
+TASK [Clone template] **********************************************************
+changed: [localhost]
+
+TASK [Change rootvg size] ******************************************************
+changed: [localhost]
+
+TASK [Set max memory] **********************************************************
+changed: [localhost]
+
+TASK [Set more memory] *********************************************************
+changed: [localhost]
+
+TASK [Start machine] ***********************************************************
+changed: [localhost]
+
+PLAY [basevm] ******************************************************************
+
+TASK [pause] *******************************************************************
+Pausing for 35 seconds
+(ctrl+C then 'C' = continue early, ctrl+C then 'A' = abort)
+ok: [basevm]
+
+TASK [Set global variables] ****************************************************
+ok: [basevm]
+
+TASK [Set ip] ******************************************************************
+ok: [basevm]
+
+TASK [Set FQDN] ****************************************************************
+ok: [basevm]
+
+TASK [Set REALM] ***************************************************************
+ok: [basevm]
+
+TASK [Set Kubernetes facts] ****************************************************
+ok: [basevm]
+
+TASK [Change hostname] *********************************************************
+changed: [basevm]
+
+TASK [Add hosts to hostname] ***************************************************
+changed: [basevm]
+
+TASK [Resize partition] ********************************************************
+changed: [basevm]
+
+TASK [Partprobe disks] *********************************************************
+changed: [basevm]
+
+TASK [PV resize] ***************************************************************
+changed: [basevm]
+
+TASK [Add an Ethernet connection with static IP configuration] *****************
+changed: [basevm]
+
+TASK [Install additional packages] *********************************************
+changed: [basevm]
+
+TASK [Update sshd config - part 1] *********************************************
+changed: [basevm]
+
+TASK [Update sshd config - part 2] *********************************************
+changed: [basevm]
+
+TASK [Update ssh config - non strict host checking] ****************************
+changed: [basevm]
+
+TASK [Update ssh config - GSSAPI] **********************************************
+changed: [basevm]
+
+TASK [Create nfshome dir] ******************************************************
+changed: [basevm]
+
+TASK [Set nfs home boolean] ****************************************************
+changed: [basevm]
+
+TASK [Prepare autofs master] ***************************************************
+changed: [basevm]
+
+TASK [Create auto.nfshome] *****************************************************
+changed: [basevm]
+
+TASK [Set timezone to Prague] **************************************************
+changed: [basevm]
+
+PLAY [localhost] ***************************************************************
+
+TASK [Shutdown host] ***********************************************************
+changed: [localhost]
+
+TASK [pause] *******************************************************************
+Pausing for 5 seconds
+(ctrl+C then 'C' = continue early, ctrl+C then 'A' = abort)
+ok: [localhost]
+
+TASK [Destroy domain] **********************************************************
+fatal: [localhost]: FAILED! => {"changed": true, "cmd": "virsh destroy node23.lab.syscallx86.com", "delta": "0:00:00.099937", "end": "2024-07-29 16:30:14.200228", "msg": "non-zero return code", "rc": 1, "start": "2024-07-29 16:30:14.100291", "stderr": "error: Failed to destroy domain 'node23.lab.syscallx86.com'\nerror: Requested operation is not valid: domain is not running", "stderr_lines": ["error: Failed to destroy domain 'node23.lab.syscallx86.com'", "error: Requested operation is not valid: domain is not running"], "stdout": "", "stdout_lines": []}
+...ignoring
+
+TASK [Change network configuration] ********************************************
+changed: [localhost]
+
+TASK [Start domain] ************************************************************
+changed: [localhost]
+
+PLAY [newhost] *****************************************************************
+
+TASK [pause] *******************************************************************
+Pausing for 25 seconds
+(ctrl+C then 'C' = continue early, ctrl+C then 'A' = abort)
+ok: [10.1.4.23]
+
+TASK [Set global variables] ****************************************************
+ok: [10.1.4.23]
+
+TASK [Set ip] ******************************************************************
+ok: [10.1.4.23]
+
+TASK [Set FQDN] ****************************************************************
+ok: [10.1.4.23]
+
+TASK [Set REALM] ***************************************************************
+ok: [10.1.4.23]
+
+TASK [Set Kubernetes facts] ****************************************************
+ok: [10.1.4.23]
+
+TASK [Join machine to IPA domain] **********************************************
+changed: [10.1.4.23]
+
+TASK [Get the krb5 ticket] *****************************************************
+changed: [10.1.4.23]
+
+TASK [Add nfs server to the ipa server] ****************************************
+changed: [10.1.4.23]
+
+TASK [Create nfs service for krb5 mount client] ********************************
+changed: [10.1.4.23]
+
+TASK [Enable and start nfs client] *********************************************
+changed: [10.1.4.23]
+
+TASK [Enable and start autofs] *************************************************
+changed: [10.1.4.23]
+
+PLAY RECAP *********************************************************************
+10.1.4.23                  : ok=12   changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+basevm                     : ok=22   changed=16   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+localhost                  : ok=20   changed=14   unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   
+
+[WARNING]: Found both group and host with same name: localhost
+[DEPRECATION WARNING]: "include" is deprecated, use include_tasks/import_tasks 
+instead. See https://docs.ansible.com/ansible-
+core/2.14/user_guide/playbooks_reuse_includes.html for details. This feature 
+will be removed in version 2.16. Deprecation warnings can be disabled by 
+setting deprecation_warnings=False in ansible.cfg.
+
+PLAY [localhost] ***************************************************************
+
+TASK [Set global variables] ****************************************************
+ok: [localhost]
+
+TASK [Set ip] ******************************************************************
+ok: [localhost]
+
+TASK [Set FQDN] ****************************************************************
+ok: [localhost]
+
+TASK [Set REALM] ***************************************************************
+ok: [localhost]
+
+TASK [Set Kubernetes facts] ****************************************************
+ok: [localhost]
+
+TASK [Create snapshot for the host] ********************************************
+changed: [localhost]
+
+TASK [Create ansible group for new hosts] **************************************
+changed: [localhost]
+
+PLAY [newhost] *****************************************************************
+
+TASK [Set global variables] ****************************************************
+ok: [10.1.4.23]
+
+TASK [Set ip] ******************************************************************
+ok: [10.1.4.23]
+
+TASK [Set FQDN] ****************************************************************
+ok: [10.1.4.23]
+
+TASK [Set REALM] ***************************************************************
+ok: [10.1.4.23]
+
+TASK [Set Kubernetes facts] ****************************************************
+ok: [10.1.4.23]
+
+TASK [Disable SElinux] *********************************************************
+changed: [10.1.4.23]
+
+TASK [Make /etc/kubernetes directory and change the selinux context] ***********
+changed: [10.1.4.23]
+
+TASK [Make /var/lib/etcd and change the selinux context] ***********************
+changed: [10.1.4.23]
+
+TASK [Restore contexts] ********************************************************
+changed: [10.1.4.23]
+
+TASK [Disable swap] ************************************************************
+changed: [10.1.4.23]
+
+TASK [Disable firewalld] *******************************************************
+changed: [10.1.4.23]
+
+TASK [Install ovs] *************************************************************
+changed: [10.1.4.23]
+
+TASK [Copy kubernetes repo definition to yum dir] ******************************
+changed: [10.1.4.23]
+
+TASK [Copy crio repo definition to yum dir] ************************************
+changed: [10.1.4.23]
+
+TASK [Install kubeadm, crio and wget] ******************************************
+changed: [10.1.4.23]
+
+TASK [Enable crio] *************************************************************
+changed: [10.1.4.23]
+
+TASK [Copy ssh keys for root - HACK - must be changed!] ************************
+changed: [10.1.4.23]
+
+TASK [Copy ssh keys for root - HACK - must be changed! - changing perm] ********
+changed: [10.1.4.23]
+
+TASK [Get token file] **********************************************************
+changed: [10.1.4.23]
+
+TASK [Get token] ***************************************************************
+changed: [10.1.4.23]
+
+TASK [Get CA token] ************************************************************
+changed: [10.1.4.23]
+
+TASK [Join node to kubernetes cluster] *****************************************
+changed: [10.1.4.23]
+
+TASK [Enable kubelet] **********************************************************
+changed: [10.1.4.23]
+
+TASK [Create .kube directory] **************************************************
+changed: [10.1.4.23]
+
+TASK [Copy cfg to .kube dir] ***************************************************
+changed: [10.1.4.23]
+
+TASK [Change ownership to kube directory] **************************************
+changed: [10.1.4.23]
+
+TASK [Label node as a worker] **************************************************
+changed: [10.1.4.23]
+
+PLAY RECAP *********************************************************************
+10.1.4.23                  : ok=27   changed=22   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+localhost                  : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+node24.lab.syscallx86.com
+arp: in 10 entries no match found.
+[WARNING]: Found both group and host with same name: localhost
+[DEPRECATION WARNING]: "include" is deprecated, use include_tasks/import_tasks 
+instead. See https://docs.ansible.com/ansible-
+core/2.14/user_guide/playbooks_reuse_includes.html for details. This feature 
+will be removed in version 2.16. Deprecation warnings can be disabled by 
+setting deprecation_warnings=False in ansible.cfg.
+
+PLAY [localhost] ***************************************************************
+
+TASK [Set global variables] ****************************************************
+ok: [localhost]
+
+TASK [Set ip] ******************************************************************
+ok: [localhost]
+
+TASK [Set FQDN] ****************************************************************
+ok: [localhost]
+
+TASK [Set REALM] ***************************************************************
+ok: [localhost]
+
+TASK [Set Kubernetes facts] ****************************************************
+ok: [localhost]
+
+TASK [Create ansible group for new hosts] **************************************
+changed: [localhost]
+
+TASK [Delete ssh keys for template] ********************************************
+changed: [localhost]
+
+TASK [Delete ssh keys for ip] **************************************************
+changed: [localhost]
+
+TASK [Create ansible group for ipa server] *************************************
+changed: [localhost]
+
+TASK [Create data directory] ***************************************************
+changed: [localhost]
+
+TASK [Clone template] **********************************************************
+changed: [localhost]
+
+TASK [Change rootvg size] ******************************************************
+changed: [localhost]
+
+TASK [Set max memory] **********************************************************
+changed: [localhost]
+
+TASK [Set more memory] *********************************************************
+changed: [localhost]
+
+TASK [Start machine] ***********************************************************
+changed: [localhost]
+
+PLAY [basevm] ******************************************************************
+
+TASK [pause] *******************************************************************
+Pausing for 35 seconds
+(ctrl+C then 'C' = continue early, ctrl+C then 'A' = abort)
+ok: [basevm]
+
+TASK [Set global variables] ****************************************************
+ok: [basevm]
+
+TASK [Set ip] ******************************************************************
+ok: [basevm]
+
+TASK [Set FQDN] ****************************************************************
+ok: [basevm]
+
+TASK [Set REALM] ***************************************************************
+ok: [basevm]
+
+TASK [Set Kubernetes facts] ****************************************************
+ok: [basevm]
+
+TASK [Change hostname] *********************************************************
+changed: [basevm]
+
+TASK [Add hosts to hostname] ***************************************************
+changed: [basevm]
+
+TASK [Resize partition] ********************************************************
+changed: [basevm]
+
+TASK [Partprobe disks] *********************************************************
+changed: [basevm]
+
+TASK [PV resize] ***************************************************************
+changed: [basevm]
+
+TASK [Add an Ethernet connection with static IP configuration] *****************
+changed: [basevm]
+
+TASK [Install additional packages] *********************************************
+changed: [basevm]
+
+TASK [Update sshd config - part 1] *********************************************
+changed: [basevm]
+
+TASK [Update sshd config - part 2] *********************************************
+changed: [basevm]
+
+TASK [Update ssh config - non strict host checking] ****************************
+changed: [basevm]
+
+TASK [Update ssh config - GSSAPI] **********************************************
+changed: [basevm]
+
+TASK [Create nfshome dir] ******************************************************
+changed: [basevm]
+
+TASK [Set nfs home boolean] ****************************************************
+changed: [basevm]
+
+TASK [Prepare autofs master] ***************************************************
+changed: [basevm]
+
+TASK [Create auto.nfshome] *****************************************************
+changed: [basevm]
+
+TASK [Set timezone to Prague] **************************************************
+changed: [basevm]
+
+PLAY [localhost] ***************************************************************
+
+TASK [Shutdown host] ***********************************************************
+changed: [localhost]
+
+TASK [pause] *******************************************************************
+Pausing for 5 seconds
+(ctrl+C then 'C' = continue early, ctrl+C then 'A' = abort)
+ok: [localhost]
+
+TASK [Destroy domain] **********************************************************
+fatal: [localhost]: FAILED! => {"changed": true, "cmd": "virsh destroy node24.lab.syscallx86.com", "delta": "0:00:00.093630", "end": "2024-07-29 16:36:06.096523", "msg": "non-zero return code", "rc": 1, "start": "2024-07-29 16:36:06.002893", "stderr": "error: Failed to destroy domain 'node24.lab.syscallx86.com'\nerror: Requested operation is not valid: domain is not running", "stderr_lines": ["error: Failed to destroy domain 'node24.lab.syscallx86.com'", "error: Requested operation is not valid: domain is not running"], "stdout": "", "stdout_lines": []}
+...ignoring
+
+TASK [Change network configuration] ********************************************
+changed: [localhost]
+
+TASK [Start domain] ************************************************************
+changed: [localhost]
+
+PLAY [newhost] *****************************************************************
+
+TASK [pause] *******************************************************************
+Pausing for 25 seconds
+(ctrl+C then 'C' = continue early, ctrl+C then 'A' = abort)
+ok: [10.1.4.24]
+
+TASK [Set global variables] ****************************************************
+ok: [10.1.4.24]
+
+TASK [Set ip] ******************************************************************
+ok: [10.1.4.24]
+
+TASK [Set FQDN] ****************************************************************
+ok: [10.1.4.24]
+
+TASK [Set REALM] ***************************************************************
+ok: [10.1.4.24]
+
+TASK [Set Kubernetes facts] ****************************************************
+ok: [10.1.4.24]
+
+TASK [Join machine to IPA domain] **********************************************
+changed: [10.1.4.24]
+
+TASK [Get the krb5 ticket] *****************************************************
+changed: [10.1.4.24]
+
+TASK [Add nfs server to the ipa server] ****************************************
+changed: [10.1.4.24]
+
+TASK [Create nfs service for krb5 mount client] ********************************
+changed: [10.1.4.24]
+
+TASK [Enable and start nfs client] *********************************************
+changed: [10.1.4.24]
+
+TASK [Enable and start autofs] *************************************************
+changed: [10.1.4.24]
+
+PLAY RECAP *********************************************************************
+10.1.4.24                  : ok=12   changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+basevm                     : ok=22   changed=16   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+localhost                  : ok=20   changed=14   unreachable=0    failed=0    skipped=0    rescued=0    ignored=1   
+
+[WARNING]: Found both group and host with same name: localhost
+[DEPRECATION WARNING]: "include" is deprecated, use include_tasks/import_tasks 
+instead. See https://docs.ansible.com/ansible-
+core/2.14/user_guide/playbooks_reuse_includes.html for details. This feature 
+will be removed in version 2.16. Deprecation warnings can be disabled by 
+setting deprecation_warnings=False in ansible.cfg.
+
+PLAY [localhost] ***************************************************************
+
+TASK [Set global variables] ****************************************************
+ok: [localhost]
+
+TASK [Set ip] ******************************************************************
+ok: [localhost]
+
+TASK [Set FQDN] ****************************************************************
+ok: [localhost]
+
+TASK [Set REALM] ***************************************************************
+ok: [localhost]
+
+TASK [Set Kubernetes facts] ****************************************************
+ok: [localhost]
+
+TASK [Create snapshot for the host] ********************************************
+changed: [localhost]
+
+TASK [Create ansible group for new hosts] **************************************
+changed: [localhost]
+
+PLAY [newhost] *****************************************************************
+
+TASK [Set global variables] ****************************************************
+ok: [10.1.4.24]
+
+TASK [Set ip] ******************************************************************
+ok: [10.1.4.24]
+
+TASK [Set FQDN] ****************************************************************
+ok: [10.1.4.24]
+
+TASK [Set REALM] ***************************************************************
+ok: [10.1.4.24]
+
+TASK [Set Kubernetes facts] ****************************************************
+ok: [10.1.4.24]
+
+TASK [Disable SElinux] *********************************************************
+changed: [10.1.4.24]
+
+TASK [Make /etc/kubernetes directory and change the selinux context] ***********
+changed: [10.1.4.24]
+
+TASK [Make /var/lib/etcd and change the selinux context] ***********************
+changed: [10.1.4.24]
+
+TASK [Restore contexts] ********************************************************
+changed: [10.1.4.24]
+
+TASK [Disable swap] ************************************************************
+changed: [10.1.4.24]
+
+TASK [Disable firewalld] *******************************************************
+changed: [10.1.4.24]
+
+TASK [Install ovs] *************************************************************
+changed: [10.1.4.24]
+
+TASK [Copy kubernetes repo definition to yum dir] ******************************
+changed: [10.1.4.24]
+
+TASK [Copy crio repo definition to yum dir] ************************************
+changed: [10.1.4.24]
+
+TASK [Install kubeadm, crio and wget] ******************************************
+changed: [10.1.4.24]
+
+TASK [Enable crio] *************************************************************
+changed: [10.1.4.24]
+
+TASK [Copy ssh keys for root - HACK - must be changed!] ************************
+changed: [10.1.4.24]
+
+TASK [Copy ssh keys for root - HACK - must be changed! - changing perm] ********
+changed: [10.1.4.24]
+
+TASK [Get token file] **********************************************************
+changed: [10.1.4.24]
+
+TASK [Get token] ***************************************************************
+changed: [10.1.4.24]
+
+TASK [Get CA token] ************************************************************
+changed: [10.1.4.24]
+
+TASK [Join node to kubernetes cluster] *****************************************
+changed: [10.1.4.24]
+
+TASK [Enable kubelet] **********************************************************
+changed: [10.1.4.24]
+
+TASK [Create .kube directory] **************************************************
+changed: [10.1.4.24]
+
+TASK [Copy cfg to .kube dir] ***************************************************
+changed: [10.1.4.24]
+
+TASK [Change ownership to kube directory] **************************************
+changed: [10.1.4.24]
+
+TASK [Label node as a worker] **************************************************
+changed: [10.1.4.24]
+
+PLAY RECAP *********************************************************************
+10.1.4.24                  : ok=27   changed=22   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+localhost                  : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

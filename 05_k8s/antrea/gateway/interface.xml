@@ -1,0 +1,5 @@
+    <interface type='bridge'>
+      <source bridge='eno3'/>
+      <model type='virtio'/>
+    </interface>
+

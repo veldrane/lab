@@ -28,7 +28,7 @@
     include: include/_setup_vars.yaml
 
   - name: Setup temporary external DNS
-    shell: echo "nameserver 8.8.8.8" > /etc/resolv.conf
+    shell: nmcli connection modify enp1s0 ipv4.dns 8.8.8.8 ; systemctl restart NetworkManager
 
   - name: Install prereq packages
     shell: yum install ipa-server ipa-server-dns -y
@@ -39,9 +39,6 @@
   - name: Allow https on firewalld
     shell: firewall-cmd --add-service=https --add-service=ldap --add-service=ldaps --add-service=kerberos --add-service=kpasswd --add-service=dns --permanent ; firewall-cmd --reload
 
-  - name: Setup temporary external DNS
-    shell: echo "nameserver {{ ip }}" > /etc/resolv.conf
- 
   - name: Customize /etc/hosts
     shell: sed -i -E "/{{ ip }}/d" /etc/hosts ; echo "{{ ip }} {{ fqdn }} {{ hostname }}" >> /etc/hosts
 

@@ -1,0 +1,17 @@
+<network>
+  <name>public</name>
+  <uuid>9cdde189-9298-4de1-a513-d2e4d8ac8cef</uuid>
+  <forward mode='bridge'/>
+  <bridge name='br-pub0'/>
+  <virtualport type='openvswitch'/>
+  <vlan trunk='yes'>
+    <tag id='1' nativeMode='untagged'/>
+    <tag id='2'/>
+    <tag id='3'/>
+    <tag id='4'/>
+    <tag id='5'/>
+    <tag id='6'/>
+    <tag id='7'/>
+    <tag id='8'/>
+  </vlan>
+</network>

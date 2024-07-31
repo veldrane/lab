@@ -23,7 +23,7 @@
     shell: mkdir /data/vms/{{ hostname }}.{{ domain }} 
 
   - name: Clone template
-    shell: virt-clone --original-xml /data/vms/templates/basevm.xml --name {{ fqdn }} --file /data/vms/{{ fqdn }}/rootvg.qcow2
+    shell: virt-clone --original-xml /data/templates/t_centos7/t_centos7.xml --name {{ fqdn }} --file /data/vms/{{ fqdn }}/rootvg.qcow2
 
   - name: Change rootvg size
     shell: qemu-img resize /data/vms/{{ fqdn }}/rootvg.qcow2 +{{ rootvg_size - 20 }}G
@@ -41,7 +41,7 @@
 
   
 
-- hosts: basevm
+- hosts: centos7
   become: true
   gather_facts: no
   tasks:
@@ -56,7 +56,7 @@
     shell: echo "{{ fqdn }}" > /etc/hostname
 
   - name: Add hosts to hostname
-    shell: echo "{{ ip }} {{ fqdn }}  {{ hostname }}" >> /etc/hosts
+    shell: echo "{{ ip }} {{ fqdn }} {{ hostname }} " >> /etc/hosts
 
   - name: Resize partition
     shell: printf 'd\n2\np\nn\np\n2\n\n\nt\n2\n8e\nw' | fdisk /dev/vda
@@ -69,10 +69,13 @@
     shell: pvresize /dev/vda2
 
   - name: Add an Ethernet connection with static IP configuration
-    shell: nmcli connection modify enp1s0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "{{ ipaip }}"
+    shell: nmcli connection modify eth0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "{{ ipaip }}"
 
   - name: Install additional packages
-    shell: yum install -y ipa-client sssd openldap-clients krb5-workstation
+    shell: yum install -y ipa-client sssd openldap-clients krb5-workstation nfs-client autofs
+
+  - name: Enable make dir option for new users
+    shell: authconfig --enablemkhomedir --update
 
   - name: Update sshd config - part 1
     shell: echo "AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys" >> /etc/ssh/sshd_config 
@@ -101,5 +104,24 @@
     shell: "virsh destroy {{ fqdn }}"
     ignore_errors: yes
 
+  - name: "Change virbr interface"
+    shell: virt-xml {{ fqdn }} --edit -w vnet0 --network bridge=virbr{{ virbr }}
+
+
   - name: "Start domain"
     shell: "virsh start {{ fqdn }}"
+    
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - pause:
+      seconds: 25
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Join machine to IPA domain
+    shell: ipa-client-install -U -p {{ svcadmin }} -w {{ adminpwd }} --mkhomedir

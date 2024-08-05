@@ -1,0 +1,12 @@
+[Unit]
+Description=Simple api for testing purpose
+
+[Service]
+User=svcsimple
+WorkingDirectory=/tmp
+ExecStart=/usr/local/bin/simpleoidc
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

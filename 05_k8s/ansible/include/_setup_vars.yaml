@@ -1,8 +1,8 @@
 - name: Set global variables
   set_fact:
-    virbr: "4"
-    netsuffix: "26" 
-    hostname: "node26"
+    virbr: "16"
+    netsuffix: "22" 
+    hostname: "ovn22"
     domain: "lab.syscallx86.com"
     mem: "4G"
     ipaserver: "freeipa.lab.syscallx86.com"
@@ -31,8 +31,7 @@
 
 - name: Set Kubernetes facts
   set_fact:
-    podnetwork: "10.58.0.0/16"
-    svcnetwork: "10.59.0.0/16"
+    podnetwork: "10.38.0.0/16"
+    svcnetwork: "10.49.0.0/16"
     clusterdom: "cluster.local"
-    master: "node11.lab.syscallx86.com"
-
+    master: "ovn11.lab.syscallx86.com"

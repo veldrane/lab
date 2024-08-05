@@ -2,8 +2,8 @@
 
 echo "Creating nodes..."
 
-i=25
-while [ "$i" -ne 27 ]
+i=27
+while [ "$i" -ne 28 ]
 do
     echo "node$i.lab.syscallx86.com"
     arp -da 10.1.16.200

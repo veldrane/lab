@@ -57,10 +57,10 @@
     shell: systemctl enable docker ; systemctl start docker
 
   - name: Get go install package
-    shell: wget https://dl.google.com/go/go1.13.6.linux-amd64.tar.gz -O /usr/local/go1.13.6.linux-amd64.tar.gz
+    shell: wget https://dl.google.com/go/go1.22.5.linux-amd64.tar.gz -O /usr/local/go1.22.5.linux-amd64.tar.gz
 
   - name: Extract GO package
-    shell: cd /usr/local ; tar xvfz ./go1.13.6.linux-amd64.tar.gz ; mv go go1.13.6.linux-amd64 ; ln -s go1.13.6.linux-amd64 go
+    shell: cd /usr/local ; tar xvfz ./go1.22.5.linux-amd64.tar.gz ; mv go go1.22.5.linux-amd64 ; ln -s go1.22.5.linux-amd64 go
 
   - name: Setup /etc/environment
     shell: echo "PATH=$PATH:/usr/local/go/bin" >> /etc/environment

@@ -12,7 +12,7 @@ do
     rm -rf /root/.ansible/cp/*
     rm -rf /root/.ansible/tmp/*
     cat ansible/include/_setup_vars.ovn.template | sed s/XXX/$i/g > ansible/include/_setup_vars.yaml
-    ansible-playbook ansible/01_prepare_nodes.yaml
+#    ansible-playbook ansible/01_prepare_nodes_ovn.yaml
     if [ $? -eq 1 ]; then
     	exit 1
     fi

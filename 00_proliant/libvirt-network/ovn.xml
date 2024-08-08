@@ -1,0 +1,11 @@
+<network>
+  <name>ovn</name>
+  <uuid>88115f4c-3e06-4a29-8d4d-e1648358324b</uuid>
+  <forward mode='bridge'/>
+  <bridge name='br-int0'/>
+  <virtualport type='openvswitch'/>
+  <vlan trunk='yes'>
+    <tag id='1' nativeMode='untagged'/>
+    <tag id='64'/>
+  </vlan>
+</network>

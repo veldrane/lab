@@ -3,3 +3,4 @@ temp
 09_apigw/krakend/dockerfiles/krakend*
 08_keycloak/ansible/archives/keycloak-12.0.2.tar.gz
 08_keycloak/ansible/centos/archives/keycloak-12.0.2.tar.gz
+01_template/ssh/id_ecdsa

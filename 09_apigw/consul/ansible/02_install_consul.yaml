@@ -1,0 +1,45 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before Consul installation"
+    ignore_errors: yes
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Install yum utils
+    shell: yum install -y yum-utils
+
+  - name: Add hashicorp repo
+    shell: yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+  - name: Install consul and envoy
+    shell: yum install -y consul hashicorp-envoy
+
+  - name: Copy consul bootstrap file
+    copy: 
+      src: include/consul.hcl
+      dest: /etc/consul.d/consul.hcl
+  
+  - name: Enable consul agent and start it
+    shell: systemctl enable consul ; systemctl start consul
+
+  - name: Add ui port
+    shell: firewall-cmd --add-port=8080/tcp --permanent ; firewall-cmd --reload

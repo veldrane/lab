@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KICKSTART="/root/lab-new-ocp4/01_template/kickstart/kickstart.cfg"
+KICKSTART="/root/lab/01_template/kickstart/kickstart.cfg"
 
 mkdir -p /data/vms/rocky9
 

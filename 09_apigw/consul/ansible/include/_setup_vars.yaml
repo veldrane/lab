@@ -1,26 +1,28 @@
 - name: Set global variables
   set_fact:
     virbr: "8"
-    netsuffix: "42" 
-    hostname: "api02"
+    netsuffix: "254" 
+    hostname: "apigw"
     domain: "lab.syscallx86.com"
     mem: "2G"
     ipaserver: "freeipa.lab.syscallx86.com"
+    nfsserver: "nfsnode.lab.syscallx86.com"
+    home_export: "/nfsvg/home"
     ipaip: "10.1.8.10"
-    ldapbase: "dc=lab,dc=syscallx86,dc=com"
+    ldapbase: "dc=lab,dc=local"
     svcadmin: "admin"
     adminpwd: "admin123"
     template: "basevm"
-    template_dir: "/data/vms/templates"
+    template_dir: "/data/templates"
     vms_dir: "/data/vms"
-    rootvg_size: 20
-    nfsserver: "nfsnode.lab.syscallx86.com"
-    home_export: "/nfsvg/home"
+    rootvg_size: 30
 
 
 - name: Set ip
   set_fact:
     ip: "10.1.{{ virbr  }}.{{ netsuffix }}"
+
+
 
 - name: Set FQDN
   set_fact:
@@ -32,4 +34,4 @@
 
 - name: Set disksize
   set_fact: 
-    disksize: "20G"
+    disksize: "30"

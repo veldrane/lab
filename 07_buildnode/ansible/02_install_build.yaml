@@ -50,9 +50,6 @@
         After=network-online.target
         Wants=network-online.target
 
-  - name: Change docker.socket systemd group
-    shell: sed -i -E "s/SocketGroup\=docker/SocketGroup\=a_docker/g" /usr/lib/systemd/system/docker.socket
-
   - name: Enable and start docker
     shell: systemctl enable docker ; systemctl start docker
 

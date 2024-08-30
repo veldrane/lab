@@ -1,0 +1,149 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before k8s installation"
+    ignore_errors: yes
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ master }}" groups=master
+
+- hosts: master
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+  
+  - name: Create bootstrap token
+    shell: kubeadm token create
+    register: bootstrap_token
+
+  - name: "Add K8S Token to dummy host"
+    add_host:
+      name:   "K8S_TOKEN_HOLDER"
+      token:  "{{ bootstrap_token.stdout }}"
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Disable SElinux
+    shell: setenforce 0 ; sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+
+  - name: Make /etc/kubernetes directory and change the selinux context
+    shell: mkdir /etc/kubernetes ; semanage fcontext -a -t svirt_sandbox_file_t '/etc/kubernetes(/.*)?'
+
+  - name: Make /var/lib/etcd and change the selinux context 
+    shell: mkdir -p /var/lib/etcd ; semanage fcontext -a -t svirt_sandbox_file_t '/var/lib/etcd(/.*)?'
+
+  - name: Restore contexts
+    shell: restorecon -vR /etc/kubernetes ; restorecon -vR /var/lib/etcd
+
+  - name: Disable swap
+    shell: swapoff -a ; sed -i -E '/swap/d' /etc/fstab
+
+  - name: Disable firewalld
+    shell: systemctl stop firewalld && systemctl disable firewalld
+
+  - name: Install ovs
+    shell: yum install -y epel-release centos-release-nfv-common centos-release-nfv-openvswitch && yum install -y openvswitch3.3 libibverbs NetworkManager-ovs
+
+  - name: Copy kubernetes repo definition to yum dir
+    copy: 
+      src: include/kubernetes.repo
+      dest: /etc/yum.repos.d/kubernetes.repo
+  
+  - name: Copy crio repo definition to yum dir
+    copy: 
+      src: include/crio.repo
+      dest: /etc/yum.repos.d/crio.repo
+
+  - name: Install kubeadm, crio and wget
+    shell: yum install wget kubeadm cri-o kubelet libnetfilter_conntrack conntrack-tools socat kubectl -y
+
+  - name: Restart and network manager
+    shell: systemctl restart NetworkManager
+
+  - name: Start and enable openvswitch
+    shell: systemctl enable openvswitch ; systemctl start openvswitch
+
+  - name: Enable crio
+    shell: systemctl restart crio && systemctl enable crio
+
+  - name: Add bridge
+    shell: nmcli c add type ovs-bridge conn.interface {{ bridge_name }} con-name {{ bridge_name }}
+
+  - name: Add bridge - new port
+    shell: nmcli c add type ovs-port conn.interface {{ bridge_name }} master {{ bridge_name }} con-name ovs-port-{{ bridge_name }}
+
+  - name: Add bridge - slave
+    shell: nmcli c add type ovs-interface slave-type ovs-port conn.interface {{ bridge_name }} master ovs-port-{{ bridge_name }}  con-name ovs-if-{{ bridge_name }}
+
+  - name: Add bridge - second iface
+    shell: nmcli c add type ovs-port conn.interface {{ iface }} master {{ bridge_name }} con-name ovs-port-{{ iface }}
+
+  - name: Add bridge - add ethernet iface
+    shell: nmcli c add type ethernet conn.interface {{ iface }} master ovs-port-{{ iface }} con-name ovs-if-{{ iface }}
+
+  - name: Set no to autoconnect for ethernet 
+    shell: nmcli conn mod {{ iface }} connection.autoconnect no
+
+  - name: Set autoconnect to bridge
+    shell: nmcli conn mod {{ bridge_name }} connection.autoconnect yes
+  
+  - name: Set autoconnect to bridge
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} connection.autoconnect yes
+
+  - name: Set autoconnect to bridge
+    shell: nmcli conn mod ovs-if-{{ iface }} connection.autoconnect yes
+
+  - name: Set autoconnect to bridge
+    shell: nmcli conn mod ovs-port-{{ iface }} connection.autoconnect yes
+
+  - name: Set autoconnect to bridge
+    shell: nmcli conn mod ovs-port-{{ bridge_name }} connection.autoconnect yes
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} ipv4.address {{ ip_address }}
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} ipv4.method static
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} ipv4.route-metric 50
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} ipv4.gateway "10.1.16.1"
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod {{ iface }} ipv4.never-default yes
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod {{ iface }} ipv4.ignore-auto-dns yes
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} ipv4.dns "10.1.8.10"
+  
+  - name: Modules for crio
+    shell: modprobe br_netfilter; sysctl -w net.ipv4.ip_forward=1
+
+  - name: Reboot node
+    shell: reboot
+    ignore_errors: yes
+
+

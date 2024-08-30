@@ -1,0 +1,68 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+    
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before kubeadm run"
+    ignore_errors: yes
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ master }}" groups=master
+
+- hosts: master
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+  
+  - name: Extend var
+    shell: lvextend -L+6GiB /dev/mapper/rootvg-var ; resize2fs /dev/mapper/rootvg-var
+  
+  - name: Delete old ethernet interface
+    shell: nmcli con delete {{ iface }}
+
+  - name: Enable kubelet
+    shell: systemctl enable kubelet
+
+  - name: Modules for crio
+    shell: modprobe br_netfilter; sysctl -w net.ipv4.ip_forward=1
+
+  - name: Run kubeadm
+    shell: kubeadm init --pod-network-cidr={{ podnetwork }} --service-cidr={{ svcnetwork }} --apiserver-advertise-address={{ ip }} > /tmp/kubeadm.out
+
+  - name: Enable kubelet
+    shell: systemctl enable kubelet
+
+  - name: Get token 
+    shell: cat /tmp/kubeadm.out | grep -E '\-\-token' | awk '{print $5}'
+    register: kube_token
+  
+  - name: Recreate kube_token
+    shell: kubectl token delete {{ kube_token.stdout }} ; kubeadm token create
+
+  - name: Register new kube token
+    shell: kubeadm token list | tail -n 1 | awk '{print $1}'
+    register: bootstrap_token
+
+  - name: Get CA sha256
+    shell: cat /tmp/kubeadm.out | grep -E 'sha256' | awk '{print $2}'
+    register: ca_token
+
+  - name: Create Token file
+    shell: echo "{{ bootstrap_token.stdout }};{{ ca_token.stdout }}" > /root/token.out
+
+  - name: Create .kube directory
+    shell: mkdir -p /root/.kube
+
+  - name: Copy cfg to .kube dir
+    shell: cp -i /etc/kubernetes/admin.conf /root/.kube/config 
+ 
+  - name: Change ownership to kube directory
+    shell: chown $(id -u):$(id -g) /root/.kube/config

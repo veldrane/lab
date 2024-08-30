@@ -24,6 +24,9 @@
   - name: Set variables
     include: include/_setup_vars.yaml
 
+  - name: Setup firewall rules
+    shell: firewall-cmd --permanent --add-port=6080/tcp --add-port 6080/tcp --add-port 8502/tcp --add-port 21000/tcp
+
   - name: Install yum utils
     shell: yum install -y yum-utils
 
@@ -32,6 +35,12 @@
 
   - name: Install yum consul and envoy proxy
     shell: yum install -y consul hashicorp-envoy.x86_64
+  
+  - name: Make certs dir
+    shell: mkdir -p /etc/consul.d/certs ; chown R consul.consul /etc/consul.d
+
+  - name: Mame Envoy dir
+    shell: mkdir /etc/envoy
 
   - name: Copy consul client definition
     copy: 

@@ -23,7 +23,7 @@
     shell: mkdir /data/vms/{{ hostname }}.{{ domain }} 
 
   - name: Clone template
-    shell: virt-clone --original-xml /data/vms/templates/basevm.xml --name {{ fqdn }} --file /data/vms/{{ fqdn }}/rootvg.qcow2
+    shell: virt-clone --original-xml /data/vms/templates/ovn.xml --name {{ fqdn }} --file /data/vms/{{ fqdn }}/rootvg.qcow2
 
   - name: Change rootvg size
     shell: qemu-img resize /data/vms/{{ fqdn }}/rootvg.qcow2 +{{ rootvg_size - 20 }}G
@@ -66,8 +66,11 @@
     shell: partprobe /dev/vda
 
   - name: PV resize
-    shell: pvresize /dev/vda2  
+    shell: pvresize /dev/vda2
 
+  - name: Delete wired connextion 1
+    shell: nmcli con delete "Wired connection 1"
+  
   - name: Add an Ethernet connection with static ip configuration
     shell: nmcli connection modify enp1s0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "{{ ipaip }}"
 
@@ -117,7 +120,7 @@
     ignore_errors: yes
   
   - name: "Change network configuration"
-    shell: "virt-xml {{ fqdn }} --xml ./devices/interface/vlan/tag/@id={{ virbr }} --edit"
+    shell: "virt-xml {{ fqdn }} --xml ./devices/interface/vlan/tag/@id={{ virbr1 }} --edit"
 
   - name: "Start domain"
     shell: "virsh start {{ fqdn }}"

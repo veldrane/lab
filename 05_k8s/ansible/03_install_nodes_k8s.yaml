@@ -8,7 +8,7 @@
     include: include/_setup_vars.yaml
 
   - name: Create snapshot for the host
-    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before k8s installation"
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before kubeadm installation"
     ignore_errors: yes
 
   - name: "Create ansible group for new hosts"
@@ -41,43 +41,6 @@
 
   - name: Set variables
     include: include/_setup_vars.yaml
-
-  - name: Disable SElinux
-    shell: setenforce 0 ; sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
-
-  - name: Make /etc/kubernetes directory and change the selinux context
-    shell: mkdir /etc/kubernetes ; semanage fcontext -a -t svirt_sandbox_file_t '/etc/kubernetes(/.*)?'
-
-  - name: Make /var/lib/etcd and change the selinux context 
-    shell: mkdir -p /var/lib/etcd ; semanage fcontext -a -t svirt_sandbox_file_t '/var/lib/etcd(/.*)?'
-
-  - name: Restore contexts
-    shell: restorecon -vR /etc/kubernetes ; restorecon -vR /var/lib/etcd
-
-  - name: Disable swap
-    shell: swapoff -a ; sed -i -E '/swap/d' /etc/fstab
-
-  - name: Disable firewalld
-    shell: systemctl stop firewalld && systemctl disable firewalld
-
-  - name: Install ovs
-    shell: yum install -y epel-release centos-release-nfv-common centos-release-nfv-openvswitch && yum install -y openvswitch3.3 libibverbs
-
-  - name: Copy kubernetes repo definition to yum dir
-    copy: 
-      src: include/kubernetes.repo
-      dest: /etc/yum.repos.d/kubernetes.repo
-  
-  - name: Copy crio repo definition to yum dir
-    copy: 
-      src: include/crio.repo
-      dest: /etc/yum.repos.d/crio.repo
-
-  - name: Install kubeadm, crio and wget
-    shell: yum install wget kubeadm cri-o kubelet libnetfilter_conntrack conntrack-tools socat kubectl -y
-
-  - name: Enable crio
-    shell: systemctl restart crio && systemctl enable crio
 
   - name: Copy ssh keys for root - HACK - must be changed!
     copy: 

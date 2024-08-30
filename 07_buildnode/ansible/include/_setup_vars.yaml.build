@@ -1,8 +1,8 @@
 - name: Set global variables
   set_fact:
     virbr: "8"
-    netsuffix: "52" 
-    hostname: "jump"
+    netsuffix: "22" 
+    hostname: "build"
     domain: "lab.syscallx86.com"
     mem: "4G"
     ipaserver: "freeipa.lab.syscallx86.com"

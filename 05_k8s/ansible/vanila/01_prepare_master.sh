@@ -17,6 +17,6 @@ do
     	exit 1
     fi
     #ansible-playbook ansible/02_prepare_master.yaml
-    ansible-playbook ansible/02_install_master_antrea_crio.yaml
+    #ansible-playbook ansible/02_install_master_antrea_crio.yaml
     i=$((i + 1))
 done

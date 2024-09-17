@@ -15,7 +15,7 @@ because of the enterprise standard.
 
 #### OS setup ####
 
-Centos 8 with kvm is used for this purpose.
+Rocky 9 with kvm is used for this purpose.
 
 
 #### KVM setup ####

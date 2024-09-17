@@ -1,0 +1,281 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "2"
+    kubernetes.io/description: |
+      This Deployment launches the ovn-kubernetes master networking components.
+  creationTimestamp: "2024-08-27T11:57:30Z"
+  generation: 2
+  name: ovnkube-master
+  namespace: ovn-kubernetes
+  resourceVersion: "601978"
+  uid: bd42d043-3775-4bc8-84e0-35d86776ff27
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: ovnkube-master
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        component: network
+        kubernetes.io/os: linux
+        name: ovnkube-master
+        type: infra
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: In
+                values:
+                - ""
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: name
+                operator: In
+                values:
+                - ovnkube-master
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - command:
+        - /root/ovnkube.sh
+        - run-ovn-northd
+        env:
+        - name: OVN_DAEMONSET_VERSION
+          value: 1.0.0
+        - name: OVN_LOGLEVEL_NORTHD
+          value: -vconsole:info -vfile:info
+        - name: K8S_APISERVER
+          valueFrom:
+            configMapKeyRef:
+              key: k8s_apiserver
+              name: ovn-config
+        - name: OVN_KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: OVN_SSL_ENABLE
+          value: "no"
+        image: registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
+        imagePullPolicy: IfNotPresent
+        name: ovn-northd
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/ovn-kube-util
+            - readiness-probe
+            - -t
+            - ovn-northd
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 30
+        resources:
+          requests:
+            cpu: 100m
+            memory: 300Mi
+        securityContext:
+          capabilities:
+            add:
+            - SYS_NICE
+          runAsUser: 0
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: FallbackToLogsOnError
+        volumeMounts:
+        - mountPath: /var/run/dbus/
+          name: host-var-run-dbus
+          readOnly: true
+        - mountPath: /var/log/openvswitch/
+          name: host-var-log-ovs
+        - mountPath: /var/log/ovn/
+          name: host-var-log-ovs
+        - mountPath: /var/run/openvswitch/
+          name: host-var-run-ovs
+        - mountPath: /var/run/ovn/
+          name: host-var-run-ovs
+        - mountPath: /ovn-cert
+          name: host-ovn-cert
+          readOnly: true
+      - command:
+        - /root/ovnkube.sh
+        - ovn-master
+        env:
+        - name: OVN_DAEMONSET_VERSION
+          value: 1.0.0
+        - name: OVNKUBE_LOGLEVEL
+          value: "5"
+        - name: OVNKUBE_LOGFILE_MAXSIZE
+          value: "100"
+        - name: OVNKUBE_LOGFILE_MAXBACKUPS
+          value: "5"
+        - name: OVNKUBE_LOGFILE_MAXAGE
+          value: "5"
+        - name: OVNKUBE_LIBOVSDB_CLIENT_LOGFILE
+        - name: OVNKUBE_CONFIG_DURATION_ENABLE
+        - name: OVNKUBE_METRICS_SCALE_ENABLE
+        - name: OVNKUBE_COMPACT_MODE_ENABLE
+          value: "false"
+        - name: OVN_NET_CIDR
+          valueFrom:
+            configMapKeyRef:
+              key: net_cidr
+              name: ovn-config
+        - name: OVN_SVC_CIDR
+          valueFrom:
+            configMapKeyRef:
+              key: svc_cidr
+              name: ovn-config
+        - name: K8S_APISERVER
+          valueFrom:
+            configMapKeyRef:
+              key: k8s_apiserver
+              name: ovn-config
+        - name: K8S_NODE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: K8S_NODE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: OVN_KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: OVN_HYBRID_OVERLAY_ENABLE
+        - name: OVN_ADMIN_NETWORK_POLICY_ENABLE
+        - name: OVN_EGRESSIP_ENABLE
+          value: "true"
+        - name: OVN_EGRESSIP_HEALTHCHECK_PORT
+        - name: OVN_EGRESSFIREWALL_ENABLE
+        - name: OVN_EGRESSQOS_ENABLE
+        - name: OVN_MULTI_NETWORK_ENABLE
+        - name: OVN_NETWORK_SEGMENTATION_ENABLE
+        - name: OVN_EGRESSSERVICE_ENABLE
+        - name: OVN_HYBRID_OVERLAY_NET_CIDR
+        - name: OVN_DISABLE_SNAT_MULTIPLE_GWS
+        - name: OVN_DISABLE_FORWARDING
+        - name: OVN_ENCAP_PORT
+        - name: OVN_EMPTY_LB_EVENTS
+        - name: OVN_V4_JOIN_SUBNET
+        - name: OVN_V6_JOIN_SUBNET
+        - name: OVN_V4_MASQUERADE_SUBNET
+        - name: OVN_V6_MASQUERADE_SUBNET
+        - name: OVN_SSL_ENABLE
+          value: "no"
+        - name: OVN_GATEWAY_MODE
+          value: local
+        - name: OVN_GATEWAY_OPTS
+        - name: OVN_MULTICAST_ENABLE
+        - name: OVN_ACL_LOGGING_RATE_LIMIT
+          value: "20"
+        - name: OVN_STATELESS_NETPOL_ENABLE
+        - name: OVN_ENABLE_MULTI_EXTERNAL_GATEWAY
+        - name: OVN_ENABLE_SVC_TEMPLATE_SUPPORT
+          value: "true"
+        - name: OVN_HOST_NETWORK_NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              key: host_network_namespace
+              name: ovn-config
+        - name: OVN_ENABLE_PERSISTENT_IPS
+        - name: OVN_ENABLE_DNSNAMERESOLVER
+          value: "false"
+        image: registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
+        imagePullPolicy: IfNotPresent
+        name: ovnkube-master
+        resources:
+          requests:
+            cpu: 100m
+            memory: 300Mi
+        securityContext:
+          runAsUser: 0
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: FallbackToLogsOnError
+        volumeMounts:
+        - mountPath: /var/run/dbus/
+          name: host-var-run-dbus
+          readOnly: true
+        - mountPath: /var/log/ovn-kubernetes/
+          name: host-var-log-ovnkube
+        - mountPath: /var/run/openvswitch/
+          name: host-var-run-ovs
+        - mountPath: /var/run/ovn/
+          name: host-var-run-ovs
+        - mountPath: /ovn-cert
+          name: host-ovn-cert
+          readOnly: true
+      dnsPolicy: Default
+      hostNetwork: true
+      priorityClassName: system-cluster-critical
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: ovnkube-master
+      serviceAccountName: ovnkube-master
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - operator: Exists
+      volumes:
+      - hostPath:
+          path: /var/run/dbus
+          type: ""
+        name: host-var-run-dbus
+      - hostPath:
+          path: /var/log/openvswitch
+          type: ""
+        name: host-var-log-ovs
+      - hostPath:
+          path: /var/log/ovn-kubernetes
+          type: ""
+        name: host-var-log-ovnkube
+      - hostPath:
+          path: /var/run/openvswitch
+          type: ""
+        name: host-var-run-ovs
+      - hostPath:
+          path: /etc/ovn
+          type: DirectoryOrCreate
+        name: host-ovn-cert
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2024-08-27T11:57:30Z"
+    lastUpdateTime: "2024-08-27T11:57:30Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2024-08-27T11:57:30Z"
+    lastUpdateTime: "2024-08-28T10:26:11Z"
+    message: ReplicaSet "ovnkube-master-f9c59bd6c" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  observedGeneration: 2
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

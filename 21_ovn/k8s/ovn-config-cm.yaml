@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  host_network_namespace: ovn-host-network
+  k8s_apiserver: https://10.1.16.11:6443
+  mtu: "1400"
+  net_cidr: 10.38.0.0/16
+  svc_cidr: 10.49.0.0/16
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"host_network_namespace":"ovn-host-network","k8s_apiserver":"https://10.1.16.11:6443","mtu":"1400","net_cidr":"10.38.0.0/16","svc_cidr":"10.49.0.0/16"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"ovn-config","namespace":"ovn-kubernetes"}}
+  creationTimestamp: "2024-08-27T10:13:50Z"
+  name: ovn-config
+  namespace: ovn-kubernetes
+  resourceVersion: "11184"
+  uid: 0949e29f-0a47-48f4-9fc3-6175f11677a1

@@ -1,0 +1,229 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{"kubernetes.io/description":"This daemonset launches the OVN NB/SB ovsdb service components.\n"},"name":"ovnkube-db","namespace":"ovn-kubernetes"},"spec":{"progressDeadlineSeconds":600,"replicas":1,"revisionHistoryLimit":10,"selector":{"matchLabels":{"name":"ovnkube-db"}},"strategy":{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"},"template":{"metadata":{"labels":{"component":"network","kubernetes.io/os":"linux","name":"ovnkube-db","ovn-db-pod":"true","type":"infra"}},"spec":{"containers":[{"command":["/root/ovnkube.sh","nb-ovsdb"],"env":[{"name":"OVN_DAEMONSET_VERSION","value":"1.0.0"},{"name":"OVN_LOGLEVEL_NB","value":"-vconsole:info -vfile:info"},{"name":"K8S_APISERVER","valueFrom":{"configMapKeyRef":{"key":"k8s_apiserver","name":"ovn-config"}}},{"name":"OVN_KUBERNETES_NAMESPACE","valueFrom":{"fieldRef":{"fieldPath":"metadata.namespace"}}},{"name":"K8S_NODE_IP","valueFrom":{"fieldRef":{"fieldPath":"status.hostIP"}}},{"name":"OVN_SSL_ENABLE","value":"no"},{"name":"OVN_NB_PORT","value":"6641"},{"name":"ENABLE_IPSEC","value":"false"},{"name":"OVN_NORTHD_BACKOFF_INTERVAL","value":""}],"image":"registry.lab.syscallx86.com/ovn-daemonset-fedora:latest","imagePullPolicy":"IfNotPresent","name":"nb-ovsdb","readinessProbe":{"exec":{"command":["/usr/bin/ovn-kube-util","readiness-probe","-t","ovnnb-db"]},"initialDelaySeconds":30,"periodSeconds":60,"timeoutSeconds":30},"resources":{"requests":{"cpu":"100m","memory":"300Mi"}},"securityContext":{"capabilities":{"add":["NET_ADMIN"]},"runAsUser":0},"terminationMessagePolicy":"FallbackToLogsOnError","volumeMounts":[{"mountPath":"/etc/openvswitch/","name":"host-var-lib-ovs"},{"mountPath":"/etc/ovn/","name":"host-var-lib-ovs"},{"mountPath":"/var/log/openvswitch/","name":"host-var-log-ovs"},{"mountPath":"/var/log/ovn/","name":"host-var-log-ovs"},{"mountPath":"/ovn-cert","name":"host-ovn-cert","readOnly":true},{"mountPath":"/var/run/ovn/","name":"host-var-run-ovs"},{"mountPath":"/var/run/openvswitch/","name":"host-var-run-ovs"}]},{"command":["/root/ovnkube.sh","sb-ovsdb"],"env":[{"name":"OVN_DAEMONSET_VERSION","value":"1.0.0"},{"name":"OVN_LOGLEVEL_SB","value":"-vconsole:info -vfile:info"},{"name":"K8S_APISERVER","valueFrom":{"configMapKeyRef":{"key":"k8s_apiserver","name":"ovn-config"}}},{"name":"OVN_KUBERNETES_NAMESPACE","valueFrom":{"fieldRef":{"fieldPath":"metadata.namespace"}}},{"name":"K8S_NODE_IP","valueFrom":{"fieldRef":{"fieldPath":"status.hostIP"}}},{"name":"OVN_SSL_ENABLE","value":"no"},{"name":"OVN_SB_PORT","value":"6642"}],"image":"registry.lab.syscallx86.com/ovn-daemonset-fedora:latest","imagePullPolicy":"IfNotPresent","name":"sb-ovsdb","readinessProbe":{"exec":{"command":["/usr/bin/ovn-kube-util","readiness-probe","-t","ovnsb-db"]},"initialDelaySeconds":30,"periodSeconds":60,"timeoutSeconds":30},"resources":{"requests":{"cpu":"100m","memory":"300Mi"}},"securityContext":{"capabilities":{"add":["NET_ADMIN"]},"runAsUser":0},"terminationMessagePolicy":"FallbackToLogsOnError","volumeMounts":[{"mountPath":"/etc/openvswitch/","name":"host-var-lib-ovs"},{"mountPath":"/etc/ovn/","name":"host-var-lib-ovs"},{"mountPath":"/var/log/openvswitch/","name":"host-var-log-ovs"},{"mountPath":"/var/log/ovn/","name":"host-var-log-ovs"},{"mountPath":"/ovn-cert","name":"host-ovn-cert","readOnly":true},{"mountPath":"/var/run/ovn/","name":"host-var-run-ovs"},{"mountPath":"/var/run/openvswitch/","name":"host-var-run-ovs"}]}],"dnsPolicy":"Default","hostNetwork":true,"nodeSelector":{"kubernetes.io/os":"linux","node-role.kubernetes.io/control-plane":""},"priorityClassName":"system-cluster-critical","serviceAccountName":"ovnkube-db","tolerations":[{"operator":"Exists"}],"volumes":[{"hostPath":{"path":"/var/lib/openvswitch"},"name":"host-var-lib-ovs"},{"hostPath":{"path":"/var/log/openvswitch"},"name":"host-var-log-ovs"},{"hostPath":{"path":"/etc/ovn","type":"DirectoryOrCreate"},"name":"host-ovn-cert"},{"hostPath":{"path":"/var/run/openvswitch"},"name":"host-var-run-ovs"}]}}}}
+    kubernetes.io/description: |
+      This daemonset launches the OVN NB/SB ovsdb service components.
+  creationTimestamp: "2024-08-27T10:19:47Z"
+  generation: 5
+  name: ovnkube-db
+  namespace: ovn-kubernetes
+  resourceVersion: "601906"
+  uid: fb67b434-9c83-4429-b764-76944af5c6bb
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      name: ovnkube-db
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        component: network
+        kubernetes.io/os: linux
+        name: ovnkube-db
+        ovn-db-pod: "true"
+        type: infra
+    spec:
+      containers:
+      - command:
+        - /root/ovnkube.sh
+        - nb-ovsdb
+        env:
+        - name: OVN_DAEMONSET_VERSION
+          value: 1.0.0
+        - name: OVN_LOGLEVEL_NB
+          value: -vconsole:info -vfile:info
+        - name: K8S_APISERVER
+          valueFrom:
+            configMapKeyRef:
+              key: k8s_apiserver
+              name: ovn-config
+        - name: OVN_KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: K8S_NODE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: OVN_SSL_ENABLE
+          value: "no"
+        - name: OVN_NB_PORT
+          value: "6641"
+        - name: ENABLE_IPSEC
+          value: "false"
+        - name: OVN_NORTHD_BACKOFF_INTERVAL
+        image: registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
+        imagePullPolicy: IfNotPresent
+        name: nb-ovsdb
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/ovn-kube-util
+            - readiness-probe
+            - -t
+            - ovnnb-db
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 30
+        resources:
+          requests:
+            cpu: 100m
+            memory: 300Mi
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+          runAsUser: 0
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: FallbackToLogsOnError
+        volumeMounts:
+        - mountPath: /etc/openvswitch/
+          name: host-var-lib-ovs
+        - mountPath: /etc/ovn/
+          name: host-var-lib-ovs
+        - mountPath: /var/log/openvswitch/
+          name: host-var-log-ovs
+        - mountPath: /var/log/ovn/
+          name: host-var-log-ovs
+        - mountPath: /ovn-cert
+          name: host-ovn-cert
+          readOnly: true
+        - mountPath: /var/run/ovn/
+          name: host-var-run-ovs
+        - mountPath: /var/run/openvswitch/
+          name: host-var-run-ovs
+      - command:
+        - /root/ovnkube.sh
+        - sb-ovsdb
+        env:
+        - name: OVN_DAEMONSET_VERSION
+          value: 1.0.0
+        - name: OVN_LOGLEVEL_SB
+          value: -vconsole:info -vfile:info
+        - name: K8S_APISERVER
+          valueFrom:
+            configMapKeyRef:
+              key: k8s_apiserver
+              name: ovn-config
+        - name: OVN_KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: K8S_NODE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: OVN_SSL_ENABLE
+          value: "no"
+        - name: OVN_SB_PORT
+          value: "6642"
+        image: registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
+        imagePullPolicy: IfNotPresent
+        name: sb-ovsdb
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/ovn-kube-util
+            - readiness-probe
+            - -t
+            - ovnsb-db
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 30
+        resources:
+          requests:
+            cpu: 100m
+            memory: 300Mi
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+          runAsUser: 0
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: FallbackToLogsOnError
+        volumeMounts:
+        - mountPath: /etc/openvswitch/
+          name: host-var-lib-ovs
+        - mountPath: /etc/ovn/
+          name: host-var-lib-ovs
+        - mountPath: /var/log/openvswitch/
+          name: host-var-log-ovs
+        - mountPath: /var/log/ovn/
+          name: host-var-log-ovs
+        - mountPath: /ovn-cert
+          name: host-ovn-cert
+          readOnly: true
+        - mountPath: /var/run/ovn/
+          name: host-var-run-ovs
+        - mountPath: /var/run/openvswitch/
+          name: host-var-run-ovs
+      dnsPolicy: Default
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/os: linux
+        node-role.kubernetes.io/control-plane: ""
+      priorityClassName: system-cluster-critical
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: ovnkube-db
+      serviceAccountName: ovnkube-db
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - operator: Exists
+      volumes:
+      - hostPath:
+          path: /var/lib/openvswitch
+          type: ""
+        name: host-var-lib-ovs
+      - hostPath:
+          path: /var/log/openvswitch
+          type: ""
+        name: host-var-log-ovs
+      - hostPath:
+          path: /etc/ovn
+          type: DirectoryOrCreate
+        name: host-ovn-cert
+      - hostPath:
+          path: /var/run/openvswitch
+          type: ""
+        name: host-var-run-ovs
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2024-08-27T10:19:47Z"
+    lastUpdateTime: "2024-08-27T10:20:45Z"
+    message: ReplicaSet "ovnkube-db-84468d897f" has successfully progressed.
+    reason: NewReplicaSetAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2024-09-17T07:23:09Z"
+    lastUpdateTime: "2024-09-17T07:23:09Z"
+    message: Deployment has minimum availability.
+    reason: MinimumReplicasAvailable
+    status: "True"
+    type: Available
+  observedGeneration: 5
+  readyReplicas: 1
+  replicas: 1
+  updatedReplicas: 1

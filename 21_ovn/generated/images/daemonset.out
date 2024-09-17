@@ -1,0 +1,760 @@
++ set -e
++ command -v jinjanate
++ OVN_OUTPUT_DIR=
++ OVN_IMAGE=
++ OVN_IMAGE_PULL_POLICY=
++ OVN_NET_CIDR=
++ OVN_SVC_CIDR=
++ OVN_K8S_APISERVER=
++ OVN_GATEWAY_MODE=
++ OVN_GATEWAY_OPTS=
++ OVN_DUMMY_GATEWAY_BRIDGE=
++ OVN_DB_REPLICAS=
++ OVN_MTU=
++ OVN_SSL_ENABLE=
++ OVN_UNPRIVILEGED_MODE=
++ MASTER_LOGLEVEL=
++ NODE_LOGLEVEL=
++ DBCHECKER_LOGLEVEL=
++ OVN_LOGLEVEL_NORTHD=
++ OVN_LOGLEVEL_NB=
++ OVN_LOGLEVEL_SB=
++ OVN_LOGLEVEL_CONTROLLER=
++ OVN_LOGLEVEL_NBCTLD=
++ OVNKUBE_LOGFILE_MAXSIZE=
++ OVNKUBE_LOGFILE_MAXBACKUPS=
++ OVNKUBE_LOGFILE_MAXAGE=
++ OVNKUBE_LIBOVSDB_CLIENT_LOGFILE=
++ OVN_ACL_LOGGING_RATE_LIMIT=
++ OVN_MASTER_COUNT=
++ OVN_REMOTE_PROBE_INTERVAL=
++ OVN_MONITOR_ALL=
++ OVN_OFCTRL_WAIT_BEFORE_CLEAR=
++ OVN_ENABLE_LFLOW_CACHE=
++ OVN_LFLOW_CACHE_LIMIT=
++ OVN_LFLOW_CACHE_LIMIT_KB=
++ OVN_HYBRID_OVERLAY_ENABLE=
++ OVN_DISABLE_SNAT_MULTIPLE_GWS=
++ OVN_DISABLE_FORWARDING=
++ OVN_DISABLE_PKT_MTU_CHECK=
++ OVN_EMPTY_LB_EVENTS=
++ OVN_MULTICAST_ENABLE=
++ OVN_ADMIN_NETWORK_POLICY_ENABLE=
++ OVN_EGRESSIP_ENABLE=
++ OVN_EGRESSIP_HEALTHCHECK_PORT=
++ OVN_EGRESSFIREWALL_ENABLE=
++ OVN_EGRESSQOS_ENABLE=
++ OVN_EGRESSSERVICE_ENABLE=
++ OVN_DISABLE_OVN_IFACE_ID_VER=false
++ OVN_MULTI_NETWORK_ENABLE=
++ OVN_NETWORK_SEGMENTATION_ENABLE=
++ OVN_V4_JOIN_SUBNET=
++ OVN_V6_JOIN_SUBNET=
++ OVN_V4_MASQUERADE_SUBNET=
++ OVN_V6_MASQUERADE_SUBNET=
++ OVN_V4_TRANSIT_SWITCH_SUBNET=
++ OVN_V6_TRANSIT_SWITCH_SUBNET=
++ OVN_NETFLOW_TARGETS=
++ OVN_SFLOW_TARGETS=
++ OVN_IPFIX_TARGETS=
++ OVN_IPFIX_SAMPLING=
++ OVN_IPFIX_CACHE_MAX_FLOWS=
++ OVN_IPFIX_CACHE_ACTIVE_TIMEOUT=
++ OVN_HOST_NETWORK_NAMESPACE=
++ OVN_EX_GW_NETWORK_INTERFACE=
++ OVNKUBE_NODE_MGMT_PORT_NETDEV=
++ OVNKUBE_CONFIG_DURATION_ENABLE=
++ OVNKUBE_METRICS_SCALE_ENABLE=
++ OVN_STATELESS_NETPOL_ENABLE=false
++ OVN_ENABLE_INTERCONNECT=
++ OVN_ENABLE_OVNKUBE_IDENTITY=true
++ OVN_ENABLE_PERSISTENT_IPS=
++ OVN_ENABLE_SVC_TEMPLATE_SUPPORT=true
++ OVN_ENABLE_DNSNAMERESOLVER=false
++ IN_UPGRADE=
++ OVN_NORTHD_BACKOFF_INTERVAL=
++ '[' --image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest '!=' '' ']'
+++ echo --image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
+++ awk -F= '{print $1}'
++ PARAM=--image
+++ echo --image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
+++ cut -d= -f2-
++ VALUE=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ case $PARAM in
++ OVN_IMAGE=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ shift
++ '[' --net-cidr=10.38.0.0/16 '!=' '' ']'
+++ echo --net-cidr=10.38.0.0/16
+++ awk -F= '{print $1}'
++ PARAM=--net-cidr
+++ echo --net-cidr=10.38.0.0/16
+++ cut -d= -f2-
++ VALUE=10.38.0.0/16
++ case $PARAM in
++ OVN_NET_CIDR=10.38.0.0/16
++ shift
++ '[' --svc-cidr=10.49.0.0/16 '!=' '' ']'
+++ echo --svc-cidr=10.49.0.0/16
+++ awk -F= '{print $1}'
++ PARAM=--svc-cidr
+++ echo --svc-cidr=10.49.0.0/16
+++ cut -d= -f2-
++ VALUE=10.49.0.0/16
++ case $PARAM in
++ OVN_SVC_CIDR=10.49.0.0/16
++ shift
++ '[' --gateway-mode=local '!=' '' ']'
+++ echo --gateway-mode=local
+++ awk -F= '{print $1}'
++ PARAM=--gateway-mode
+++ echo --gateway-mode=local
+++ cut -d= -f2-
++ VALUE=local
++ case $PARAM in
++ OVN_GATEWAY_MODE=local
++ shift
++ '[' --k8s-apiserver=https://10.1.16.11:6443 '!=' '' ']'
+++ echo --k8s-apiserver=https://10.1.16.11:6443
+++ awk -F= '{print $1}'
++ PARAM=--k8s-apiserver
+++ echo --k8s-apiserver=https://10.1.16.11:6443
+++ cut -d= -f2-
++ VALUE=https://10.1.16.11:6443
++ case $PARAM in
++ OVN_K8S_APISERVER=https://10.1.16.11:6443
++ shift
++ '[' '' '!=' '' ']'
++ '[' -z ']'
++ output_dir=../yaml
++ echo 'output_dir: ../yaml'
++ image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ echo 'image: registry.lab.syscallx86.com/ovn-daemonset-fedora:latest'
++ ovnkube_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ echo 'ovnkube_image: registry.lab.syscallx86.com/ovn-daemonset-fedora:latest'
++ image_pull_policy=IfNotPresent
++ echo 'imagePullPolicy: IfNotPresent'
++ ovn_gateway_mode=local
++ echo 'ovn_gateway_mode: local'
++ ovn_gateway_opts=
++ echo 'ovn_gateway_opts: '
++ ovn_dummy_gateway_bridge=
++ echo 'ovn_dummy_gateway_bridge: '
++ enable_ipsec=false
++ echo 'enable_ipsec: false'
++ ovn_db_replicas=3
++ echo 'ovn_db_replicas: 3'
++ ovn_db_minAvailable=2
++ echo 'ovn_db_minAvailable: 2'
++ master_loglevel=4
++ echo 'master_loglevel: 4'
++ node_loglevel=5
++ echo 'node_loglevel: 5'
++ db_checker_loglevel=4
++ echo 'db_checker_loglevel: 4'
++ ovn_loglevel_northd='-vconsole:info -vfile:info'
++ echo 'ovn_loglevel_northd: -vconsole:info -vfile:info'
++ ovn_loglevel_nb='-vconsole:info -vfile:info'
++ echo 'ovn_loglevel_nb: -vconsole:info -vfile:info'
++ ovn_loglevel_sb='-vconsole:info -vfile:info'
++ echo 'ovn_loglevel_sb: -vconsole:info -vfile:info'
++ ovn_loglevel_controller=-vconsole:dbg
++ echo 'ovn_loglevel_controller: -vconsole:dbg'
++ ovnkube_logfile_maxsize=100
++ echo 'ovnkube_logfile_maxsize: 100'
++ ovnkube_logfile_maxbackups=5
++ echo 'ovnkube_logfile_maxbackups: 5'
++ ovnkube_logfile_maxage=5
++ echo 'ovnkube_logfile_maxage: 5'
++ ovnkube_libovsdb_client_logfile=
++ echo 'ovnkube_libovsdb_client_logfile: '
++ ovn_acl_logging_rate_limit=20
++ echo 'ovn_acl_logging_rate_limit: 20'
++ ovn_hybrid_overlay_enable=
++ echo 'ovn_hybrid_overlay_enable: '
++ ovn_admin_network_policy_enable=
++ echo 'ovn_admin_network_policy_enable: '
++ ovn_egress_ip_enable=
++ echo 'ovn_egress_ip_enable: '
++ ovn_egress_ip_healthcheck_port=
++ echo 'ovn_egress_ip_healthcheck_port: '
++ ovn_egress_firewall_enable=
++ echo 'ovn_egress_firewall_enable: '
++ ovn_egress_qos_enable=
++ echo 'ovn_egress_qos_enable: '
++ ovn_egress_service_enable=
++ echo 'ovn_egress_service_enable: '
++ ovn_disable_ovn_iface_id_ver=false
++ echo 'ovn_disable_ovn_iface_id_ver: false'
++ ovn_multi_network_enable=
++ echo 'ovn_multi_network_enable: '
++ ovn_network_segmentation_enable=
++ echo 'ovn_network_segmentation_enable: '
++ ovn_hybrid_overlay_net_cidr=
++ echo 'ovn_hybrid_overlay_net_cidr: '
++ ovn_disable_snat_multiple_gws=
++ echo 'ovn_disable_snat_multiple_gws: '
++ ovn_disable_forwarding=
++ echo 'ovn_disable_forwarding: '
++ ovn_encap_port=
++ echo 'ovn_encap_port: '
++ ovn_disable_pkt_mtu_check=
++ echo 'ovn_disable_pkt_mtu_check: '
++ ovn_empty_lb_events=
++ echo 'ovn_empty_lb_events: '
++ ovn_ssl_en=no
++ echo 'ovn_ssl_enable: no'
++ ovn_unprivileged_mode=no
++ echo 'ovn_unprivileged_mode: no'
++ ovn_nb_raft_election_timer=1000
++ echo 'ovn_nb_raft_election_timer: 1000'
++ ovn_sb_raft_election_timer=1000
++ echo 'ovn_sb_raft_election_timer: 1000'
++ ovn_master_count=1
++ echo 'ovn_master_count: 1'
++ ovn_remote_probe_interval=100000
++ echo 'ovn_remote_probe_interval: 100000'
++ ovn_monitor_all=
++ echo 'ovn_monitor_all: '
++ ovn_ofctrl_wait_before_clear=
++ echo 'ovn_ofctrl_wait_before_clear: '
++ ovn_enable_lflow_cache=
++ echo 'ovn_enable_lflow_cache: '
++ ovn_lflow_cache_limit=
++ echo 'ovn_lflow_cache_limit: '
++ ovn_lflow_cache_limit_kb=
++ echo 'ovn_lflow_cache_limit_kb: '
++ ovn_nb_port=6641
++ echo 'ovn_nb_port: 6641'
++ ovn_sb_port=6642
++ echo 'ovn_sb_port: 6642'
++ ovn_nb_raft_port=6643
++ echo 'ovn_nb_raft_port: 6643'
++ ovn_sb_raft_port=6644
++ echo 'ovn_sb_raft_port: 6644'
++ ovn_multicast_enable=
++ echo 'ovn_multicast_enable: '
++ ovn_v4_join_subnet=
++ echo 'ovn_v4_join_subnet: '
++ ovn_v6_join_subnet=
++ echo 'ovn_v6_join_subnet: '
++ ovn_v4_masquerade_subnet=
++ echo 'ovn_v4_masquerade_subnet: '
++ ovn_v6_masquerade_subnet=
++ echo 'ovn_v6_masquerade_subnet: '
++ ovn_v4_transit_switch_subnet=
++ echo 'ovn_v4_transit_switch_subnet: '
++ ovn_v6_transit_switch_subnet=
++ echo 'ovn_v6_transit_switch_subnet: '
++ ovn_netflow_targets=
++ echo 'ovn_netflow_targets: '
++ ovn_sflow_targets=
++ echo 'ovn_sflow_targets: '
++ ovn_ipfix_targets=
++ echo 'ovn_ipfix_targets: '
++ ovn_ipfix_sampling=
++ echo 'ovn_ipfix_sampling: '
++ ovn_ipfix_cache_max_flows=
++ echo 'ovn_ipfix_cache_max_flows: '
++ ovn_ipfix_cache_active_timeout=
++ echo 'ovn_ipfix_cache_active_timeout: '
++ ovn_ex_gw_networking_interface=
++ echo 'ovn_ex_gw_networking_interface: '
++ ovnkube_node_mgmt_port_netdev=
++ echo 'ovnkube_node_mgmt_port_netdev: '
++ ovnkube_config_duration_enable=
++ echo 'ovnkube_config_duration_enable: '
++ ovnkube_metrics_scale_enable=
++ echo 'ovnkube_metrics_scale_enable: '
++ ovn_stateless_netpol_enable=false
++ echo 'ovn_stateless_netpol_enable: false'
++ ovnkube_compact_mode_enable=false
++ echo 'ovnkube_compact_mode_enable: false'
++ ovn_enable_interconnect=
++ echo 'ovn_enable_interconnect: '
++ ovn_enable_multi_external_gateway=
++ echo 'ovn_enable_multi_external_gateway: '
++ ovn_enable_ovnkube_identity=true
++ echo 'ovn_enable_ovnkube_identity: true'
++ ovn_northd_backoff_interval=
++ echo 'ovn_northd_backoff_interval: '
++ ovn_enable_persistent_ips=
++ echo 'ovn_enable_persistent_ips: '
++ ovn_enable_svc_template_support=true
++ echo 'ovn_enable_svc_template_support: true'
++ ovn_enable_dnsnameresolver=false
++ echo 'ovn_enable_dnsnameresolver: false'
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovnkube_compact_mode_enable=false
++ ovn_image_pull_policy=IfNotPresent
++ ovn_unprivileged_mode=no
++ ovn_gateway_mode=local
++ ovn_gateway_opts=
++ ovn_dummy_gateway_bridge=
++ ovnkube_node_loglevel=5
++ ovn_loglevel_controller=-vconsole:dbg
++ ovnkube_logfile_maxsize=100
++ ovnkube_logfile_maxbackups=5
++ ovnkube_logfile_maxage=5
++ ovn_hybrid_overlay_net_cidr=
++ ovn_hybrid_overlay_enable=
++ ovn_disable_snat_multiple_gws=
++ ovn_disable_forwarding=
++ ovn_encap_port=
++ ovn_disable_pkt_mtu_check=
++ ovn_v4_join_subnet=
++ ovn_v6_join_subnet=
++ ovn_v4_masquerade_subnet=
++ ovn_v6_masquerade_subnet=
++ ovn_multicast_enable=
++ ovn_admin_network_policy_enable=
++ ovn_egress_ip_enable=
++ ovn_egress_ip_healthcheck_port=
++ ovn_multi_network_enable=
++ ovn_network_segmentation_enable=
++ ovn_egress_service_enable=
++ ovn_ssl_en=no
++ ovn_remote_probe_interval=100000
++ ovn_monitor_all=
++ ovn_ofctrl_wait_before_clear=
++ ovn_enable_lflow_cache=
++ ovn_lflow_cache_limit=
++ ovn_lflow_cache_limit_kb=
++ ovn_netflow_targets=
++ ovn_sflow_targets=
++ ovn_ipfix_targets=
++ ovn_ipfix_sampling=
++ ovn_ipfix_cache_max_flows=
++ ovn_ipfix_cache_active_timeout=
++ ovn_ex_gw_networking_interface=
++ ovn_disable_ovn_iface_id_ver=false
++ ovnkube_node_mgmt_port_netdev=
++ ovn_enable_interconnect=
++ ovn_enable_multi_external_gateway=
++ ovn_enable_ovnkube_identity=true
++ ovnkube_app_name=ovnkube-node
++ jinjanate ../templates/ovnkube-node.yaml.j2 -o ../yaml/ovnkube-node.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovnkube_compact_mode_enable=false
++ ovn_image_pull_policy=IfNotPresent
++ ovn_unprivileged_mode=no
++ ovn_gateway_mode=local
++ ovn_gateway_opts=
++ ovn_dummy_gateway_bridge=
++ ovnkube_node_loglevel=5
++ ovn_loglevel_controller=-vconsole:dbg
++ ovnkube_logfile_maxsize=100
++ ovnkube_logfile_maxbackups=5
++ ovnkube_logfile_maxage=5
++ ovn_hybrid_overlay_net_cidr=
++ ovn_hybrid_overlay_enable=
++ ovn_disable_snat_multiple_gws=
++ ovn_disable_forwarding=
++ ovn_encap_port=
++ ovn_disable_pkt_mtu_check=
++ ovn_v4_join_subnet=
++ ovn_v6_join_subnet=
++ ovn_v4_masquerade_subnet=
++ ovn_v6_masquerade_subnet=
++ ovn_multicast_enable=
++ ovn_admin_network_policy_enable=
++ ovn_egress_ip_enable=
++ ovn_egress_ip_healthcheck_port=
++ ovn_multi_network_enable=
++ ovn_network_segmentation_enable=
++ ovn_egress_service_enable=
++ ovn_ssl_en=no
++ ovn_remote_probe_interval=100000
++ ovn_monitor_all=
++ ovn_ofctrl_wait_before_clear=
++ ovn_enable_lflow_cache=
++ ovn_lflow_cache_limit=
++ ovn_lflow_cache_limit_kb=
++ ovn_netflow_targets=
++ ovn_sflow_targets=
++ ovn_ipfix_targets=
++ ovn_ipfix_sampling=
++ ovn_ipfix_cache_max_flows=
++ ovn_ipfix_cache_active_timeout=
++ ovn_ex_gw_networking_interface=
++ ovn_disable_ovn_iface_id_ver=false
++ ovnkube_node_mgmt_port_netdev=
++ ovn_enable_interconnect=
++ ovn_enable_multi_external_gateway=
++ ovn_enable_ovnkube_identity=true
++ ovnkube_app_name=ovnkube-node-dpu
++ jinjanate ../templates/ovnkube-node.yaml.j2 -o ../yaml/ovnkube-node-dpu.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovnkube_compact_mode_enable=false
++ ovn_image_pull_policy=IfNotPresent
++ kind=
++ ovn_unprivileged_mode=no
++ ovn_gateway_mode=local
++ ovn_gateway_opts=
++ ovn_dummy_gateway_bridge=
++ ovnkube_node_loglevel=5
++ ovn_loglevel_controller=-vconsole:dbg
++ ovnkube_logfile_maxsize=100
++ ovnkube_logfile_maxbackups=5
++ ovnkube_logfile_maxage=5
++ ovn_hybrid_overlay_net_cidr=
++ ovn_hybrid_overlay_enable=
++ ovn_disable_snat_multiple_gws=
++ ovn_disable_forwarding=
++ ovn_encap_port=
++ ovn_disable_pkt_mtu_check=
++ ovn_v4_join_subnet=
++ ovn_v6_join_subnet=
++ ovn_v4_masquerade_subnet=
++ ovn_v6_masquerade_subnet=
++ ovn_multicast_enable=
++ ovn_admin_network_policy_enable=
++ ovn_egress_ip_enable=
++ ovn_egress_ip_healthcheck_port=
++ ovn_egress_service_enable=
++ ovn_netflow_targets=
++ ovn_sflow_targets=
++ ovn_ipfix_targets=
++ ovn_ipfix_sampling=
++ ovn_ipfix_cache_max_flows=
++ ovn_ipfix_cache_active_timeout=
++ ovn_ex_gw_networking_interface=
++ ovnkube_node_mgmt_port_netdev=
++ ovn_enable_ovnkube_identity=true
++ ovnkube_app_name=ovnkube-node-dpu-host
++ jinjanate ../templates/ovnkube-node.yaml.j2 -o ../yaml/ovnkube-node-dpu-host.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovn_image_pull_policy=IfNotPresent
++ ovnkube_master_loglevel=4
++ ovn_loglevel_northd='-vconsole:info -vfile:info'
++ ovnkube_logfile_maxsize=100
++ ovnkube_logfile_maxbackups=5
++ ovnkube_logfile_maxage=5
++ ovnkube_libovsdb_client_logfile=
++ ovnkube_config_duration_enable=
++ ovnkube_metrics_scale_enable=
++ ovn_acl_logging_rate_limit=20
++ ovn_hybrid_overlay_net_cidr=
++ ovn_hybrid_overlay_enable=
++ ovn_disable_snat_multiple_gws=
++ ovn_disable_forwarding=
++ ovn_encap_port=
++ ovn_disable_pkt_mtu_check=
++ ovn_empty_lb_events=
++ ovn_v4_join_subnet=
++ ovn_v6_join_subnet=
++ ovn_v4_masquerade_subnet=
++ ovn_v6_masquerade_subnet=
++ ovn_multicast_enable=
++ ovn_admin_network_policy_enable=
++ ovn_egress_ip_enable=
++ ovn_egress_ip_healthcheck_port=
++ ovn_egress_firewall_enable=
++ ovn_egress_qos_enable=
++ ovn_multi_network_enable=
++ ovn_network_segmentation_enable=
++ ovn_egress_service_enable=
++ ovn_ssl_en=no
++ ovn_master_count=1
++ ovn_gateway_mode=local
++ ovn_gateway_opts=
++ ovn_dummy_gateway_bridge=
++ ovn_ex_gw_networking_interface=
++ ovn_stateless_netpol_enable=
++ ovnkube_compact_mode_enable=false
++ ovn_unprivileged_mode=no
++ ovn_enable_multi_external_gateway=
++ ovn_enable_ovnkube_identity=true
++ ovn_enable_persistent_ips=
++ ovn_enable_svc_template_support=true
++ ovn_enable_dnsnameresolver=false
++ jinjanate ../templates/ovnkube-master.yaml.j2 -o ../yaml/ovnkube-master.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovn_image_pull_policy=IfNotPresent
++ ovnkube_master_loglevel=4
++ ovn_loglevel_northd='-vconsole:info -vfile:info'
++ ovnkube_logfile_maxsize=100
++ ovnkube_logfile_maxbackups=5
++ ovnkube_logfile_maxage=5
++ ovnkube_config_duration_enable=
++ ovnkube_metrics_scale_enable=
++ ovn_acl_logging_rate_limit=20
++ ovn_hybrid_overlay_net_cidr=
++ ovn_hybrid_overlay_enable=
++ ovn_disable_snat_multiple_gws=
++ ovn_disable_pkt_mtu_check=
++ ovn_empty_lb_events=
++ ovn_v4_join_subnet=
++ ovn_v6_join_subnet=
++ ovn_v4_masquerade_subnet=
++ ovn_v6_masquerade_subnet=
++ ovn_multicast_enable=
++ ovn_admin_network_policy_enable=
++ ovn_egress_ip_enable=
++ ovn_egress_ip_healthcheck_port=
++ ovn_egress_firewall_enable=
++ ovn_egress_qos_enable=
++ ovn_multi_network_enable=
++ ovn_network_segmentation_enable=
++ ovn_egress_service_enable=
++ ovn_ssl_en=no
++ ovn_master_count=1
++ ovn_gateway_mode=local
++ ovn_ex_gw_networking_interface=
++ ovn_enable_interconnect=
++ ovn_enable_multi_external_gateway=
++ ovn_enable_ovnkube_identity=true
++ ovn_v4_transit_switch_subnet=
++ ovn_v6_transit_switch_subnet=
++ ovn_enable_persistent_ips=
++ ovn_enable_dnsnameresolver=false
++ jinjanate ../templates/ovnkube-control-plane.yaml.j2 -o ../yaml/ovnkube-control-plane.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovn_image_pull_policy=IfNotPresent
++ ovn_loglevel_nb='-vconsole:info -vfile:info'
++ ovn_loglevel_sb='-vconsole:info -vfile:info'
++ ovn_ssl_en=no
++ ovn_nb_port=6641
++ ovn_sb_port=6642
++ enable_ipsec=false
++ ovn_northd_backoff_interval=
++ jinjanate ../templates/ovnkube-db.yaml.j2 -o ../yaml/ovnkube-db.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovn_image_pull_policy=IfNotPresent
++ ovn_db_replicas=3
++ ovn_db_minAvailable=2
++ ovn_loglevel_nb='-vconsole:info -vfile:info'
++ ovn_loglevel_sb='-vconsole:info -vfile:info'
++ ovn_dbchecker_loglevel=4
++ ovnkube_logfile_maxsize=100
++ ovnkube_logfile_maxbackups=5
++ ovnkube_logfile_maxage=5
++ ovn_ssl_en=no
++ ovn_nb_raft_election_timer=1000
++ ovn_sb_raft_election_timer=1000
++ ovn_nb_port=6641
++ ovn_sb_port=6642
++ ovn_nb_raft_port=6643
++ ovn_sb_raft_port=6644
++ enable_ipsec=false
++ ovn_northd_backoff_interval=
++ jinjanate ../templates/ovnkube-db-raft.yaml.j2 -o ../yaml/ovnkube-db-raft.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovn_image_pull_policy=IfNotPresent
++ ovn_unprivileged_mode=no
++ ovn_gateway_mode=local
++ ovn_gateway_opts=
++ ovnkube_node_loglevel=5
++ ovnkube_local_loglevel=5
++ ovn_loglevel_controller=-vconsole:dbg
++ ovnkube_logfile_maxsize=100
++ ovnkube_logfile_maxbackups=5
++ ovnkube_logfile_maxage=5
++ ovnkube_libovsdb_client_logfile=
++ ovnkube_config_duration_enable=
++ ovnkube_metrics_scale_enable=
++ ovn_hybrid_overlay_net_cidr=
++ ovn_hybrid_overlay_enable=
++ ovn_disable_snat_multiple_gws=
++ ovn_disable_forwarding=
++ ovn_encap_port=
++ ovn_disable_pkt_mtu_check=
++ ovn_v4_join_subnet=
++ ovn_v6_join_subnet=
++ ovn_v4_masquerade_subnet=
++ ovn_v6_masquerade_subnet=
++ ovn_multicast_enable=
++ ovn_admin_network_policy_enable=
++ ovn_egress_ip_enable=
++ ovn_egress_ip_healthcheck_port=
++ ovn_egress_firewall_enable=
++ ovn_egress_qos_enable=
++ ovn_multi_network_enable=
++ ovn_network_segmentation_enable=
++ ovn_egress_service_enable=
++ ovn_ssl_en=no
++ ovn_remote_probe_interval=100000
++ ovn_monitor_all=
++ ovn_ofctrl_wait_before_clear=
++ ovn_enable_lflow_cache=
++ ovn_lflow_cache_limit=
++ ovn_lflow_cache_limit_kb=
++ ovn_netflow_targets=
++ ovn_sflow_targets=
++ ovn_ipfix_targets=
++ ovn_ipfix_sampling=
++ ovn_ipfix_cache_max_flows=
++ ovn_ipfix_cache_active_timeout=
++ ovn_ex_gw_networking_interface=
++ ovnkube_node_mgmt_port_netdev=
++ ovn_disable_ovn_iface_id_ver=false
++ ovnkube_master_loglevel=4
++ ovn_loglevel_northd='-vconsole:info -vfile:info'
++ ovn_loglevel_nbctld=
++ ovn_acl_logging_rate_limit=20
++ ovn_empty_lb_events=
++ ovn_loglevel_nb='-vconsole:info -vfile:info'
++ ovn_loglevel_sb='-vconsole:info -vfile:info'
++ ovn_enable_interconnect=
++ ovn_enable_multi_external_gateway=
++ ovn_enable_ovnkube_identity=true
++ ovn_northd_backoff_interval=
++ ovn_enable_persistent_ips=
++ ovn_enable_svc_template_support=true
++ ovn_enable_dnsnameresolver=false
++ jinjanate ../templates/ovnkube-single-node-zone.yaml.j2 -o ../yaml/ovnkube-single-node-zone.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovn_image_pull_policy=IfNotPresent
++ ovn_unprivileged_mode=no
++ ovn_gateway_mode=local
++ ovn_gateway_opts=
++ ovnkube_node_loglevel=5
++ ovnkube_local_loglevel=5
++ ovn_loglevel_controller=-vconsole:dbg
++ ovnkube_logfile_maxsize=100
++ ovnkube_logfile_maxbackups=5
++ ovnkube_logfile_maxage=5
++ ovnkube_libovsdb_client_logfile=
++ ovnkube_config_duration_enable=
++ ovnkube_metrics_scale_enable=
++ ovn_hybrid_overlay_net_cidr=
++ ovn_hybrid_overlay_enable=
++ ovn_disable_snat_multiple_gws=
++ ovn_encap_port=
++ ovn_disable_pkt_mtu_check=
++ ovn_v4_join_subnet=
++ ovn_v6_join_subnet=
++ ovn_v4_masquerade_subnet=
++ ovn_v6_masquerade_subnet=
++ ovn_multicast_enable=
++ ovn_admin_network_policy_enable=
++ ovn_egress_ip_enable=
++ ovn_egress_ip_healthcheck_port=
++ ovn_egress_service_enable=
++ ovn_egress_firewall_enable=
++ ovn_egress_qos_enable=
++ ovn_multi_network_enable=
++ ovn_network_segmentation_enable=
++ ovn_ssl_en=no
++ ovn_remote_probe_interval=100000
++ ovn_monitor_all=
++ ovn_ofctrl_wait_before_clear=
++ ovn_enable_lflow_cache=
++ ovn_lflow_cache_limit=
++ ovn_lflow_cache_limit_kb=
++ ovn_netflow_targets=
++ ovn_sflow_targets=
++ ovn_ipfix_targets=
++ ovn_ipfix_sampling=
++ ovn_ipfix_cache_max_flows=
++ ovn_ipfix_cache_active_timeout=
++ ovn_ex_gw_networking_interface=
++ ovnkube_node_mgmt_port_netdev=
++ ovn_disable_ovn_iface_id_ver=false
++ ovnkube_master_loglevel=4
++ ovn_loglevel_northd='-vconsole:info -vfile:info'
++ ovn_loglevel_nbctld=
++ ovn_acl_logging_rate_limit=20
++ ovn_empty_lb_events=
++ ovn_loglevel_nb='-vconsole:info -vfile:info'
++ ovn_loglevel_sb='-vconsole:info -vfile:info'
++ ovn_enable_interconnect=
++ ovn_enable_multi_external_gateway=
++ ovn_enable_ovnkube_identity=true
++ ovn_northd_backoff_interval=
++ ovn_enable_persistent_ips=
++ ovn_enable_svc_template_support=true
++ ovn_enable_dnsnameresolver=false
++ jinjanate ../templates/ovnkube-zone-controller.yaml.j2 -o ../yaml/ovnkube-zone-controller.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovn_image_pull_policy=IfNotPresent
++ ovn_unprivileged_mode=no
++ jinjanate ../templates/ovs-node.yaml.j2 -o ../yaml/ovs-node.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovnkube_certs_dir=/tmp/ovnkube-certs
++ ovnkube_webhook_name=ovnkube-webhook
++ mkdir -p /tmp/ovnkube-certs
++ path_prefix=/tmp/ovnkube-certs/ovnkube-webhook
++ '[' true = true ']'
++ openssl req -x509 -newkey rsa:4096 -nodes -keyout /tmp/ovnkube-certs/ovnkube-webhook-ca.key -out /tmp/ovnkube-certs/ovnkube-webhook-ca.crt -days 400 -subj /CN=self-signed-ca
+..........+..............+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+.......+...............+..+.+.....+.+......+..+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*......+...+......+.....+.+...+.....+......+.......+...+..+....+...+..+.+..+...+.............+...........+..........+..................+.....+...+.......+..+...+.......+.....+.........+.......+.....+.......+...............+...+..+.......+..........................+.........+.........+.+...........+............+.........................+......+..+....+...+......+....................+.+........+......+..........+..+....+......+..............+.+.....+...+....+...+..................+.....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+....+.+.........+..+....+.....+.........+.+..+...+.+........+...+....+.........+..............+...+.......+...........+.+..............+.........+......+.+......+...+......+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.........+.......+...+.....+..........+......+.....+.......+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*......+..+.+........+......+....+...........+...+.......+.........+..+..................+...............+..........+..+.......+..+.+..+..........+..+...............+......+.......+..+...+.+.........+...+...+..+...+.+......+...+............+..+.......+...............+...+...+........+................+........+.+.....+.........+...+....+.....+.+...+......+.....+.+.....+............+......+.......+.................+.+......+........+.......+.........+.....+.......+...+.....+......+...+..........+...+.........+............................................+....+......+.........+..+...............+......+....+.....+..........+...+..+.........+....+..+...+.+......+.....+...+...+......................+...+..+......+........................+.............+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----
++ openssl req -newkey rsa:4096 -nodes -keyout /tmp/ovnkube-certs/ovnkube-webhook.key -out /tmp/ovnkube-certs/ovnkube-webhook.csr -subj /CN=localhost
+......+..................+...............+.......+.....+.+...+......+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*....+................+............+...+........+......+....+.....+......+.+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*...+...+...........+......+......+.........+.+.....+.........+.+...+.....+.......+.......................+.+........+..........+..+.+........+.+.........+.....+............+.........+.+.................+...+....+.....+.........+.+..............+......+...+.............+............+.......................+............+.+...........+......+...+.........+...+.........................+..+.+..+....+.....+.+..+...+.......+...+............+......+...........+....+.....+.+..............+......+.+..................+.....+....+........+....+.....+....+.....+.......+....................+....+...+...........+.+.....+.+...+...........+....+.........+...........+.+.....+.+...+.....+................+...+......+..+....+...........+.......+..+.+..+.+...........+.+..+..........+.......................+.......+..+....+..+....+..............+...................+............+.....+.+...+......+......+..+...+...+......+......+.......+............+...+.....+...+...+.........+.+..+.......+.....+.....................+.......+..+...+.......+....................+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+....+.....+....+.....+..........+............+.........+...+...+..............+.+..............+...+...+...+..........+.....+......+..........+.....+.+........+.+...+.....+...+...+....+........+.......+......+......+...+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*.+..+.......+...+........+.........+.+...+.....+....+...+..+..........+..+......+...+.+...........+....+..............+.+.....+....+.........+.....+..........+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*..................+.+..+....+........+......+.......+...+..+....+........+..........+.....................+......+...............+........+...+...+.......+...+...............+............+.....+.........+.+...........................+........+...+.+......+..+...+............+.+...........+.+..+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-----
++ openssl x509 -req -in /tmp/ovnkube-certs/ovnkube-webhook.csr -CA /tmp/ovnkube-certs/ovnkube-webhook-ca.crt -CAkey /tmp/ovnkube-certs/ovnkube-webhook-ca.key -extfile /dev/fd/63 -CAcreateserial -out /tmp/ovnkube-certs/ovnkube-webhook.crt -days 365
+++ printf subjectAltName=DNS:localhost
+Certificate request self-signature ok
+subject=CN = localhost
++ ovn_image=registry.lab.syscallx86.com/ovn-daemonset-fedora:latest
++ ovn_image_pull_policy=IfNotPresent
++ ovn_master_count=1
++ ovnkube_master_loglevel=4
++ ovn_enable_interconnect=
+++ cat /tmp/ovnkube-certs/ovnkube-webhook-ca.crt
+++ base64 -w0
++ webhook_ca_bundle=LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZFekNDQXZ1Z0F3SUJBZ0lVYzF1ZHNUNkhqMEN4UEhQcU8rT1kvbHZGOWcwd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0dURVhNQlVHQTFVRUF3d09jMlZzWmkxemFXZHVaV1F0WTJFd0hoY05NalF3T0RJek1EZ3lNVFF6V2hjTgpNalV3T1RJM01EZ3lNVFF6V2pBWk1SY3dGUVlEVlFRRERBNXpaV3htTFhOcFoyNWxaQzFqWVRDQ0FpSXdEUVlKCktvWklodmNOQVFFQkJRQURnZ0lQQURDQ0Fnb0NnZ0lCQUs3U2pWTXE3ajBYY3gzaDhPWDZtSVB1MlFlWFZGR1kKOWxEVkJ2cUdMbDYyWkhMbTJYY1ExZUpuNmhudUtoYUt3NEo5cVhtOXFnQTg2bXUyOVBaeU55dXdrSFE4L1FqMAo5WFFMMGFYelM4TWJ0bXM4RkFGcVVzb2U3QS94MElUT2lQN0k3VVUwQytxMkhqY3FiRitLVUpqdkdsN2FDbFRlCkY5Q2d5YUJwampPWUVkUUdnOTBVbDllMHk2MUZjZnh5blVzMFRZek4ra0tjY1Q0Yy94QW1qaFY0UW1lVG5xMkEKK0N5SnZhYk9lN2RySFFBemhUdjFjblFjVkltd01kUE02aFg5cHY2UG9YSWVXdTZIbWdvbTVFNzBCZUZPQXA5aQo1NldoaVgxQmZ6ZzlxTTJvQnM2cGYyYTVXYnI2RjBjNjY3aUFmRGZlWkowMkR6Q2pKTUE5NnVwd2FjZXc3bXRXCi9BSnJ6NTl0dzlwb1RYOUZXd0tCOXA5bWpUaUsrTVhDUGtnK2tYS3pXWno1d1o5ZUxnT3dsZjlPMVJyd1hueGYKb3gyRkpUbkRETUtQeCtWUTlHQjRjQUZ3b2tENThLTVI2bHBBOTBsNHQ4MmN1SjF3Q1cwTWlySUhlOWtSS1RkMApZZnJkbmt2cjNYeEFuVERLT2lVVEF1Qnc5QWMyTERsMHNtSEpOaTQvYzQ0WHdDT1BXSHVUNmNZelZIZmxaRWZjCi9EZ3dFK2ZKZmVzd2RmdStBQmFvWWczdm50dlpJZHJCaVUrZEtRQWM2NW9QblJ3SllaWmx0cHJ6QU54K0dKWlEKa3lwVW8rKzQ4WVcrZElqb1llTU9QS3hyenAydVNGK0tZNFJtNXovclNKUGZkZUxZZmlDVTZ6b2dWdkp1T3hLUQpLK3lDZis5dm84YkxBZ01CQUFHalV6QlJNQjBHQTFVZERnUVdCQlRKUWtQdW1XUWQwb0FtNy95VWFxYnR1S281Cm9EQWZCZ05WSFNNRUdEQVdnQlRKUWtQdW1XUWQwb0FtNy95VWFxYnR1S281b0RBUEJnTlZIUk1CQWY4RUJUQUQKQVFIL01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQ0FRQk9GdXAyZ3YzcVJGcmlhU28wRW1LRTJselcyclVWVUR4dgpBZlFnV01jRXRMQTRPL0JmZFJmaEdGTXVMWGdVWm9CVy9kWVhCUndIQnhXdDhVVGtLNDZ2NFI1ckdzblF4cWQ2ClMxVnF6dUtzTmI4ZzdwRFA3NzJ5WStjbWVLSVdVek52bUhDWmdOK2w1dzMrVnB5ZnpFa0JyWUh6WERkWkIrSFMKaEVTUWo1d1N3YWJsVjM3dTVlUVVsSHFpelJYdVZ3ZFhWWmxrS0VhTkdjWG9zL1d1NjZXcytXVklrMzUvR0phQQp4cUNYanFhR3FkTmhsSmpLY2FEQ0hHV2swdmxQUVcrUStWcXkrMXVqZ0UrY0ZaTUJkbFZxNU9vVG1CbzFSUVVkCi9WRXo4OC9waU9FdG1RSHB4a1VtUWF5VlY2N3BPclZJdG5uMkdKbmkzNkFUWEtWR0dXSDNPMFZ5WlpJTnpRSmgKNnQvMk1NY0EvcWNjTXZmeFRyY3ozaEVlRCtna0VNSWpFeVp2UjluM2hQR1VkY21oaUpqY0JwamMzTi80S3RwMApMc3lndGxQUVJQS0RWTG9nekp5MFdDSldiWEtkSmZhUXJoTklheVgzK2ZTRHRFbUw5TmpPQ3IyblZkUGdkNEtmCnVySWNQN0UreFdJZk1YMzB6RkpVZ29VYXp0a3pHYTZMMnhDYldrMUZ6dUJ4WDZLUW83S2hYRTVWelA2MDdjVjUKZXUxbHFJZCt5MnB1V21NMzZhVGE1TDMrckhLMlJpT1pxTDk3dEkwR1lJTUtDVzQrT0kyUDFuWVJ5Sko3alNMMgp1NGxMMXhvNXFuTzhCVjFIV0FROHVMSDBXSEFvN1QzaWE0cTJkTVhwOW5xNjNmc25XNmFlYnVIaFl3bjhCLzU0CnVTcjVHcldVd2c9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+++ cat /tmp/ovnkube-certs/ovnkube-webhook.key
+++ base64 -w0
++ webhook_key=LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUpRd0lCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQ1Mwd2dna3BBZ0VBQW9JQ0FRRHo4TDRqdWJ0L3dWQU8KT256UjRCbFV2WkJKditQNGVjcjd4K2h2czJKRTYzU1N6SnhPYW5YQ3BnT1NnaC9vRGltRDU0cWJxV3ZnVWlxawpxZHdOWnFJWUIxUHZJSUNlYWJ0ektscmtwTGhYSktjd3k0T2o2REJ4K0tDUGk0NnZwT3JrZ0tvYitmNDJnaEh6CkVxWDdHR0pTQmY2VWJWT2VlK0ZuN0Eyc01Td3RiSksvZ1FlTUp5bHlJWWYvaDJndlVKRi92VG5MVEw0cDNSdkYKZnVSSnpsUzk0YzYzaGhVZEsxWDduUnM2OGxQQTlmYkVnTlQ4Y2VQcDQ0Mjd2K0E3ZjJTRFhQMnovNUlnakZBUQpBSlFMd1orWWlyV1plZ3JHVTh5RTdBRUhYZFlwVkFvT2JvTG9zcyt0Ky8vYWhHKy9ZOTRoZzBKRE91VGVIOU9ZCms0elFDK2RhTkE0NzdzWCtzcGhsTisxM3NHVy8xazQ3ZzEwNEtGdENPWWd4V2lOR01nVkJCbWJ2ODFSYnBPL0oKeFlBZnNMRzA3MldKL29UeXhaZUdTdFJoTnF0V0JGaHNwVFdNMUdSRnR0dksvbnEzMzFrL1FUQUZYaFFJWTZIKwpFWi91ZHRtSnhNbkplekQ4dHZCMXVlNWxURW0xK3o5R2UxYXlvbmxMbFF5a2U0Q1dWcWkyU1VjVEQ1YWZFOW1UCnVuUlF6aWdZVjZKVUdFalV0dU9zZ3MwVGhhM1BFQUdWakFKS3AxUVNUOVpQRjF2dGljdHRNN0I2c2ZSMnk1UU4KMlA2N1J0ZHhRSGd5TVB6alN0NXlPM3FFbmhZMUgweWZZSVU2T1ZIcEFKUkM0dVhDejRIcW1pVWRDY2lOS3psdgpjZnhZbE52YklsaW5QQ0Y4aVFQK1ZXamduNXRIZVFJREFRQUJBb0lDQUNPMWJvZjVSTWF2VENKQkVvdUFkQVRSCkdRR0t1dnJoRFVNdElNdlZKUUgwdTZSUG1tUHFOcUhQUG4rZ1Y3NVc4R0hVTDVpWXhPZFo3ODhaNUZINzM2ZUgKenhRV25HMVVDZklTVmFyWnAvaHRyNkczY09ZNTgzbURqVEZtR3ZXQVBUaEUwMkgwQnZBQXUxTHJQR3ZVeG5PKwpWK1Z2V1ltK0ZhRnFUeGdSUEtmTG1IRzdHQmsrbEZVV0xudkwzUWJzRXRoeG9UZXUzTGx4R2dNZmo1aDBRVGhvCmlTT1pWNWJsQkptb0JsZnJLREo3YnV1VjlsZWI3bUtMQW5EazVoU2ZrZDJlNjY2QkwybGZVTXIrNHEwVDQySm4KajZ6UFRpdDVFZHUxVm5NM0c4WUIvTlRlL1gvRnlSdnRZeWNnTXVGLzQ0RGhYMzVLN1R6TXlPTXhXakFNUmduSApvTnhLYVpIZGdOZ3JTQ1h5YXlhYWZtOWo2blJCelN1cUxKenNwZzhLRkZhSDF4bWFzN29LTm1VemlwNWwvajBZCkNnUEY4NFFVbUJHcndBdnZXQ3I0dmhjY09Nb3NzdXhRTlVPQUJMQnoyclJaRVN4bHU0N2dYaTdwYkZ6NmNRekMKWjVGYXkwSjUybUdKZnk5dk8zbmpKMERuQWlyV1VyV1Y5OER2YVFFVjJ2ajg2dlVJeHEvVnUzWVhyQUdaSitkagphTnZ2c0t3RENGaEc0ZzFMV2g1N1FJZTJ6cGpOaS9DbzF6MUdNZlc1VkxQQUVZQytjbHB1MDZPb2F6WWEvZHZJCndRTWQ4L0dFdnVPZlJJV2ZMRXhSV0hXRldTNitMaEZTTURVUTcwajF1MEJUc1pTZVp0czBiM0l5YWhKaUtwUnEKZ1R4RnFJK1pxNy8zZGxvMkNzUFBBb0lCQVFEOUZYSi9qaFVnT3RrZURlTWFZbyt3WlMzdjJiZFE3bEwxamhYUQpFc1Y4NU5qVFZRbmkrK0lPR2pkeXUwa2lnV29RL3AyYVdBMm9Sb2ZBSHJIQmFPWHRaUHBWZ2ZSMEExRkpjTVJwCmdRaGlzUFg1SktTV2hXQmt4Nlh1RnAycmVhOFlGV0lnK29IWmQrU1plZXl4SkxNdWJOZlVmbVFXaG9RTGVjUVAKVkpPdGpGK2dJUjVvenRjVnVVU2tKUklBR2Z2bTJvampKNXF4Z1JQK0V5WWl5My9HSWNSUkxtaHYzUnFkMWxDYwo1MlRlZThTZXI0dG5GemtBdGNHRFNkZDhLMWF1NXl6bWNXSzY0d3lzMVl4ODUyVXlGTzBHeXNEZ2ZtbERDT2tJCllCNXZPcnpaL0RqWENNRVRHVmtpYVRlU0FlRmxOcW1md0RodDVsazhXZUNUMXlmSEFvSUJBUUQyd0ZMNVA3aysKWlhSbTB0dnBtWXJwajlLRzRmTUV4elhCNVJQT25qVC96cDJKbXVMaFc3bGFuelFua2pTVzVjWGtMU2Z0QlROWgo2ZFpmYjBKcDdkb21pSDkvcExIT3JXN1RxSmhkMEJ5SWJ6cVkrb3A2RjdndWlYU1U5MEpqejJydSt4a1cra0kxCjNqTGFWYnR0UXpjQlhFaTV5Z3hHZ0FZd1BNN0F2TW5kcWl3TVV0UEwzY1E0RFFWQ29WallTZVdsL3gySFZFaFIKajM5NEFKSUZNandsVFhQVEFKNGdjVkYzOXAvb3piNDdKTlBOMlVYYjYzc2I4cStNRGJXVTUwdm4yMlQ3eS9KVAo1MStUWFIraGxCNzlXcnkvMVFYYjd1NU5RUlNoTGpaZUtoQnBoN3ZrTkE5T0tHd3ZvRHlPaUovN2dSbmNCd205CmZ4U2UvbjIxQ3BhL0FvSUJBUURVWTZaV0k0L1pIMm5NRGcxenZCa29DSkZYZ3hlVGhKMzhVd1E5UFRPZEQ1UmoKTGkrQTNLK2w5QnhxWFlBUHhCbVdMNGRsMnRXRFRjVm8xcG1JWFpidjlka2IzMWFkOFpiTEVpYlMvNlZnNVc5WAphWWZ5aGZZU1BYWWo2N2pnQ2R1R1U1T3BaM0dIWmxWaTgyNU9ieVVzSmMydkYyNjVkS1BsMllkTzhrU0kxWS8rCm15eWcra3lJZjVWNlIxM20xZWVQb2dCVTJZeTV3RUJkN2dZSUYwMmdvZi9WdlNPS0ZUemNEdHBTQXVLa3o2dC8KSElUWnZDUnJVeDBXSitiOTNvVDlmU1l5TWgrUUJURkM3bWZhL25udllKNVdIOXRqeXRKZG5tR3FWTGZWMHE1ZwpKWW94ODdmTVptNW1NWFNnUkpHNlZmaGVCM3VUeDBkR0hZc1pwdXRMQW9JQkFFK2dudVlhWDFBNGMwamZVT0pnCmowaHlCakZLNXg2cW5ybDBrR0RFQXp4dDA3N2RRY3dSeW8zcEJHNmtxdDNyUm1JdEJFNWp1RCtTeTRBK3FrTCsKNDhBOW1rOTV1WHVGMGxieGVFSUY3NzlEamJoaVdaK3UyZHdDdGFHQTdXYkNQN0xoU3laMEdqdkIrYzBsajNkaQpFblVZNzhzczNhcytrMENyenRpNTA3YjV2SDg1bDJtWnBrR2tTZ2RIaENGQUw2RFM1QmVRNWttVHNrSHFoVFN5CkVtRERUdFpQdzdlYWVmenBsSThQSGcxK0ErL1E1czlpZlhiMmFSb2NMblhmOGtuZkxnWm51VXJFUnI2S2RiT3gKMWhKU1hzalZHSy94dWVzcVRscjVTOGcxY05odFdmLzVvTnJMQnFhVDRoYnBGaCtXZU43ZFVwSlpXVEU1MVIxQQpUb2NDZ2dFQkFKS2FodTltYTMvV2RyS2M5MnpwdmRqb1dPMW5yWXJVZlozbytMazB2aTRVcjNBaUt1ZlkrN1RtCmMwRmM0R3VmdEtTTndFTlpSRDJJZ01LUFhJNVQrczhVVkZCdzFZOVlPWHN2T1JzMU0xOVVuYkxqNkphbjd3dk0KZEp1TCtKRXNIMGtPMm1GQ0FzLzdPbGpCMXBha1M2UDBYd0FnVjhHaDYrblNxQUlrNUxUVG9aWS82STE4bG16RwpHMFo0aGdzZkxEM25wQUJNdlR2N2x6TUdkY3ZwQlBJVkxyVEJDZ2gyemlFUmt1N1lYdkpTNXJnZVVheHdQQkVhCkdqcWQyUGFzaTIrTyt0dUlobytpZXoxWkdrUWJGSUFwT25mTDBZZ2MzT3A5RHhzNXJ5bHFpa01tTGxSNzV5S2MKZkxqNHJBczdBZEVjWTlwT1MvcGhvTExMdWxLOTA2MD0KLS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLQo=
+++ cat /tmp/ovnkube-certs/ovnkube-webhook.crt
+++ base64 -w0
++ webhook_cert=LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZFekNDQXZ1Z0F3SUJBZ0lVYnRySU54VFdGMUwrck9NY2pZSjJTQVFnUTNZd0RRWUpLb1pJaHZjTkFRRUwKQlFBd0dURVhNQlVHQTFVRUF3d09jMlZzWmkxemFXZHVaV1F0WTJFd0hoY05NalF3T0RJek1EZ3lNVFEyV2hjTgpNalV3T0RJek1EZ3lNVFEyV2pBVU1SSXdFQVlEVlFRRERBbHNiMk5oYkdodmMzUXdnZ0lpTUEwR0NTcUdTSWIzCkRRRUJBUVVBQTRJQ0R3QXdnZ0lLQW9JQ0FRRHo4TDRqdWJ0L3dWQU9PbnpSNEJsVXZaQkp2K1A0ZWNyN3graHYKczJKRTYzU1N6SnhPYW5YQ3BnT1NnaC9vRGltRDU0cWJxV3ZnVWlxa3Fkd05acUlZQjFQdklJQ2VhYnR6S2xyawpwTGhYSktjd3k0T2o2REJ4K0tDUGk0NnZwT3JrZ0tvYitmNDJnaEh6RXFYN0dHSlNCZjZVYlZPZWUrRm43QTJzCk1Td3RiSksvZ1FlTUp5bHlJWWYvaDJndlVKRi92VG5MVEw0cDNSdkZmdVJKemxTOTRjNjNoaFVkSzFYN25SczYKOGxQQTlmYkVnTlQ4Y2VQcDQ0Mjd2K0E3ZjJTRFhQMnovNUlnakZBUUFKUUx3WitZaXJXWmVnckdVOHlFN0FFSApYZFlwVkFvT2JvTG9zcyt0Ky8vYWhHKy9ZOTRoZzBKRE91VGVIOU9ZazR6UUMrZGFOQTQ3N3NYK3NwaGxOKzEzCnNHVy8xazQ3ZzEwNEtGdENPWWd4V2lOR01nVkJCbWJ2ODFSYnBPL0p4WUFmc0xHMDcyV0ovb1R5eFplR1N0UmgKTnF0V0JGaHNwVFdNMUdSRnR0dksvbnEzMzFrL1FUQUZYaFFJWTZIK0VaL3VkdG1KeE1uSmV6RDh0dkIxdWU1bApURW0xK3o5R2UxYXlvbmxMbFF5a2U0Q1dWcWkyU1VjVEQ1YWZFOW1UdW5SUXppZ1lWNkpVR0VqVXR1T3NnczBUCmhhM1BFQUdWakFKS3AxUVNUOVpQRjF2dGljdHRNN0I2c2ZSMnk1UU4yUDY3UnRkeFFIZ3lNUHpqU3Q1eU8zcUUKbmhZMUgweWZZSVU2T1ZIcEFKUkM0dVhDejRIcW1pVWRDY2lOS3psdmNmeFlsTnZiSWxpblBDRjhpUVArVldqZwpuNXRIZVFJREFRQUJvMWd3VmpBVUJnTlZIUkVFRFRBTGdnbHNiMk5oYkdodmMzUXdIUVlEVlIwT0JCWUVGTk9MClpnWXhNb1JqTFg1WW4zbFZzNFFJbWd0Mk1COEdBMVVkSXdRWU1CYUFGTWxDUSs2WlpCM1NnQ2J2L0pScXB1MjQKcWptZ01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQ0FRQ1JSNHN5NEw4ZW8zMmZZWXR3dTlsM3REVEsyREZ4T3pFawphazJYd3RoS3ZVU05RNHg4WHFId2J6dG85NjYvUjZTN1hNaVNzUUpRS3ZycU1pcjJOZVRhTE5uU082eGJOcE55Cm80R0RtV09BRHBUQnRiU2lOb1dkczliVlROaHkyVTA5d1Z0L1UybFEyMHFXaEJ6d0tGalZQb0hRVUJXbTZTZysKaHhBR2tSaUFkcngwYjRUSVkrck5FemhSdDFwTHZsN2I5cTU2eHJPZFFPWFRsTHF2Wk91cWt2RUdSR3BESEhrRQpVVGFDZzcxT0prZitka1hkWEttYzRYUEhqcnlLdmI5bW90Z2FmTzJ5dUlzeWx0RTBSeHV2STcvZGZQd1YyS2pTClJsOGpnRzN6Qmp4NFFiSk84YXlHV0w2MGpHZEo1bnZrWDUvdmh3MFo3a0xYbzhOeVJ5ellCSUhQVUlmSlNxeFcKOVZ0Vk1PcmlkN3R1czVKeXhBb1NlY05FSzVwbCt6NXFDbldKZmRSY3dtRjZoS21rdGVQK2JYdVdjeU5idVNoOQpnRXRZVzh2dktlQUg5aXlmZGFORWZkcmJ0NEhjS01jaDhGbzZETCt3MDBuek1kZ3lyR2ZyeEVMWmJESDVKRDhIClFrQ0c1cVQ2S081K1IzV21wVFo2RndBSVFqNXcxU2tvTG5xdFdISVJTUVVnczdTS2lYVUdYMVI2dnZ6eHRZaWwKZHhIZU9WbGY4WmlvRGp4VEx2T1l4Tjk2OVdoTDlRT3Q1VjJFL0twYzkvZ0poVDI1VVBYZmJRTWxTbkNZN1k1SAptSmwxTi9LQW81THVDRlZzVmhESitES0xodUJFYm9kemorcHJhS2drdUNzcmpHWlNiaTY0bHgyeFFyV0ExWHZDCktGcGRhdjdGbmc9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
++ ovn_enable_multi_node_zone=
++ ovn_hybrid_overlay_enable=
++ jinjanate ../templates/ovnkube-identity.yaml.j2 -o ../yaml/ovnkube-identity.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ false
++ net_cidr=10.38.0.0/16
++ svc_cidr=10.49.0.0/16
++ k8s_apiserver=https://10.1.16.11:6443
++ mtu=1400
++ host_network_namespace=ovn-host-network
++ in_upgrade=false
++ echo 'net_cidr: 10.38.0.0/16'
++ echo 'svc_cidr: 10.49.0.0/16'
++ echo 'k8s_apiserver: https://10.1.16.11:6443'
++ echo 'mtu: 1400'
++ echo 'host_network_namespace: ovn-host-network'
++ echo 'in_upgrade: false'
++ net_cidr=10.38.0.0/16
++ svc_cidr=10.49.0.0/16
++ mtu_value=1400
++ k8s_apiserver=https://10.1.16.11:6443
++ host_network_namespace=ovn-host-network
++ in_upgrade=false
++ jinjanate ../templates/ovn-setup.yaml.j2 -o ../yaml/ovn-setup.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_enable_interconnect=
++ ovn_enable_ovnkube_identity=true
++ ovn_enable_dnsnameresolver=false
++ jinjanate ../templates/rbac-ovnkube-node.yaml.j2 -o ../yaml/rbac-ovnkube-node.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_network_segmentation_enable=
++ ovn_enable_dnsnameresolver=false
++ jinjanate ../templates/rbac-ovnkube-cluster-manager.yaml.j2 -o ../yaml/rbac-ovnkube-cluster-manager.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ ovn_network_segmentation_enable=
++ ovn_enable_dnsnameresolver=false
++ jinjanate ../templates/rbac-ovnkube-master.yaml.j2 -o ../yaml/rbac-ovnkube-master.yaml
+jinjanate 24.3.0, Jinja2 2.11.3
++ cp ../templates/rbac-ovnkube-identity.yaml.j2 ../yaml/rbac-ovnkube-identity.yaml
++ cp ../templates/rbac-ovnkube-db.yaml.j2 ../yaml/rbac-ovnkube-db.yaml
++ cp ../templates/ovnkube-monitor.yaml.j2 ../yaml/ovnkube-monitor.yaml
++ cp ../templates/k8s.ovn.org_egressfirewalls.yaml.j2 ../yaml/k8s.ovn.org_egressfirewalls.yaml
++ cp ../templates/k8s.ovn.org_egressips.yaml.j2 ../yaml/k8s.ovn.org_egressips.yaml
++ cp ../templates/k8s.ovn.org_egressqoses.yaml.j2 ../yaml/k8s.ovn.org_egressqoses.yaml
++ cp ../templates/k8s.ovn.org_egressservices.yaml.j2 ../yaml/k8s.ovn.org_egressservices.yaml
++ cp ../templates/k8s.ovn.org_adminpolicybasedexternalroutes.yaml.j2 ../yaml/k8s.ovn.org_adminpolicybasedexternalroutes.yaml
++ cp ../templates/k8s.ovn.org_userdefinednetworks.yaml.j2 ../yaml/k8s.ovn.org_userdefinednetworks.yaml
++ exit 0

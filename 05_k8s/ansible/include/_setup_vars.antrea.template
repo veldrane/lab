@@ -1,0 +1,39 @@
+- name: Set global variables
+  set_fact:
+    virbr: "16"
+    netsuffix: "XXX" 
+    hostname: "nodeXXX"
+    domain: "lab.local"
+    mem: "4G"
+    ipaserver: "freeipa.lab.local"
+    ipaip: "10.1.8.10"
+    nfsserver: "nfsnode.lab.local"
+    home_export: "/nfsvg/home"
+    ldapbase: "dc=lab,dc=local"
+    svcadmin: "admin"
+    adminpwd: "admin123"
+    template: "t_centos7"
+    template_dir: "/data/templates"
+    vms_dir: "/data/vms"
+    rootvg_size: 30
+
+- name: Set ip
+  set_fact:
+    ip: "10.1.{{ virbr  }}.{{ netsuffix }}"
+
+- name: Set FQDN
+  set_fact:
+    fqdn: "{{ hostname }}.{{ domain }}"
+
+- name: Set REALM
+  set_fact: 
+    realm: "{{ domain|upper }}"
+
+- name: Set Kubernetes facts
+  set_fact:
+    podnetwork: "10.78.0.0/16"
+    svcnetwork: "10.79.0.0/16"
+    clusterdom: "cluster.local"
+    master: "node51.lab.local"
+
+

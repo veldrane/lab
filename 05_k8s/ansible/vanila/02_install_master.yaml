@@ -1,0 +1,102 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ master }}" groups=master
+
+- hosts: master
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Make /etc/kubernetes directory and change the selinux context
+    shell: mkdir /etc/kubernetes ; semanage fcontext -a -t svirt_sandbox_file_t '/etc/kubernetes(/.*)?'
+
+  - name: Make /var/lib/etcd and change the selinux context 
+    shell: mkdir -p /var/lib/etcd ; semanage fcontext -a -t svirt_sandbox_file_t '/var/lib/etcd(/.*)?'
+
+  - name: Restore contexts
+    shell: restorecon -vR /etc/kubernetes ; restorecon -vR /var/lib/etcd
+
+  - name: Disable swap
+    shell: swapoff -a ; sed -i -E '/swap/d' /etc/fstab
+
+  - name: Setup firewall rules
+    shell: firewall-cmd --permanent --add-port=6443/tcp --add-port=2379-2380/tcp --add-port=10250-10252/tcp --add-port=10255/tcp --add-port=8472/udp
+
+  - name: Open BGP protocal on firewalld
+    shell: firewall-cmd --permanent --add-port=179/tcp
+
+  - name: Setup masquarade and reload rules
+    shell: firewall-cmd --add-masquerade --permanent ; firewall-cmd --reload
+
+  - name: Enable br_netfilter (probably not survive the reboot!!! - check in the future)
+    shell: modprobe br_netfilter; echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+
+  - name: Copy kubernetes repo definition to yum dir
+    copy: 
+      src: include/kubernetes.repo
+      dest: /etc/yum.repos.d/kubernetes.repo
+
+  - name: Install kubeadm, docker and wget
+    shell: yum install wget kubeadm docker -y
+
+  - name: Enable docker
+    shell: systemctl restart docker && systemctl enable docker
+
+  - name: Enable kubelet
+    shell: systemctl restart kubelet && systemctl enable kubelet
+
+  - name: Run kubeadm
+    shell: kubeadm init --pod-network-cidr={{ podnetwork }} --service-cidr={{ svcnetwork }} --apiserver-advertise-address={{ ip }} > /tmp/kubeadm.out
+
+  - name: Get token 
+    shell: cat /tmp/kubeadm.out | grep -E '\-\-token' | awk '{print $5}'
+    register: kube_token
+
+  - name: Get CA sha256
+    shell: cat /tmp/kubeadm.out | grep -E 'sha256' | awk '{print $2}'
+    register: ca_token
+
+  - name: Create Token file
+    shell: echo "{{ kube_token.stdout }};{{ ca_token.stdout }}" > /root/token.out
+
+  - name: Create .kube directory
+    shell: mkdir -p /root/.kube
+
+  - name: Copy cfg to .kube dir
+    shell: cp -i /etc/kubernetes/admin.conf /root/.kube/config 
+ 
+  - name: Change ownership to kube directory
+    shell: chown $(id -u):$(id -g) /root/.kube/config
+
+  - name: Create SDN namespace
+    shell: kubectl create namespace kube-sdn
+
+  - name: Get calico manifest
+    shell: cd /root ; wget https://docs.projectcalico.org/manifests/calico.yaml
+
+  - name: Change pod ip
+    replace:
+      path: /root/calico.yaml
+      regexp: '192.168.0.0/16'
+      replace: "{{ podnetwork }}"
+
+  - name: Change namespace for calico
+    replace:
+      path: /root/calico.yaml
+      regexp: 'kube-system'
+      replace: "kube-sdn"
+
+
+  - name: Apply Calico SDN Manifest
+    shell: kubectl apply -f /root/calico.yaml

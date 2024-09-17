@@ -1,0 +1,10 @@
+NAME                             READY   STATUS    RESTARTS   AGE   IP           NODE                       NOMINATED NODE   READINESS GATES
+ovnkube-db-84468d897f-764mr      2/2     Running   32         20d   10.1.16.11   ovn11.lab.syscallx86.com   <none>           <none>
+ovnkube-master-f9c59bd6c-cdpqg   2/2     Running   28         19d   10.1.16.11   ovn11.lab.syscallx86.com   <none>           <none>
+ovnkube-node-8zbjr               3/3     Running   42         19d   10.1.16.11   ovn11.lab.syscallx86.com   <none>           <none>
+ovnkube-node-9wb5f               3/3     Running   42         19d   10.1.16.15   ovn15.lab.syscallx86.com   <none>           <none>
+ovnkube-node-qfsjr               3/3     Running   45         19d   10.1.16.17   ovn17.lab.syscallx86.com   <none>           <none>
+ovnkube-node-rcfwk               3/3     Running   42         18d   10.1.16.52   ovn52.lab.syscallx86.com   <none>           <none>
+ovnkube-node-rjwwz               3/3     Running   42         19d   10.1.16.16   ovn16.lab.syscallx86.com   <none>           <none>
+ovnkube-node-ss9zx               3/3     Running   40         18d   10.1.16.51   ovn51.lab.syscallx86.com   <none>           <none>
+ovnkube-node-zzccr               3/3     Running   48         19d   10.1.16.18   ovn18.lab.syscallx86.com   <none>           <none>

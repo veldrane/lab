@@ -1,0 +1,38 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before SimpleApi installation"
+    ignore_errors: yes
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+  
+  - name: New application user - Maybe in ipa
+    shell: useradd -r -s /bin/false svcsimple
+
+  - name: Copy crio repo definition to yum dir
+    copy: 
+      src: include/simpleoidc.service
+      dest: /usr/lib/systemd/system/
+
+  - name: Setup firewall rules
+    shell: firewall-cmd --permanent --add-port=6080/tcp
+  
+  - name: Enable and start simpleoidc
+    shell: systemctl enable simpleoidc ; systemctl start simpleoidc

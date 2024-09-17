@@ -1,0 +1,83 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before kubeadm installation"
+    ignore_errors: yes
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ master }}" groups=master
+
+- hosts: master
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+  
+  - name: Create bootstrap token
+    shell: kubeadm token create
+    register: bootstrap_token
+
+  - name: "Add K8S Token to dummy host"
+    add_host:
+      name:   "K8S_TOKEN_HOLDER"
+      token:  "{{ bootstrap_token.stdout }}"
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Copy ssh keys for root - HACK - must be changed!
+    copy: 
+      src: /root/.ssh/id_ecdsa
+      dest: /root/.ssh/id_ecdsa
+
+  - name: Copy ssh keys for root - HACK - must be changed! - changing perm
+    shell: chmod 0400 /root/.ssh/id_ecdsa
+
+  - name: Get token file 
+    shell: scp root@{{ master }}:/root/token.out /tmp/token.out
+
+  - name: Get token 
+    shell: cat /tmp/token.out | awk -F\; '{print $1}'
+    register: kube_token
+
+  - name: Get CA token
+    shell: cat /tmp/token.out | awk -F\; '{print $2}'
+    register: ca_token
+
+  - name: Enable kubelet
+    shell: systemctl enable kubelet 
+
+  - name: Join node to kubernetes cluster
+    shell: kubeadm join --token {{ hostvars['K8S_TOKEN_HOLDER']['token'] }} --discovery-token-ca-cert-hash {{ ca_token.stdout }} {{ master }}:6443
+
+  - name: Restart kubelet
+    shell: systemctl restart kubelet 
+
+  - name: Create .kube directory
+    shell: mkdir -p /root/.kube
+
+  - name: Copy cfg to .kube dir
+    shell: scp root@{{ master }}:/etc/kubernetes/admin.conf /root/.kube/config 
+ 
+  - name: Change ownership to kube directory
+    shell: chown $(id -u):$(id -g) /root/.kube/config
+
+  - name: Label node as a worker
+    shell: kubectl label node {{ fqdn }} node-role.kubernetes.io/worker=worker

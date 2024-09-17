@@ -1,18 +1,18 @@
 - name: Set global variables
   set_fact:
     virbr: "8"
-    netsuffix: "22" 
-    hostname: "build"
-    domain: "lab.local"
+    netsuffix: "52" 
+    hostname: "jump"
+    domain: "lab.syscallx86.com"
     mem: "4G"
-    ipaserver: "freeipa.lab.local"
-    nfsserver: "nfsnode.lab.local"
+    ipaserver: "freeipa.lab.syscallx86.com"
+    nfsserver: "nfsnode.lab.syscallx86.com"
     home_export: "/nfsvg/home"
     ipaip: "10.1.8.10"
     ldapbase: "dc=lab,dc=local"
     svcadmin: "admin"
     adminpwd: "admin123"
-    template: "t_centos7"
+    template: "basevm"
     template_dir: "/data/templates"
     vms_dir: "/data/vms"
     rootvg_size: 40
@@ -33,4 +33,4 @@
 
 - name: Set disksize
   set_fact: 
-    disksize: "40G"
+    disksize: "40"

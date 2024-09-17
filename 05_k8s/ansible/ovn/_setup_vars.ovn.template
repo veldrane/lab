@@ -1,0 +1,46 @@
+- name: Set global variables
+  set_fact:
+    virbr1: "16"
+    virbr2: "64"
+    netsuffix: "XXX" 
+    hostname: "ovnXXX"
+    domain: "lab.syscallx86.com"
+    mem: "4G"
+    ipaserver: "freeipa.lab.syscallx86.com"
+    ipaip: "10.1.8.10"
+    nfsserver: "nfsnode.lab.syscallx86.com"
+    home_export: "/nfsvg/home"
+    ldapbase: "dc=lab,dc=syscallx86,dc=com"
+    svcadmin: "admin"
+    adminpwd: "admin123"
+    template: "basevm"
+    template_dir: "/data/templates"
+    vms_dir: "/data/vms"
+    rootvg_size: 30
+
+- name: Set ip1
+  set_fact:
+    ip1: "10.1.{{ virbr1  }}.{{ netsuffix }}"
+
+- name: Set ip2
+  set_fact:
+    ip2: "10.2.{{ virbr2  }}.{{ netsuffix }}"
+
+- name: Set FQDN
+  set_fact:
+    fqdn: "{{ hostname }}.{{ domain }}"
+
+- name: Set REALM
+  set_fact: 
+    realm: "{{ domain|upper }}"
+
+- name: Set Kubernetes facts
+  set_fact:
+    podnetwork: "10.38.0.0/16"
+    svcnetwork: "10.49.0.0/16"
+    clusterdom: "cluster.local"
+    master: "ovn11.lab.syscallx86.com"
+    bridge_name: "br-ex"
+    if1: "enp1s0"
+    if2: "enp7s0"
+    ip_address: "10.2.{{ virbr2  }}.{{ netsuffix }}"

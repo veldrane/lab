@@ -1,5 +1,5 @@
 ---
-- hosts: freeipa.lab.local
+- hosts: freeipa.lab.syscallx86.com
   become: true
   gather_facts: no
   tasks:
@@ -14,34 +14,37 @@
     shell: ipa group-add {{ item.groupname }} --gid={{ item.gid }}
     loop:
       - { groupname: 'stuff', gid: '1100' }
-      - { groupname: 'k8s-cluster-admin', gid: '1101' }
-      - { groupname: 'simple-admin', gid: '1102' }
-      - { groupname: 'simple-user', gid: '1103' }
+      - { groupname: 'k8s-cluster-admin', gid: '1111' }
+      - { groupname: 'k8s-cluster-user', gid: '1112' }
+      - { groupname: 'ocp-cluster-admin', gid: '1121' }
+      - { groupname: 'ocp-cluster-user', gid: '1122' }
+      - { groupname: 'simple-admin', gid: '1151' }
+      - { groupname: 'simple-user', gid: '1152' }
     ignore_errors: yes
 
   - name: Add users
-    shell: ipa user-add {{ item.username }} --uid={{ item.uid }} --gid=1100 --homedir=/nfshome/{{ item.username }} --random --shell=/bin/bash --first={{ item.first }} --last={{ item.last }}
+    shell: ipa user-add {{ item.username }} --gid=1100 --homedir=/nfshome/{{ item.username }} --random --shell=/bin/bash --first={{ item.first }} --last={{ item.last }}
     loop:
-      - { username: 'veldrane', uid: '1001', first: 'Veldrane', last: 'Veldranovic' }
-      - { username: 'valor', uid: '1002',first: 'Valor', last: 'Valorovic' }
-      - { username: 'jdvorak', uid: '2001', first: 'Jan', last: 'Dvorak' }
-      - { username: 'mnovak', uid: '2002', first: 'Martin', last: 'Novak' }
-      - { username: 'ddvorak', uid: '2003', first: 'David', last: 'Dvorak' }
+      - { username: 'veldrane', first: 'Veldrane', last: 'Veldranovic' }
+      - { username: 'valor', first: 'Valor', last: 'Valorovic' }
+      - { username: 'jdvorak', first: 'Jan', last: 'Dvorak' }
+      - { username: 'mnovak', first: 'Martin', last: 'Novak' }
+      - { username: 'ddvorak', first: 'David', last: 'Dvorak' }
     ignore_errors: yes
 
-- hosts: nfsnode.lab.local
+- hosts: nfsnode.lab.syscallx86.com
   become: true
   gather_facts: no
   tasks:
 
    - name: Create home dir for users
-     shell: cp -r /etc/skel /nfsvg/home/{{ item.username }} && chown {{ item.username }}:stuff -R /nfsvg/home/{{ item.username }}
+     shell: mkdir /nfsvg/home/{{ item.username }} && cp -r /etc/skel /nfsvg/home/{{ item.username }} && chown {{ item.username }}:stuff -R /nfsvg/home/{{ item.username }}
      loop:
-      - { username: 'veldrane', uid: '1001', first: 'Veldrane', last: 'Veldranovic' }
-      - { username: 'valor', uid: '1002',first: 'Valor', last: 'Valorovic' }
-      - { username: 'jdvorak', uid: '2001', first: 'Jan', last: 'Dvorak' }
-      - { username: 'mnovak', uid: '2002', first: 'Martin', last: 'Novak' }
-      - { username: 'ddvorak', uid: '2003', first: 'David', last: 'Dvorak' }
+      - { username: 'veldrane', first: 'Veldrane', last: 'Veldranovic' }
+      - { username: 'valor', first: 'Valor', last: 'Valorovic' }
+      - { username: 'jdvorak',  first: 'Jan', last: 'Dvorak' }
+      - { username: 'mnovak',  first: 'Martin', last: 'Novak' }
+      - { username: 'ddvorak', first: 'David', last: 'Dvorak' }
      ignore_errors: yes
 
    - name: restore selinux context

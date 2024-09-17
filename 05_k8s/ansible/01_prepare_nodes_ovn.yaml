@@ -1,0 +1,153 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+  - name: "Delete ssh keys for template"
+    shell: sed -i -E '/10.1.16.200/d' $HOME/.ssh/known_hosts
+
+  - name: "Delete ssh keys for ip"
+    shell: sed -i -E "/{{ ip }}/d" $HOME/.ssh/known_hosts
+
+  - name: "Create ansible group for ipa server"
+    add_host: name="{{ ipaip }}" groups=ipaserver
+ 
+  - name: Create data directory
+    shell: mkdir /data/vms/{{ hostname }}.{{ domain }} 
+
+  - name: Clone template
+    shell: virt-clone --original-xml /data/vms/templates/basevm.xml --name {{ fqdn }} --file /data/vms/{{ fqdn }}/rootvg.qcow2
+
+  - name: Change rootvg size
+    shell: qemu-img resize /data/vms/{{ fqdn }}/rootvg.qcow2 +{{ rootvg_size - 20 }}G
+    when: rootvg_size is defined
+
+  - name: Set max memory
+    shell: virsh setmaxmem {{ fqdn }} {{ mem }} --config
+
+  - name: Set more memory
+    shell: virsh setmem {{ fqdn }} {{ mem }} --config
+
+  - name: Start machine
+    shell: virsh start {{ fqdn }}
+    ignore_errors: yes
+
+  
+
+- hosts: basevm
+  become: true
+  gather_facts: no
+  tasks:
+
+  - pause:
+      seconds: 35
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Change hostname
+    shell: echo "{{ fqdn }}" > /etc/hostname
+
+  - name: Add hosts to hostname
+    shell: echo "{{ ip }} {{ fqdn }}  {{ hostname }}" >> /etc/hosts
+
+  - name: Resize partition
+    shell: printf 'd\n2\np\nn\np\n2\n\n\nt\n2\n8e\nw' | fdisk /dev/vda
+    ignore_errors: yes
+
+  - name: Partprobe disks
+    shell: partprobe /dev/vda
+
+  - name: PV resize
+    shell: pvresize /dev/vda2  
+
+  - name: Add an Ethernet connection with static ip configuration
+    shell: nmcli connection modify enp1s0 ipv4.addresses {{  ip  }}/24 ipv4.method manual ipv4.dns "{{ ipaip }}"
+
+  - name: Install additional packages
+    shell: yum install -y ipa-client sssd openldap-clients krb5-workstation nfs-utils autofs policycoreutils-python-utils python3-policycoreutils.noarch
+
+  - name: Update sshd config - part 1
+    shell: echo "AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys" >> /etc/ssh/sshd_config 
+  
+  - name: Update sshd config - part 2
+    shell: echo "AuthorizedKeysCommandUser nobody" >> /etc/ssh/sshd_config
+
+  - name: Update ssh config - non strict host checking
+    shell: echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+
+  - name: Update ssh config - GSSAPI
+    shell: printf "GSSAPIKeyExchange yes\nGSSAPIDelegateCredentials yes\nGSSAPIRenewalForcesRekey yes\nGSSAPITrustDns yes" >> /etc/ssh/ssh_config
+
+  - name: Create nfshome dir 
+    shell: mkdir /nfshome 
+
+  - name: Set nfs home boolean
+    shell: setsebool -P use_nfs_home_dirs 1
+
+  - name: Prepare autofs master
+    shell: echo "/nfshome /etc/auto.nfshome --timeout=180 " >> /etc/auto.master
+
+  - name: Create auto.nfshome
+    shell: echo "*  -fstype=nfs,rw,soft,sec=krb5i,nfsvers=4,minorversion=2,user=&  {{ nfsserver }}:{{ home_export }}/&" >> /etc/auto.nfshome
+
+  - name: Set timezone to Prague
+    shell: timedatectl set-timezone 'Europe/Prague'
+
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: "Shutdown host"
+    shell: virsh shutdown {{ fqdn }} --mode acpi
+
+  - pause:
+      seconds: 5
+    
+  - name: "Destroy domain"
+    shell: "virsh destroy {{ fqdn }}"
+    ignore_errors: yes
+  
+  - name: "Change network configuration"
+    shell: "virt-xml {{ fqdn }} --xml ./devices/interface/vlan/tag/@id={{ virbr }} --edit"
+
+  - name: "Start domain"
+    shell: "virsh start {{ fqdn }}"
+    
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - pause:
+      seconds: 25
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Join machine to IPA domain
+    shell: ipa-client-install -U -p {{ svcadmin }} -w {{ adminpwd }} --mkhomedir
+
+  - name: Get the krb5 ticket
+    shell: echo "{{ adminpwd }}" | kinit {{ svcadmin }}
+
+  - name: Add nfs server to the ipa server
+    shell: ipa service-add nfs/{{ fqdn }}
+
+  - name: Create nfs service for krb5 mount client
+    shell: ipa-getkeytab -s {{ ipaserver }} -p nfs/{{ fqdn }} -k /etc/krb5.keytab
+
+  - name: Enable and start nfs client
+    shell: systemctl enable nfs-client.target && systemctl start nfs-client.target
+
+  - name: Enable and start autofs
+    shell: systemctl enable autofs && systemctl start autofs

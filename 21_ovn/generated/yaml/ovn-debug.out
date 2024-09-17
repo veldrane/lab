@@ -1,0 +1,405 @@
+[root@ovn11 ~]# bash -x /usr/share/ovn/scripts/ovn-ctl --no-monitor start_controller --ovn-controller-log=-vconsole:dbg
++ case $0 in
+++ echo /usr/share/ovn/scripts/ovn-ctl
+++ sed 's,/[^/]*$,,'
++ dir0=/usr/share/ovn/scripts
+++ echo /usr/share/ovn/scripts
+++ sed s,/ovn/scripts,,
++ ovsdir=/usr/share
++ ovsdir=/usr/share/openvswitch/scripts
++ . /usr/share/openvswitch/scripts/ovs-lib
+++ logdir=/var/log/openvswitch
+++ rundir=/var/run/openvswitch
+++ sysconfdir=/etc
+++ etcdir=/etc/openvswitch
+++ datadir=/usr/share/openvswitch
+++ bindir=/usr/bin
+++ sbindir=/usr/sbin
+++ test X '!=' X
+++ test X '!=' X
+++ dbdir=/etc/openvswitch
+++ VERSION=3.2.2
+++ DAEMON_CWD=/
+++ LC_ALL=C
+++ export LC_ALL
+++ test -e /etc/init.d/functions
+++ test -e /etc/rc.d/init.d/functions
+++ test -e /lib/lsb/init-functions
+++ type log_success_msg
+++ type log_failure_msg
+++ type log_warning_msg
+++ type action
++ . /usr/share/ovn/scripts/ovn-lib
+++ ovn_logdir=/var/log/ovn
+++ ovn_rundir=/var/run/ovn
+++ ovn_sysconfdir=/etc
+++ ovn_etcdir=/etc/ovn
+++ ovn_datadir=/usr/share/ovn
+++ ovn_bindir=/usr/bin
+++ ovn_sbindir=/usr/sbin
+++ test X '!=' X
+++ test X '!=' X
+++ ovn_dbdir=/etc/ovn
+++ VERSION=24.03.3
+++ DAEMON_CWD=/
+++ LC_ALL=C
+++ export LC_ALL
++ for dir in "$sbindir" "$ovn_bindir" "$bindir" /sbin /bin /usr/sbin /usr/bin
++ case :$PATH: in
++ for dir in "$sbindir" "$ovn_bindir" "$bindir" /sbin /bin /usr/sbin /usr/bin
++ case :$PATH: in
++ for dir in "$sbindir" "$ovn_bindir" "$bindir" /sbin /bin /usr/sbin /usr/bin
++ case :$PATH: in
++ for dir in "$sbindir" "$ovn_bindir" "$bindir" /sbin /bin /usr/sbin /usr/bin
++ case :$PATH: in
++ for dir in "$sbindir" "$ovn_bindir" "$bindir" /sbin /bin /usr/sbin /usr/bin
++ case :$PATH: in
++ for dir in "$sbindir" "$ovn_bindir" "$bindir" /sbin /bin /usr/sbin /usr/bin
++ case :$PATH: in
++ for dir in "$sbindir" "$ovn_bindir" "$bindir" /sbin /bin /usr/sbin /usr/bin
++ case :$PATH: in
++ ovnnb_active_conf_file=/etc/ovn/ovnnb-active.conf
++ ovnsb_active_conf_file=/etc/ovn/ovnsb-active.conf
++ ovn_northd_db_conf_file=/etc/ovn/ovn-northd-db-params.conf
++ ic_nb_active_conf_file=/etc/ovn/ic-nb-active.conf
++ ic_sb_active_conf_file=/etc/ovn/ic-sb-active.conf
++ ovn_ic_db_conf_file=/etc/ovn/ovn-ic-db-params.conf
++ set_defaults
++ OVN_MANAGE_OVSDB=yes
++ RESTART=no
++ OVS_RUNDIR=/var/run/openvswitch
++ OVN_RUNDIR=/var/run/ovn
++ DB_NB_SOCK=/var/run/ovn/ovnnb_db.sock
++ DB_NB_PIDFILE=/var/run/ovn/ovnnb_db.pid
++ DB_NB_CTRL_SOCK=/var/run/ovn/ovnnb_db.ctl
++ DB_NB_FILE=/etc/ovn/ovnnb_db.db
++ DB_NB_ADDR=0.0.0.0
++ DB_NB_PORT=6641
++ DB_NB_SYNC_FROM_PROTO=tcp
++ DB_NB_SYNC_FROM_ADDR=
++ DB_NB_SYNC_FROM_PORT=6641
++ DB_NB_PROBE_INTERVAL_TO_ACTIVE=60000
++ DB_NB_ELECTION_TIMER=
++ DB_SB_SOCK=/var/run/ovn/ovnsb_db.sock
++ DB_SB_PIDFILE=/var/run/ovn/ovnsb_db.pid
++ DB_SB_CTRL_SOCK=/var/run/ovn/ovnsb_db.ctl
++ DB_SB_FILE=/etc/ovn/ovnsb_db.db
++ DB_SB_ADDR=0.0.0.0
++ DB_SB_PORT=6642
++ DB_SB_SYNC_FROM_PROTO=tcp
++ DB_SB_SYNC_FROM_ADDR=
++ DB_SB_SYNC_FROM_PORT=6642
++ DB_SB_PROBE_INTERVAL_TO_ACTIVE=60000
++ DB_SB_ELECTION_TIMER=
++ DB_IC_NB_SOCK=/var/run/ovn/ovn_ic_nb_db.sock
++ DB_IC_NB_PIDFILE=/var/run/ovn/ovn_ic_nb_db.pid
++ DB_IC_NB_CTRL_SOCK=/var/run/ovn/ovn_ic_nb_db.ctl
++ DB_IC_NB_FILE=/etc/ovn/ovn_ic_nb_db.db
++ DB_IC_NB_ADDR=0.0.0.0
++ DB_IC_NB_PORT=6645
++ DB_IC_NB_SYNC_FROM_PROTO=tcp
++ DB_IC_NB_SYNC_FROM_ADDR=
++ DB_IC_NB_SYNC_FROM_PORT=6645
++ DB_IC_SB_SOCK=/var/run/ovn/ovn_ic_sb_db.sock
++ DB_IC_SB_PIDFILE=/var/run/ovn/ovn_ic_sb_db.pid
++ DB_IC_SB_CTRL_SOCK=/var/run/ovn/ovn_ic_sb_db.ctl
++ DB_IC_SB_FILE=/etc/ovn/ovn_ic_sb_db.db
++ DB_IC_SB_ADDR=0.0.0.0
++ DB_IC_SB_PORT=6646
++ DB_IC_SB_SYNC_FROM_PROTO=tcp
++ DB_IC_SB_SYNC_FROM_ADDR=
++ DB_IC_SB_SYNC_FROM_PORT=6646
++ DB_NB_SCHEMA=/usr/share/ovn/ovn-nb.ovsschema
++ DB_SB_SCHEMA=/usr/share/ovn/ovn-sb.ovsschema
++ DB_IC_NB_SCHEMA=/usr/share/ovn/ovn-ic-nb.ovsschema
++ DB_IC_SB_SCHEMA=/usr/share/ovn/ovn-ic-sb.ovsschema
++ DB_SOCK=/var/run/openvswitch/db.sock
++ DB_CONF_FILE=/etc/openvswitch/conf.db
++ OVN_NORTHD_PRIORITY=-10
++ OVN_NORTHD_WRAPPER=
++ OVN_IC_PRIORITY=-10
++ OVN_IC_WRAPPER=
++ OVN_CONTROLLER_PRIORITY=-10
++ OVN_CONTROLLER_WRAPPER=
++ OVSDB_NB_WRAPPER=
++ OVSDB_SB_WRAPPER=
++ OVSDB_DISABLE_FILE_COLUMN_DIFF=no
++ OVN_USER=
++ OVN_CONTROLLER_LOG='-vconsole:emer -vsyslog:err -vfile:info'
++ OVN_NORTHD_LOG='-vconsole:emer -vsyslog:err -vfile:info'
++ OVN_NORTHD_LOGFILE=
++ OVN_NORTHD_N_THREADS=1
++ OVN_IC_LOG='-vconsole:emer -vsyslog:err -vfile:info'
++ OVN_IC_LOGFILE=
++ OVN_NB_LOG='-vconsole:off -vfile:info'
++ OVN_SB_LOG='-vconsole:off -vfile:info'
++ OVN_NB_LOGFILE=/var/log/ovn/ovsdb-server-nb.log
++ OVN_SB_LOGFILE=/var/log/ovn/ovsdb-server-sb.log
++ OVN_IC_NB_LOG='-vconsole:off -vfile:info'
++ OVN_IC_SB_LOG='-vconsole:off -vfile:info'
++ OVN_IC_NB_LOGFILE=/var/log/ovn/ovsdb-server-ic-nb.log
++ OVN_IC_SB_LOGFILE=/var/log/ovn/ovsdb-server-ic-sb.log
++ OVN_SB_RELAY_LOG='-vconsole:emer -vsyslog:err -vfile:info'
++ OVN_SB_RELAY_LOGFILE=/var/log/ovn/ovsdb-server-sb-relay.log
++ OVN_CONTROLLER_SSL_KEY=
++ OVN_CONTROLLER_SSL_CERT=
++ OVN_CONTROLLER_SSL_CA_CERT=
++ OVN_CONTROLLER_SSL_BOOTSTRAP_CA_CERT=
++ OVN_NORTHD_SSL_KEY=
++ OVN_NORTHD_SSL_CERT=
++ OVN_NORTHD_SSL_CA_CERT=
+:q!
+:q+ OVN_IC_SSL_KEY=
++ OVN_IC_SSL_CERT=
++ OVN_IC_SSL_CA_CERT=
++ DB_SB_CREATE_INSECURE_REMOTE=no
++ DB_NB_CREATE_INSECURE_REMOTE=no
++ DB_IC_SB_CREATE_INSECURE_REMOTE=no
++ DB_IC_NB_CREATE_INSECURE_REMOTE=no
++ MONITOR=yes
++ DB_NB_DETACH=yes
++ DB_SB_DETACH=yes
++ DB_IC_NB_DETACH=yes
++ DB_IC_SB_DETACH=yes
++ DB_NB_CLUSTER_LOCAL_ADDR=
++ DB_NB_CLUSTER_LOCAL_PROTO=tcp
++ DB_NB_CLUSTER_LOCAL_PORT=6643
++ DB_NB_CLUSTER_REMOTE_ADDR=
++ DB_NB_CLUSTER_REMOTE_PROTO=tcp
++ DB_NB_CLUSTER_REMOTE_PORT=6643
++ DB_SB_CLUSTER_LOCAL_ADDR=
++ DB_SB_CLUSTER_LOCAL_PROTO=tcp
++ DB_SB_CLUSTER_LOCAL_PORT=6644
++ DB_SB_CLUSTER_REMOTE_ADDR=
++ DB_SB_CLUSTER_REMOTE_PROTO=tcp
++ DB_SB_CLUSTER_REMOTE_PORT=6644
++ DB_IC_NB_CLUSTER_LOCAL_ADDR=
++ DB_IC_NB_CLUSTER_LOCAL_PROTO=tcp
++ DB_IC_NB_CLUSTER_LOCAL_PORT=6647
++ DB_IC_NB_CLUSTER_REMOTE_ADDR=
++ DB_IC_NB_CLUSTER_REMOTE_PROTO=tcp
++ DB_IC_NB_CLUSTER_REMOTE_PORT=6647
++ DB_IC_SB_CLUSTER_LOCAL_ADDR=
++ DB_IC_SB_CLUSTER_LOCAL_PROTO=tcp
++ DB_IC_SB_CLUSTER_LOCAL_PORT=6648
++ DB_IC_SB_CLUSTER_REMOTE_ADDR=
++ DB_IC_SB_CLUSTER_REMOTE_PROTO=tcp
++ DB_IC_SB_CLUSTER_REMOTE_PORT=6648
++ OVN_NORTHD_NB_DB=unix:/var/run/ovn/ovnnb_db.sock
++ OVN_NORTHD_SB_DB=unix:/var/run/ovn/ovnsb_db.sock
++ DB_NB_USE_REMOTE_IN_DB=yes
++ DB_SB_USE_REMOTE_IN_DB=yes
++ OVN_IC_NB_DB=unix:/var/run/ovn/ovn_ic_nb_db.sock
++ OVN_IC_SB_DB=unix:/var/run/ovn/ovn_ic_sb_db.sock
++ DB_IC_NB_USE_REMOTE_IN_DB=yes
++ DB_IC_SB_USE_REMOTE_IN_DB=yes
++ OVN_NB_DB_SSL_KEY=
++ OVN_NB_DB_SSL_CERT=
++ OVN_NB_DB_SSL_CA_CERT=
++ OVN_SB_DB_SSL_KEY=
++ OVN_SB_DB_SSL_CERT=
++ OVN_SB_DB_SSL_CA_CERT=
++ OVN_IC_NB_DB_SSL_KEY=
++ OVN_IC_NB_DB_SSL_CERT=
++ OVN_IC_NB_DB_SSL_CA_CERT=
++ OVN_IC_SB_DB_SSL_KEY=
++ OVN_IC_SB_DB_SSL_CERT=
++ OVN_IC_SB_DB_SSL_CA_CERT=
++ RELAY_MODE=no
++ DB_SB_RELAY_REMOTE=
++ DB_SB_RELAY_SOCK=/var/run/ovn/ovnsb_relay_db.sock
++ DB_SB_RELAY_PIDFILE=/var/run/ovn/ovnsb_relay_db.pid
++ DB_SB_RELAY_CTRL_SOCK=/var/run/ovn/ovnsb_relay_db.ctl
++ OVN_SB_RELAY_DB_SSL_KEY=
++ OVN_SB_RELAY_DB_SSL_CERT=
++ OVN_SB_RELAY_DB_SSL_CA_CERT=
++ DB_SB_RELAY_USE_REMOTE_IN_DB=yes
++ DB_CLUSTER_SCHEMA_UPGRADE=yes
++ command=
++ extra_args=
++ for arg in "$@"
++ shift
++ case $arg in
+++ expr X--no-monitor : 'X--no-\(.*\)'
++ option=monitor
++ value=no
++ type=bool
++ set_option
+++ echo monitor
+++ tr abcdefghijklmnopqrstuvwxyz- ABCDEFGHIJKLMNOPQRSTUVWXYZ_
++ var=MONITOR
++ eval 'set=${MONITOR+yes}'
+++ set=yes
++ eval 'old_value=$MONITOR'
+++ old_value=yes
++ test Xyes = X
++ test bool = bool
++ test Xyes '!=' Xno
++ test Xyes '!=' Xyes
++ eval 'MONITOR=$value'
+++ MONITOR=no
++ for arg in "$@"
++ shift
++ case $arg in
++ test X = X
++ command=start_controller
++ for arg in "$@"
++ shift
++ case $arg in
+++ expr X--ovn-controller-log=-vconsole:dbg : 'X--\([^=]*\)'
++ option=ovn-controller-log
+++ expr X--ovn-controller-log=-vconsole:dbg : 'X[^=]*=\(.*\)'
++ value=-vconsole:dbg
++ type=string
++ set_option
+++ echo ovn-controller-log
+++ tr abcdefghijklmnopqrstuvwxyz- ABCDEFGHIJKLMNOPQRSTUVWXYZ_
++ var=OVN_CONTROLLER_LOG
++ eval 'set=${OVN_CONTROLLER_LOG+yes}'
+++ set=yes
++ eval 'old_value=$OVN_CONTROLLER_LOG'
+++ old_value='-vconsole:emer -vsyslog:err -vfile:info'
++ test Xyes = X
++ test string = bool
++ eval 'OVN_CONTROLLER_LOG=$value'
+++ OVN_CONTROLLER_LOG=-vconsole:dbg
++ OVN_NORTHD_BIN=ovn-northd
++ case $command in
++ start_controller
++ set ovn-controller unix:/var/run/openvswitch/db.sock
++ set ovn-controller unix:/var/run/openvswitch/db.sock -vconsole:dbg
++ test X '!=' X
++ test X '!=' X
++ test X '!=' X
++ test X '!=' X
++ '[' '' '!=' '' ']'
++ test X '!=' X
++ OVS_RUNDIR=/var/run/openvswitch
++ start_ovn_daemon -10 '' ovn-controller unix:/var/run/openvswitch/db.sock -vconsole:dbg
++ priority=-10
++ wrapper=
++ shift
++ shift
++ daemon=ovn-controller
++ ovn_install_dir /
++ DIR=/
++ INSTALL_MODE=755
+++ id -un
++ INSTALL_USER=root
+++ id -gn
++ INSTALL_GROUP=root
++ '[' '' '!=' '' ']'
++ '[' '' '!=' '' ']'
++ test '!' -d /
++ set ovn-controller unix:/var/run/openvswitch/db.sock -vconsole:dbg --no-chdir
++ cd /
++ ovn_install_dir /var/log/ovn 750
++ DIR=/var/log/ovn
++ INSTALL_MODE=750
+++ id -un
++ INSTALL_USER=root
+++ id -gn
++ INSTALL_GROUP=root
++ '[' '' '!=' '' ']'
++ '[' '' '!=' '' ']'
++ test '!' -d /var/log/ovn
++ set ovn-controller unix:/var/run/openvswitch/db.sock -vconsole:dbg --no-chdir --log-file=/var/log/ovn/ovn-controller.log
++ ovn_install_dir /var/run/ovn
++ DIR=/var/run/ovn
++ INSTALL_MODE=755
+++ id -un
++ INSTALL_USER=root
+++ id -gn
++ INSTALL_GROUP=root
++ '[' '' '!=' '' ']'
++ '[' '' '!=' '' ']'
++ test '!' -d /var/run/ovn
++ set ovn-controller unix:/var/run/openvswitch/db.sock -vconsole:dbg --no-chdir --log-file=/var/log/ovn/ovn-controller.log --pidfile=/var/run/ovn/ovn-controller.pid
++ set ovn-controller unix:/var/run/openvswitch/db.sock -vconsole:dbg --no-chdir --log-file=/var/log/ovn/ovn-controller.log --pidfile=/var/run/ovn/ovn-controller.pid --detach
++ test Xno = Xno
++ chown -R root:root /var/log/ovn
++ chown -R root:root /var/run/ovn
++ start_wrapped_daemon '' ovn-controller -10 ovn-controller unix:/var/run/openvswitch/db.sock -vconsole:dbg --no-chdir --log-file=/var/log/ovn/ovn-controller.log --pidfile=/var/run/ovn/ovn-controller.pid --detach
++ wrapper=
++ daemon=ovn-controller
++ priority=-10
++ strace=
++ shift
++ shift
++ shift
++ case $wrapper in
++ test X-10 '!=' X
++ set nice -n -10 ovn-controller unix:/var/run/openvswitch/db.sock -vconsole:dbg --no-chdir --log-file=/var/log/ovn/ovn-controller.log --pidfile=/var/run/ovn/ovn-controller.pid --detach
++ action 'Starting ovn-controller' nice -n -10 ovn-controller unix:/var/run/openvswitch/db.sock -vconsole:dbg --no-chdir --log-file=/var/log/ovn/ovn-controller.log --pidfile=/var/run/ovn/ovn-controller.pid --detach
++ STRING='Starting ovn-controller'
++ shift
++ nice -n -10 ovn-controller unix:/var/run/openvswitch/db.sock -vconsole:dbg --no-chdir --log-file=/var/log/ovn/ovn-controller.log --pidfile=/var/run/ovn/ovn-controller.pid --detach
+2024-08-22T11:52:17Z|00001|vlog|INFO|opened log file /var/log/ovn/ovn-controller.log
+2024-08-22T11:52:17.630Z|00001|vlog|INFO|opened log file /var/log/ovn/ovn-controller.log
+2024-08-22T11:52:17Z|00002|daemon_unix|DBG|/var/run/ovn/ovn-controller.pid: deleted stale pidfile
++ rc=0
++ test 0 = 0
++ log_success_msg 'Starting ovn-controller'
++ printf '%s.\n' 'Starting ovn-controller'
+Starting ovn-controller.
++ return 0
++ test X '!=' X
+[root@ovn11 ~]# 2024-08-22T11:52:17.635Z|00003|reconnect|INFO|unix:/var/run/openvswitch/db.sock: connecting...
+2024-08-22T11:52:17.636Z|00004|reconnect|INFO|unix:/var/run/openvswitch/db.sock: connected
+2024-08-22T11:52:17.639Z|00005|main|INFO|OVN internal version is : [24.03.3-20.33.0-72.6]
+2024-08-22T11:52:17.639Z|00006|main|INFO|OVS IDL reconnected, force recompute.
+2024-08-22T11:52:17.640Z|00007|main|INFO|OVNSB IDL reconnected, force recompute.
+
+[root@ovn11 ~]# 2024-08-22T11:53:11.539Z|00008|memory|INFO|6512 kB peak resident set size after 53.9 seconds
+2024-08-22T11:53:11.540Z|00009|memory|INFO|idl-cells-Open_vSwitch:237
++ case $0 in
+++ echo /usr/share/ovn/scripts/ovn-ctl
+++ sed 's,/[^/]*$,,'
++ dir0=/usr/share/ovn/scripts
+++ echo /usr/share/ovn/scripts
+++ sed s,/ovn/scripts,,
++ ovsdir=/usr/share
++ ovsdir=/usr/share/openvswitch/scripts
++ . /usr/share/openvswitch/scripts/ovs-lib
+++ logdir=/var/log/openvswitch
+++ rundir=/var/run/openvswitch
+++ sysconfdir=/etc
+++ etcdir=/etc/openvswitch
+++ datadir=/usr/share/openvswitch
+++ bindir=/usr/bin
+++ sbindir=/usr/sbin
+++ test X '!=' X
+++ test X '!=' X
+++ dbdir=/etc/openvswitch
+++ VERSION=3.2.2
+++ DAEMON_CWD=/
+++ LC_ALL=C
+++ export LC_ALL
+++ test -e /etc/init.d/functions
+++ test -e /etc/rc.d/init.d/functions
+++ test -e /lib/lsb/init-functions
+++ type log_success_msg
+++ type log_failure_msg
+++ type log_warning_msg
+++ type action
++ . /usr/share/ovn/scripts/ovn-lib
+++ ovn_logdir=/var/log/ovn
+++ ovn_rundir=/var/run/ovn
+++ ovn_sysconfdir=/etc
+++ ovn_etcdir=/etc/ovn
+++ ovn_datadir=/usr/share/ovn
+++ ovn_bindir=/usr/bin
+++ ovn_sbindir=/usr/sbin
+++ test X '!=' X
+++ test X '!=' X
+++ ovn_dbdir=/etc/ovn
+++ VERSION=24.03.3
+++ DAEMON_CWD=/
+++ LC_ALL=C
+++ export LC_ALL
++ for dir in "$sbindir" "$ovn_bindir" "$bindir" /sbin /bin /usr/sbin /usr/bin
++ case :$PATH: in
++ for dir in "$sbindir" "$ovn_bindir" "$bindir" /sbin /bin /usr/sbin /usr/bin
++ case :$PATH: in
++ for dir in "$sbindir" "$ovn_bindir" "$bindir" /sbin /bin /usr/sbin /usr/bin
+

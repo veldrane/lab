@@ -1,0 +1,33 @@
+- name: Set global variables
+  set_fact:
+    virbr: "8"
+    netsuffix: "24" 
+    hostname: "nfsnode"
+    domain: "lab.syscallx86.com"
+    mem: "2G"
+    ipaserver: "freeipa.lab.syscallx86.com"
+    ipaip: "10.1.8.10"
+    ldapbase: "dc=lab,dc=syscallx86,dc=com"
+    svcadmin: "admin"
+    adminpwd: "admin123"
+    template: "basevm"
+    template_dir: "/data/vms/templates"
+    vms_dir: "/data/vms"
+    rootvg_size: 30
+
+
+- name: Set ip
+  set_fact:
+    ip: "10.1.{{ virbr  }}.{{ netsuffix }}"
+
+- name: Set FQDN
+  set_fact:
+    fqdn: "{{ hostname }}.{{ domain }}"
+
+- name: Set REALM
+  set_fact: 
+    realm: "{{ domain|upper }}"
+
+- name: Set disksize
+  set_fact: 
+    disksize: "51G"

@@ -10,6 +10,10 @@
   - name: "Create ansible group for new hosts"
     add_host: name="{{ ip }}" groups=newhost
 
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before registry installation"
+    ignore_errors: yes
+
   - name: Create docker registry data disk
     shell: qemu-img create -f qcow2 {{ vms_dir }}/{{ fqdn }}/datavg.qcow2 {{ disksize }}
 

@@ -1,0 +1,175 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before k8s installation"
+    ignore_errors: yes
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ master }}" groups=master
+
+- hosts: master
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Disable SElinux
+    shell: setenforce 0 ; sed -i --follow-symlinks 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+
+  - name: Make /etc/kubernetes directory and change the selinux context
+    shell: mkdir /etc/kubernetes ; semanage fcontext -a -t svirt_sandbox_file_t '/etc/kubernetes(/.*)?'
+
+  - name: Make /var/lib/etcd and change the selinux context 
+    shell: mkdir -p /var/lib/etcd ; semanage fcontext -a -t svirt_sandbox_file_t '/var/lib/etcd(/.*)?'
+
+  - name: Restore contexts
+    shell: restorecon -vR /etc/kubernetes ; restorecon -vR /var/lib/etcd
+
+  - name: Disable swap
+    shell: swapoff -a ; sed -i -E '/swap/d' /etc/fstab
+
+  - name: Disable firewalld
+    shell: systemctl stop firewalld && systemctl disable firewalld
+
+
+#  - name: Setup firewall rules
+#    shell: firewall-cmd --permanent --add-port=6443/tcp --add-port=2379-2380/tcp --add-port=10250-10252/tcp --add-port=10255/tcp --add-port=8472/udp
+
+#  - name: Open BGP protocal on firewalld
+#    shell: firewall-cmd --permanent --add-port=179/tcp
+
+#  - name: Setup masquarade and reload rules
+#    shell: firewall-cmd --add-masquerade --permanent ; firewall-cmd --reload
+
+#  - name: Enable br_netfilter (probably not survive the reboot!!! - check in the future)
+#    shell: modprobe br_netfilter; echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+
+  - name: Copy kubernetes repo definition to yum dir
+    copy: 
+      src: include/kubernetes.repo
+      dest: /etc/yum.repos.d/kubernetes.repo
+  
+  - name: Copy crio repo definition to yum dir
+    copy: 
+      src: include/crio.repo
+      dest: /etc/yum.repos.d/crio.repo
+
+  - name: Install kubeadm, crio and wget
+    shell: yum install wget kubeadm cri-o kubelet libnetfilter_conntrack conntrack-tools socat kubectl tar traceroute git python3-pip make podman buildah -y
+
+  - name: Install ovs
+    shell: yum install -y epel-release centos-release-nfv-common centos-release-nfv-openvswitch && yum install -y openvswitch3.3 libibverbs NetworkManager-ovs
+  
+  - name: Restart and network manager
+    shell: systemctl restart NetworkManager
+
+  - name: Start and enable openvswitch
+    shell: systemctl enable openvswitch ; systemctl start openvswitch
+
+  - name: Enable crio
+    shell: systemctl restart crio && systemctl enable crio
+
+  - name: Add bridge
+    shell: nmcli c add type ovs-bridge conn.interface {{ bridge_name }} con-name {{ bridge_name }}
+
+  - name: Add bridge - new port
+    shell: nmcli c add type ovs-port conn.interface {{ bridge_name }} master {{ bridge_name }} con-name ovs-port-{{ bridge_name }}
+
+  - name: Add bridge - slave
+    shell: nmcli c add type ovs-interface slave-type ovs-port conn.interface {{ bridge_name }} master ovs-port-{{ bridge_name }}  con-name ovs-if-{{ bridge_name }}
+
+  - name: Add bridge - second iface
+    shell: nmcli c add type ovs-port conn.interface {{ iface }} master {{ bridge_name }} con-name ovs-port-{{ iface }}
+
+  - name: Add bridge - add ethernet iface
+    shell: nmcli c add type ethernet conn.interface {{ iface }} master ovs-port-{{ iface }} con-name ovs-if-{{ iface }}
+
+  - name: Delete second connection
+    shell: nmcli conn delete {{ iface }}
+
+  - name: Set autoconnect to bridge
+    shell: nmcli conn mod {{ bridge_name }} connection.autoconnect yes
+  
+  - name: Set autoconnect to bridge
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} connection.autoconnect yes
+
+  - name: Set autoconnect to bridge
+    shell: nmcli conn mod ovs-if-{{ iface }} connection.autoconnect yes
+
+  - name: Set autoconnect to bridge
+    shell: nmcli conn mod ovs-port-{{ iface }} connection.autoconnect yes
+
+  - name: Set autoconnect to bridge
+    shell: nmcli conn mod ovs-port-{{ bridge_name }} connection.autoconnect yes
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} ipv4.address {{ ip_address }}
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} ipv4.method static
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} ipv4.route-metric 50
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} ipv4.gateway "10.1.16.1"
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod {{ iface }} ipv4.never-default yes
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod {{ iface }} ipv4.ignore-auto-dns yes
+
+  - name: Change ovn bridge 
+    shell: nmcli conn mod ovs-if-{{ bridge_name }} ipv4.dns "10.1.8.10"
+  
+  - name: Modules for crio
+    shell: modprobe br_netfilter; sysctl -w net.ipv4.ip_forward=1
+
+  - name: Run kubeadm
+    shell: kubeadm init --pod-network-cidr={{ podnetwork }} --service-cidr={{ svcnetwork }} --apiserver-advertise-address={{ ip2 }} > /tmp/kubeadm.out
+
+  - name: Enable kubelet
+    shell: systemctl enable kubelet
+
+  - name: Get token 
+    shell: cat /tmp/kubeadm.out | grep -E '\-\-token' | awk '{print $5}'
+    register: kube_token
+  
+  - name: Recreate kube_token
+    shell: kubectl token delete {{ kube_token.stdout }} ; kubeadm token create
+
+  - name: Register new kube token
+    shell: kubeadm token list | tail -n 1 | awk '{print $1}'
+    register: bootstrap_token
+
+  - name: Get CA sha256
+    shell: cat /tmp/kubeadm.out | grep -E 'sha256' | awk '{print $2}'
+    register: ca_token
+
+  - name: Create Token file
+    shell: echo "{{ bootstrap_token.stdout }};{{ ca_token.stdout }}" > /root/token.out
+
+  - name: Create .kube directory
+    shell: mkdir -p /root/.kube
+
+  - name: Copy cfg to .kube dir
+    shell: cp -i /etc/kubernetes/admin.conf /root/.kube/config 
+ 
+  - name: Change ownership to kube directory
+    shell: chown $(id -u):$(id -g) /root/.kube/config
+
+  - name: Create SDN namespace
+    shell: kubectl create namespace ovn-sdn
+
+  - name: Reboot master
+    shell: shutdown -r now

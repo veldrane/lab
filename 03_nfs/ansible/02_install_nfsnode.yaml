@@ -1,0 +1,92 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before NFS Server installation"
+    ignore_errors: yes
+
+  - name: Create nfs home data disk
+    shell: qemu-img create -f qcow2 {{ vms_dir }}/{{ fqdn }}/nfsvg.qcow2 {{ disksize }}
+
+  - name: Attach disk to machine
+    shell: virsh attach-disk {{ fqdn }} --source {{ vms_dir }}/{{ fqdn }}/nfsvg.qcow2 --target vdb --subdriver qcow2 --targetbus virtio --persistent
+
+  - name: Autostart of the machine
+    shell: virsh autostart {{ fqdn }}
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Setup firewall rules
+    shell: firewall-cmd --permanent --add-service={mountd,nfs,rpc-bind} ; firewall-cmd --reload
+
+  - name: Install prerequisites
+    shell: yum install -y nfs-utils policycoreutils-python-utils python3-policycoreutils.noarch
+
+  - name: Create datavg and logical volume
+    shell: pvcreate /dev/vdb ; vgcreate nfsvg /dev/vdb ; lvcreate -n home -L20G nfsvg
+
+  - name: Create fs
+    shell: mkfs.ext4 /dev/nfsvg/home
+
+  - name: make directory /nfsvg/home
+    shell: mkdir -p /nfsvg/home
+
+  - name: Add /nfshome to fstab
+    shell: echo '/dev/mapper/nfsvg-home  /nfsvg/home              ext4    noatime,nodiratime        1 2' >> /etc/fstab
+
+  - name: Mount /nfsvg/home
+    shell: mount /nfsvg/home
+
+  - name: Set selinux context 
+    shell: semanage fcontext -a -t nfs_t "/nfsvg(/.*)?" ; restorecon -Rv /nfsvg/
+
+  - name: Get the krb5 ticket
+    shell: echo "{{ adminpwd }}" | kinit {{ svcadmin }}
+
+  - name: Add nfs service
+    shell: ipa service-add nfs/{{ fqdn }}@{{ realm }} --force
+
+  - name: Get host keytab
+    shell: ipa-getkeytab  -p host/{{ fqdn }} -k /etc/krb5.keytab
+
+  - name: Get nfs keytab
+    shell: ipa-getkeytab  -p nfs/{{ fqdn }} -k /etc/krb5.keytab
+
+  - name: Set nfs exports 
+    shell: echo '/nfsvg/home 10.1.0.0/16(rw,sec=krb5i,sync,no_root_squash,insecure)' >> /etc/exports ; exportfs -r
+
+  - name: Enable and start nfs client
+    shell: systemctl enable nfs-client.target && systemctl start nfs-client.target
+
+  - name: Enable and start nfs server
+    shell: systemctl enable --now nfs-server
+
+  - name: Create nfshome dir
+    shell: mkdir /nfshome
+
+  - name: Set nfs home boolean
+    shell: setsebool -P use_nfs_home_dirs 1
+
+  - name: Prepare autofs master
+    shell: echo "/nfshome /etc/auto.nfshome --timeout=180 " >> /etc/auto.master
+
+  - name: Create auto.nfshome
+    shell: echo "*  -fstype=nfs,rw,soft,sec=krb5i,nfsvers=4,minorversion=2,user=&  {{ fqdn }}:/nfsvg/home/&" >> /etc/auto.nfshome
+
+  - name: Enable and start autofs
+    shell: systemctl enable autofs && systemctl start autofs

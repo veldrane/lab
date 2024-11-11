@@ -1,0 +1,50 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before s3 installation"
+    ignore_errors: yes
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: Setup firewall rules
+    shell: firewall-cmd --permanent --add-port=9000/tcp --add-port=9001/tcp; firewall-cmd --reload
+
+  - name: Create logical volume
+    shell: lvcreate -n minio -L20G rootvg
+
+  - name: Create fs
+    shell: mkfs.ext4 /dev/rootvg/minio
+
+  - name: make directory /data
+    shell: mkdir /data 
+
+  - name: Add /data to fstab
+    shell: echo '/dev/mapper/rootvg-minio  /data              ext4    noatime,nodiratime        1 2' >> /etc/fstab
+
+  - name: Mount /data
+    shell: mount /data
+  
+  - name: Add minio user
+    shell: useradd -r -s /sbin/nologin minio
+  
+  - name: change data dir owner to minio
+    shell: hown -R minio:minio /data
+
+  - name: Install minio server
+    shell: dnf install https://dl.min.io/server/minio/release/linux-amd64/minio-20241107005220.0.0-1.x86_64.rpm -y

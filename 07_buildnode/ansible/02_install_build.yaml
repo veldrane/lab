@@ -7,6 +7,16 @@
   - name: Set variables
     include: include/_setup_vars.yaml
 
+  - name: Set maximum VCPUs
+    shell: virsh setvcpus {{ fqdn }} 20 --config --maximum 
+
+  - name: Set VCPUs
+    shell: virsh setvcpus {{ fqdn }} 20 --config
+
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before build run"
+    ignore_errors: yes
+
   - name: "Create ansible group for new hosts"
     add_host: name="{{ ip }}" groups=newhost
 
@@ -19,19 +29,19 @@
     include: include/_setup_vars.yaml
 
   - name: LV extend /lv-var
-    shell: lvresize /dev/rootvg/var -L+10G
+    shell: lvresize /dev/rootvg/var -L+14G
 
   - name: Resize fs
     shell: resize2fs /dev/rootvg/var
 
   - name: LV extend /lv-home
-    shell: lvresize /dev/rootvg/var -L+8G
+    shell: lvresize /dev/rootvg/home -L+4G
 
   - name: Resize fs
     shell: resize2fs /dev/rootvg/home
 
   - name: Install prerequisites
-    shell: yum install -y yum-utils device-mapper-persistent-data lvm2 wget 
+    shell: yum install -y yum-utils device-mapper-persistent-data lvm2 wget git tcpdump curl
 
   - name: Add docker repo
     shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -61,3 +71,14 @@
 
   - name: Setup /etc/environment
     shell: echo "PATH=$PATH:/usr/local/go/bin" >> /etc/environment
+
+  - name: Copy kubernetes repo definition to yum dir
+    copy: 
+      src: include/kubernetes.repo
+      dest: /etc/yum.repos.d/kubernetes.repo
+
+  - name: Install kubectl
+    shell: yum install kubectl -y
+
+  - name: Upgrade packages
+    shell: yum udpate -y ; yum upgrade -y

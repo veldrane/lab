@@ -1,8 +1,8 @@
 - name: Set global variables
   set_fact:
     virbr: "8"
-    netsuffix: "52" 
-    hostname: "jump"
+    netsuffix: "22" 
+    hostname: "build"
     domain: "lab.syscallx86.com"
     mem: "4G"
     ipaserver: "freeipa.lab.syscallx86.com"
@@ -11,11 +11,11 @@
     ipaip: "10.1.8.10"
     ldapbase: "dc=lab,dc=local"
     svcadmin: "admin"
-    adminpwd: "admin123"
+    adminpwd: "admin1234"
     template: "basevm"
     template_dir: "/data/templates"
     vms_dir: "/data/vms"
-    rootvg_size: 40
+    rootvg_size: 50
 
 - name: Set ip
   set_fact:
@@ -30,7 +30,3 @@
 - name: Set REALM
   set_fact: 
     realm: "{{ domain|upper }}"
-
-- name: Set disksize
-  set_fact: 
-    disksize: "40"

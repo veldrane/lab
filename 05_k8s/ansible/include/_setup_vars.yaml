@@ -1,8 +1,8 @@
 - name: Set global variables
   set_fact:
     virbr: "16"
-    netsuffix: "52" 
-    hostname: "ovn52"
+    netsuffix: "22" 
+    hostname: "ovn22"
     domain: "lab.syscallx86.com"
     mem: "4G"
     ipaserver: "freeipa.lab.syscallx86.com"
@@ -11,7 +11,7 @@
     home_export: "/nfsvg/home"
     ldapbase: "dc=lab,dc=syscallx86,dc=com"
     svcadmin: "admin"
-    adminpwd: "admin123"
+    adminpwd: "admin1234"
     template: "basevm"
     template_dir: "/data/templates"
     vms_dir: "/data/vms"

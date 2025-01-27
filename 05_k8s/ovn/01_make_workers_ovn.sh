@@ -2,8 +2,8 @@
 
 echo "Creating nodes..."
 
-i=52
-while [ "$i" -ne 53 ]
+i=21
+while [ "$i" -ne 23 ]
 do
     echo "ovn$i.lab.syscallx86.com"
     rm -rf /root/.ansible/cp/*

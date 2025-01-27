@@ -11,7 +11,7 @@
     home_export: "/nfsvg/home"
     ldapbase: "dc=lab,dc=syscallx86,dc=com"
     svcadmin: "admin"
-    adminpwd: "admin123"
+    adminpwd: "admin1234"
     template: "basevm"
     template_dir: "/data/templates"
     vms_dir: "/data/vms"

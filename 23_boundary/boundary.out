@@ -1,0 +1,215 @@
+# boundary database init -config=/etc/boundary.d/boundary.hcl 
+Migrations successfully run.
+Global-scope KMS keys successfully created.
+
+Initial login role information:
+  Name:      Login Grants
+  Role ID:   r_SsM1E8hzie
+
+Initial authenticated user role information:
+  Name:      Authenticated User Grants
+  Role ID:   r_KVT4omdATu
+
+Initial auth information:
+  Auth Method ID:     ampw_KmTMXpvcW1
+  Auth Method Name:   Generated global scope initial password auth method
+  Login Name:         admin
+  Password:           orQofqkuzzyaRLbh7ZXV
+  Scope ID:           global
+  User ID:            u_k0XQeZPoCA
+  User Name:          admin
+
+Initial org scope information:
+  Name:       Generated org scope
+  Scope ID:   o_HSO0LPzmt1
+  Type:       org
+
+Initial project scope information:
+  Name:       Generated project scope
+  Scope ID:   p_ARV8HfuEN2
+  Type:       project
+
+Initial host resources information:
+  Host Catalog ID:     hcst_ybOpQKOtv0
+  Host Catalog Name:   Generated host catalog
+  Host ID:             hst_8SoTf4zKAH
+  Host Name:           Generated host
+  Host Set ID:         hsst_YTav6tRFYs
+  Host Set Name:       Generated host set
+  Scope ID:            p_ARV8HfuEN2
+  Type:                static
+
+Initial target information:
+  Default Port:               22
+  Name:                       Generated target with a direct address
+  Scope ID:                   p_ARV8HfuEN2
+  Session Connection Limit:   -1
+  Session Max Seconds:        28800
+  Target ID:                  ttcp_JQ2DwY1mvr
+  Type:                       tcp
+
+Initial target information:
+  Default Port:               22
+  Name:                       # boundary scopes list -scope-id o_HSO0LPzmt1
+Direct usage of BOUNDARY_TOKEN env var is deprecated; please use "-token env://<env var name>" format, e.g. "-token env://BOUNDARY_TOKEN" to specify an env var to use.
+
+Scope information:
+  ID:                    p_nMQdMztweM
+    Version:             1
+    Name:                consul-project
+    Authorized Actions:
+      no-op
+      read
+      update
+      delete
+
+  ID:                    p_ARV8HfuEN2
+    Version:             1
+    Name:                Generated project scope
+    Description:         Provides an initial project scope in Boundary
+    Authorized Actions:
+      update
+      delete
+      no-op
+      read
+[root@boundary ~]# boundary host-catalogs create static -name consul-catalog -scope-id p_nMQdMztweM^C
+[root@boundary ~]# boundary host-catalogs create -scope-id p_nMQdMztweM -name consulops -description "consul catalog servers"
+Usage: boundary host-catalogs create [type] [sub command] [options] [args]
+
+  This command allows create operations on Boundary host catalog resources. Example:
+
+    Create a static-type host catalog:
+
+      $ boundary host-catalogs create static -name prodops -description "For ProdOps usage"
+
+  Please see the typed subcommand help for detailed usage information.
+
+Subcommands:
+    plugin    Create a plugin type host catalog
+    static    Create a static type host catalog
+[root@boundary ~]# boundary host-catalogs create static -scope-id p_nMQdMztweM -name consulops -description "consul catalog servers"
+Direct usage of BOUNDARY_TOKEN env var is deprecated; please use "-token env://<env var name>" format, e.g. "-token env://BOUNDARY_TOKEN" to specify an env var to use.
+
+Host Catalog information:
+  Created Time:        Fri, 22 Nov 2024 14:02:05 CET
+  Description:         consul catalog servers
+  ID:                  hcst_2fdy9AjTg1
+  Name:                consulops
+  Type:                static
+  Updated Time:        Fri, 22 Nov 2024 14:02:05 CET
+  Version:             1
+
+  Scope:
+    ID:                p_nMQdMztweM
+    Name:              consul-project
+    Parent Scope ID:   o_HSO0LPzmt1
+    Type:              project
+
+  Authorized Actions:
+    no-op
+    read
+    update
+    delete
+
+  Authorized Actions on Host Catalog's Collections:
+    host-sets:
+      create
+      list
+    hosts:
+      list
+      create
+[root@boundary ~]# 
+p_ARV8HfuEN2
+  Session Connection Limit:   -1
+  Session Max Seconds:        28800
+  Target ID:                  ttcp_ncM9QcSEdx
+  Type:                       tcp
+[root@boundary boundary.d]# boundary server -config=/etc/boundary.d/boundary.hcl
+==> Boundary server configuration:
+
+                  [Root] Aead Type: aes-gcm
+           [Worker-Auth] Aead Type: aes-gcm
+                               Cgo: disabled
+    Controller Public Cluster Addr: 127.0.0.1:9202
+                        Listener 1: tcp (addr: "0.0.0.0:9200", cors_allowed_headers: "[]", cors_allowed_origins: "[*]", cors_enabled: "true", max_request_duration: "1m30s", purpose: "api")
+                        Listener 2: tcp (addr: "0.0.0.0:9201", max_request_duration: "1m30s", purpose: "proxy")
+                        Listener 3: tcp (addr: "127.0.0.1:9202", max_request_duration: "1m30s", purpose: "cluster")
+                         Log Level: info
+                             Mlock: supported: true, enabled: true
+                           Version: Boundary v0.18.1
+                       Version Sha: 7f5cae7f400fa3e64488e3ed4aa48105b246d18b
+        Worker Auth Current Key Id: backless-glitzy-say-expletive-geometric-buffing-residence-colt
+  Worker Auth Registration Request: GzusqckarbczHoLGQ4UA25uSRARRCzp74SFLTYLCakxb192XfghwvmbjUdbmpSkzK82raWYu7aNEWJFN1t5jjWrkmeEov1aAJb2ScxPJtvaHgnw2y3mHphDa4PyVogBdEBDCh1vwauXgcmc9JJZEm5vKBWk1LaaWsKZfwdtXfj13zWa9SjUq4RZcxhwY3QXVk7PrDA3vWUvhXZr3C3mDVSjKuqeb7HSZGMiM19ExWFBKc9G6JCL3QSjq5fsMihQXaYY8SDK6gEELnQ3iBr3eLBrYscJPj2YdzFabGRqZ67
+          Worker Public Proxy Addr: 0.0.0.0:9201
+
+
+
+# boundary scopes list -scope-id o_HSO0LPzmt1
+Direct usage of BOUNDARY_TOKEN env var is deprecated; please use "-token env://<env var name>" format, e.g. "-token env://BOUNDARY_TOKEN" to specify an env var to use.
+
+Scope information:
+  ID:                    p_nMQdMztweM
+    Version:             1
+    Name:                consul-project
+    Authorized Actions:
+      no-op
+      read
+      update
+      delete
+
+  ID:                    p_ARV8HfuEN2
+    Version:             1
+    Name:                Generated project scope
+    Description:         Provides an initial project scope in Boundary
+    Authorized Actions:
+      update
+      delete
+      no-op
+      read
+[root@boundary ~]# boundary host-catalogs create static -name consul-catalog -scope-id p_nMQdMztweM^C
+[root@boundary ~]# boundary host-catalogs create -scope-id p_nMQdMztweM -name consulops -description "consul catalog servers"
+Usage: boundary host-catalogs create [type] [sub command] [options] [args]
+
+  This command allows create operations on Boundary host catalog resources. Example:
+
+    Create a static-type host catalog:
+
+      $ boundary host-catalogs create static -name prodops -description "For ProdOps usage"
+
+  Please see the typed subcommand help for detailed usage information.
+
+Subcommands:
+    plugin    Create a plugin type host catalog
+    static    Create a static type host catalog
+[root@boundary ~]# boundary host-catalogs create static -scope-id p_nMQdMztweM -name consulops -description "consul catalog servers"
+Direct usage of BOUNDARY_TOKEN env var is deprecated; please use "-token env://<env var name>" format, e.g. "-token env://BOUNDARY_TOKEN" to specify an env var to use.
+
+Host Catalog information:
+  Created Time:        Fri, 22 Nov 2024 14:02:05 CET
+  Description:         consul catalog servers
+  ID:                  hcst_2fdy9AjTg1
+  Name:                consulops
+  Type:                static
+  Updated Time:        Fri, 22 Nov 2024 14:02:05 CET
+  Version:             1
+
+  Scope:
+    ID:                p_nMQdMztweM
+    Name:              consul-project
+    Parent Scope ID:   o_HSO0LPzmt1
+    Type:              project
+
+  Authorized Actions:
+    no-op
+    read
+    update
+    delete
+
+  Authorized Actions on Host Catalog's Collections:
+    host-sets:
+      create
+      list
+    hosts:
+      list
+      create
+[root@boundary ~]# 

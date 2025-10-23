@@ -1,15 +1,15 @@
 - name: Set global variables
   set_fact:
-    virbr: "16"
-    netsuffix: "XXX" 
-    hostname: "ovnXXX"
+    virbr: "8"
+    netsuffix: "29" 
+    hostname: "boundary"
     domain: "lab.syscallx86.com"
-    mem: "4G"
+    mem: "2G"
     ipaserver: "freeipa.lab.syscallx86.com"
-    ipaip: "10.1.8.10"
     nfsserver: "nfsnode.lab.syscallx86.com"
     home_export: "/nfsvg/home"
-    ldapbase: "dc=lab,dc=syscallx86,dc=com"
+    ipaip: "10.1.8.10"
+    ldapbase: "dc=lab,dc=local"
     svcadmin: "admin"
     adminpwd: "admin1234"
     template: "basevm"
@@ -17,9 +17,12 @@
     vms_dir: "/data/vms"
     rootvg_size: 30
 
+
 - name: Set ip
   set_fact:
     ip: "10.1.{{ virbr  }}.{{ netsuffix }}"
+
+
 
 - name: Set FQDN
   set_fact:
@@ -29,12 +32,6 @@
   set_fact: 
     realm: "{{ domain|upper }}"
 
-- name: Set Kubernetes facts
-  set_fact:
-    podnetwork: "10.38.0.0/16"
-    svcnetwork: "10.49.0.0/16"
-    clusterdom: "cluster.local"
-    master: "ovn11.lab.syscallx86.com"
-    bridge_name: "br-ex"
-    iface: "enp1s0"
-    ip_address: "10.1.{{ virbr  }}.{{ netsuffix }}"
+- name: Set disksize
+  set_fact: 
+    disksize: "21G"

@@ -1,0 +1,41 @@
+---
+- hosts: localhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+
+  - name: "Create ansible group for new hosts"
+    add_host: name="{{ ip }}" groups=newhost
+
+  - name: Create snapshot for the host
+    shell: virsh snapshot-create-as --domain {{ fqdn }} --name "before Boundary Server installation"
+    ignore_errors: yes
+
+- hosts: newhost
+  become: true
+  gather_facts: no
+  tasks:
+
+  - name: Set variables
+    include: include/_setup_vars.yaml
+  
+  - name: Install postresql
+    shell: dnf install -y postgresql-server postgresql-contrib
+
+  - name: init postresql db
+    shell: postgresql-setup --initdb
+
+  - name: start postresql
+    shell: systemctl start postgresql && systemctl enable postgresql
+
+  - name: Add boundary repository
+    shell: dnf install -y dnf-plugins-core && dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+  - name: Install boundary
+    shell: dnf install -y boundary && dnf update boundary
+  
+  - name: allow boundary ports
+    shell: firewall-cmd --permanent --add-port=9200/tcp --add-port=9201/tcp && firewall-cmd --reload
